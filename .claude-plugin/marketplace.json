@@ -1,0 +1,18 @@
+{
+  "name": "infracost",
+  "owner": {
+    "name": "Infracost",
+    "email": "hello@infracost.io"
+  },
+  "metadata": {
+    "description": "Marketplace used to distribute Infracost Claude plugins",
+    "version": "0.0.1"
+  },
+  "plugins": [
+    {
+      "name": "infracost",
+      "source": "./plugins/infracost",
+      "description": "Plugin for core infracost functionality"
+    }
+  ]
+}

@@ -4,20 +4,20 @@ A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) sk
 
 ## Available Skills
 
-| Skill | Description |
-|-------|-------------|
-| [infracost](./infracost/SKILL.md) | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
+| Skill                                                  | Description                                                                                                     |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| [analyze](./plugins/infracost/skills/analyze/SKILL.md) | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
 
 ## Usage
 
-To use a skill, copy its directory into your project's `.claude/skills/` directory:
+> [!NOTE]
+> While the cli-poc repository and the claude-skills repository are private, ensure you have a GITHUB_TOKEN env var set (`gh auth login`).
 
-```sh
-# Create the skills directory if it doesn't exist
-mkdir -p .claude/skills
-
-# Copy a skill into your project
-cp -r path/to/claude-skills/infracost .claude/skills/
+```bash
+claude
+/plugin marketplace add infracost/claude
+/plugin install infracost@infracost
+# Restart Claude
 ```
 
-The skill will then be available as a slash command in Claude Code.
+The plugin skills will then be available as `/infracost:<skill>` slash command in Claude Code.
