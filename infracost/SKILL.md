@@ -1,3 +1,7 @@
+---
+description: Analyze infrastructure as code (IaC) projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations. This skill should be used when asking about the cost of a cloud project, how to optimize costs, or when there are specific questions about FinOps policies or tagging compliance in an IaC codebase. The skill uses the Infracost CLI and its plugins to perform the analysis, so it requires the user to have those set up and authenticated. The output is a detailed cost report that highlights key insights and recommendations for cost optimization.
+---
+
 # Infracost Cost Estimation
 
 Analyze infrastructure as code (IaC) projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations.
@@ -7,25 +11,8 @@ Supported IaC types: Terraform, CloudFormation, Terragrunt. CDK is not yet direc
 
 ## Setup
 
-Ensure the following env vars are set. If not, set them to these default values. If the default paths don't exist, ask the user where their plugin binaries are located.
-
 ```bash
-export INFRACOST_CLI_PARSER_PLUGIN=~/src/parser/bin/infracost-parser-plugin
-export INFRACOST_CLI_PROVIDER_PLUGIN_AWS=~/src/providers/bin/infracost-provider-plugin-aws
-export INFRACOST_CLI_PROVIDER_PLUGIN_GOOGLE=~/src/providers/bin/infracost-provider-plugin-google
-export INFRACOST_CLI_PROVIDER_PLUGIN_AZURERM=~/src/providers/bin/infracost-provider-plugin-azurerm
-```
-
-Build the CLI before first use:
-
-```bash
-make build
-```
-
-The user also needs to be authenticated by running the binary with the `login` command. If your run fails for authentication reasons, ask the user to run:
-
-```bash
-./bin/infracost login
+infracost login
 ```
 
 ## Usage
@@ -34,13 +21,13 @@ Run the `analyze` command, pointing to your IaC files or a repository root:
 
 ```bash
 # Single CloudFormation template
-./bin/infracost analyze /path/to/cloudformation.yaml
+infracost analyze /path/to/cloudformation.yaml
 
 # Terraform project directory
-./bin/infracost analyze /path/to/terraform/
+infracost analyze /path/to/terraform/
 
 # Repository root (auto-discovers all IaC projects in nested directories)
-./bin/infracost analyze /path/to/repo
+infracost analyze /path/to/repo
 ```
 
 
@@ -51,15 +38,60 @@ JSON is written to stdout. Diagnostics and warnings are written to stderr.
 The output can be very large for repos with many resources, so always pipe it to a file:
 
 ```bash
-./bin/infracost analyze /path/to/repo > /tmp/infracost-output.json
+infracost analyze /path/to/repo > /tmp/infracost-output.json
 ```
 
-The JSON contains, for each discovered IaC project:
-- A breakdown of resources and their estimated monthly costs
-- Cost components with pricing, quantities, and environmental metrics (CO2, water)
-- A list of failing FinOps policies with per-resource recommendations and potential savings
+## Inspecting Results
 
-Use `jq` or a Python script to parse the JSON for analysis. For large or multi-project repos, scripted analysis is strongly recommended.
+After analyzing, use the `inspect` command to explore the results instead of parsing raw JSON. Always start with a summary, then drill into areas of interest using the available flags.
+
+!IMPORTANT: The `inspect` command reads from JSON and you DO NOT NEED to write any scripts to handle the JSON output yourself. Just use the `inspect` command with the appropriate flags to view the data in an engaging, actionable way.
+
+```bash
+# Analyze and save to file
+infracost analyze /path/to/repo > /tmp/infracost-output.json
+
+!IMPORTANT: The inspect command does not required the plugin paths to be specified, they command can be run without them
+
+# Inspect the results (always pass --file to read from the saved JSON)
+infracost inspect --file /tmp/infracost-output.json [flags]
+```
+
+Available flags (combine as needed):
+- `--summary` — high-level overview of projects, costs, and policy counts (default when no flags given)
+- `--failing` — only show policies that have failing resources (finops and tagging)
+- `--group-by <key>[,<key>]` — group results by one or more dimensions: `type`, `provider`, `project`, `policy`. Comma-separated or repeated. Single dimension aggregates with counts; multiple dimensions show individual rows with file locations.
+- `--policy <name>` — drill into a specific policy to see its failing resources, file locations, and issue counts
+- `--policy <name> --resource <address>` — full detail for one resource under a policy: issue descriptions, savings, attributes, file location with a code snippet
+- `--top N` — show only the top N most expensive resources
+- `--project <name>` — filter to a specific project
+- `--provider <name>` — filter by cloud provider (`aws`, `google`, `azurerm`)
+- `--costs-only` — hide free resources
+
+### Drill-down workflow
+
+Always start with a summary or high-level grouping, then offer to drill deeper. The inspect command supports a progressive drill-down:
+
+1. **Start broad** — `--summary` or `--group-by=policy` to see what's failing
+2. **Pick a policy** — `--policy "Use GP3"` to list the failing resources for that policy, with file locations
+3. **Pick a resource** — `--policy "Use GP3" --resource "aws_ebs_volume.data"` to see full issue detail with a code snippet
+
+When presenting results, always offer the user a list of policies or resources they can drill into next. For example:
+
+> You have 3 failing FinOps policies. Would you like to drill into one?
+> 1. **Use GP3** — 2 failing resources
+> 2. **Use Graviton** — 5 failing resources
+> 3. **Required Tags** — 12 failing resources
+
+After showing a policy overview, offer to drill into specific resources:
+
+> **Use GP3** has 2 failing resources. Want to see the detail for one?
+> 1. `aws_ebs_volume.data` — modules/storage/main.tf:10
+> 2. `aws_ebs_volume.logs` — modules/logging/main.tf:25
+
+The resource detail view includes a code snippet showing the relevant lines from the source file — use this to explain what needs to change and suggest a fix.
+
+**Important:** When the user asks about a specific resource (e.g., "show me the issue with the lambda", "what's wrong with the RDS instance?"), always drill down to the resource level using `--policy <name> --resource <address>` and include the code snippet in your response. Don't just describe the issue — show it with the snippet so the user can see exactly what needs to change.
 
 Make the output engaging with emojis, tables, and graphs where appropriate.
 
@@ -82,8 +114,8 @@ To compare cost changes between branches, use `git worktree`:
 git worktree add /tmp/infracost-baseline origin/main
 
 # Run against both and compare
-./bin/infracost analyze /path/to/repo > /tmp/infracost-current.json
-./bin/infracost analyze /tmp/infracost-baseline/path/to/repo > /tmp/infracost-baseline.json
+infracost analyze /path/to/repo > /tmp/infracost-current.json
+infracost analyze /tmp/infracost-baseline/path/to/repo > /tmp/infracost-baseline.json
 
 # Clean up
 git worktree remove /tmp/infracost-baseline
