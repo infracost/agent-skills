@@ -10,6 +10,19 @@ A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) sk
 
 ## Usage
 
+### Easy Way
+
+There is a quick way to install the skill either globally or in the a specific folder.
+
+```sh
+./install.sh infracost
+```
+
+Answer the questions...
+
+
+### Manual Way
+
 To use a skill, copy its directory into your project's `.claude/skills/` directory:
 
 ```sh
