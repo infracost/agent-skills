@@ -15,7 +15,7 @@ A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) sk
 
 ```bash
 claude
-/plugin marketplace add infracost/claude
+/plugin marketplace add infracost/claude-skills
 /plugin install infracost@infracost
 # Restart Claude
 ```
