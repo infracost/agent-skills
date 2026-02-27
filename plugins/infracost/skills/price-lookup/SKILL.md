@@ -1,6 +1,6 @@
 ---
 description: Look up cloud resource pricing by generating sample Terraform and running Infracost against it. Use this skill when the user asks "how much does X cost?" or wants to compare pricing between resource configurations, instance types, regions, or cloud providers. This does not require the user to have any existing infrastructure code.
-allowed-tools: Bash(infracost*), Bash(*mktemp*), Bash(cat*), Bash(rm*)
+allowed-tools: Bash(infracost-poc*)
 ---
 
 # Price Lookup
@@ -17,18 +17,12 @@ infracost-poc login
 
 ## Workflow
 
-### 1. Create a temporary directory
+### 1. Run Infracost
+
+Pipe the Terraform configuration directly into `infracost-poc price`. This command reads Terraform from stdin, analyzes it, and prints the cost estimate as JSON to stdout. Temporary files are created and cleaned up automatically.
 
 ```bash
-TMPDIR=$(mktemp -d -t infracost_pricing.XXXXXX)
-```
-
-### 2. Write sample Terraform
-
-Create a temporary directory and write the minimum Terraform needed to price the requested resource(s).
-
-```bash
-cat > "$TMPDIR/main.tf" << 'EOF'
+infracost-poc price << 'EOF'
 provider "aws" {
   region = "us-east-1"
 }
@@ -54,23 +48,17 @@ Rules for writing the Terraform:
 - **Multiple resources are fine** — if the user asks about several resource types, put them all in the same file.
 - **Use realistic names** — name resources descriptively (e.g., `aws_instance.web_server` not `aws_instance.example`) so the output is easier to read.
 
-### 3. Run Infracost
-
-```bash
-infracost-poc analyze "$TMPDIR" 2>/dev/null
-```
-
-JSON is written to stdout. Stderr contains diagnostics that can be ignored.
-
 **Currency**: If the user requests pricing in a non-USD currency, set the `INFRACOST_CLI_CURRENCY` environment variable when running the command. For example:
 
 ```bash
-INFRACOST_CLI_CURRENCY=EUR infracost-poc analyze "$TMPDIR" 2>/dev/null
+INFRACOST_CLI_CURRENCY=EUR infracost-poc price << 'EOF'
+...
+EOF
 ```
 
 Use standard [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency codes (e.g., `EUR`, `GBP`, `JPY`, `CAD`, `AUD`). If the user doesn't specify a currency, default to USD.
 
-### 4. Inspect the results
+### 2. Inspect the results
 
 Use the `inspect` command to read the results rather than parsing JSON manually.
 
@@ -84,16 +72,6 @@ infracost-poc inspect --costs-only
 # Top expensive resources
 infracost-poc inspect --top 5
 ```
-
-### 5. Clean up
-
-Always remove the temporary directory when done:
-
-```bash
-rm -rf "$TMPDIR"
-```
-
-**Important**: Run this in a separate command so the allowed-tools captures it and doesn't ask for permission.
 
 ## Presenting Results
 
@@ -125,7 +103,6 @@ Present pricing in a clear, structured way:
 ## Important Guidelines
 
 - Do not commit any generated Terraform files — they are throwaway.
-- Always clean up temp directories after use.
 - Do not modify the CLI source code — this skill is for *using* the CLI.
 - If `infracost-poc analyze` prompts for login, ask the user to run `infracost-poc login` first.
 - If the user asks about a resource type you're unsure of the Terraform resource name for, look it up rather than guessing — an incorrect resource type will produce no pricing data.
