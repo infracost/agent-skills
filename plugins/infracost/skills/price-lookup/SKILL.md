@@ -104,5 +104,5 @@ Present pricing in a clear, structured way:
 
 - Do not commit any generated Terraform files — they are throwaway.
 - Do not modify the CLI source code — this skill is for *using* the CLI.
-- If `infracost-poc analyze` prompts for login, ask the user to run `infracost-poc login` first.
+- If `infracost-poc scan` prompts for login, ask the user to run `infracost-poc login` first.
 - If the user asks about a resource type you're unsure of the Terraform resource name for, look it up rather than guessing — an incorrect resource type will produce no pricing data.

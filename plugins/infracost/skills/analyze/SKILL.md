@@ -21,17 +21,17 @@ infracost-poc login
 
 ## Usage
 
-Run the `analyze` command, pointing to your IaC files or a repository root:
+Run the `scan` command, pointing to your IaC files or a repository root:
 
 ```bash
 # Single CloudFormation template
-infracost-poc analyze /path/to/cloudformation.yaml
+infracost-poc scan /path/to/cloudformation.yaml
 
 # Terraform project directory
-infracost-poc analyze /path/to/terraform/
+infracost-poc scan /path/to/terraform/
 
 # Repository root (auto-discovers all IaC projects in nested directories)
-infracost-poc analyze /path/to/repo
+infracost-poc scan /path/to/repo
 ```
 
 
@@ -42,7 +42,7 @@ JSON is written to stdout. Diagnostics and warnings are written to stderr.
 The output can be very large for repos with many resources, so always pipe it to a file:
 
 ```bash
-infracost-poc analyze /path/to/repo
+infracost-poc scan /path/to/repo
 ```
 
 ## Inspecting Results
@@ -52,8 +52,8 @@ After analyzing, use the `inspect` command to explore the results instead of par
 **Important**: The `inspect` command reads from JSON and you DO NOT NEED to write any scripts to handle the JSON output yourself. Just use the `inspect` command with the appropriate flags to view the data in an engaging, actionable way.
 
 ```bash
-# Analyze and save to file
-infracost-poc analyze /path/to/repo
+# Scan and save to file
+infracost-poc scan /path/to/repo
 
 **Important**: The inspect command does not require the plugin paths to be specified, the command can be run without them
 
@@ -118,8 +118,8 @@ To compare cost changes between branches, use `git worktree`:
 git worktree add /tmp/infracost-baseline origin/main
 
 # Run against both and compare
-infracost-poc analyze /path/to/repo
-infracost-poc analyze /tmp/infracost-baseline/path/to/repo
+infracost-poc scan /path/to/repo
+infracost-poc scan /tmp/infracost-baseline/path/to/repo
 # Clean up
 git worktree remove /tmp/infracost-baseline
 ```
