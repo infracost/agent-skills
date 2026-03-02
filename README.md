@@ -4,9 +4,11 @@ A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) sk
 
 ## Available Skills
 
-| Skill                                                  | Description                                                                                                     |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| [analyze](./plugins/infracost/skills/analyze/SKILL.md) | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
+| Skill                                                            | Description                                                                                                     |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [analyze](./plugins/infracost/skills/analyze/SKILL.md)           | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
+| [install](./plugins/infracost/skills/install/SKILL.md)           | Install or update the Infracost CLI from GitHub releases                                                        |
+| [price-lookup](./plugins/infracost/skills/price-lookup/SKILL.md) | Look up cloud resource pricing by generating sample Terraform and running Infracost                             |
 
 ## Usage
 

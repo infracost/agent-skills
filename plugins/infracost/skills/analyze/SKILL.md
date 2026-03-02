@@ -11,8 +11,7 @@ Supported IaC types: Terraform, CloudFormation, Terragrunt. CDK is not yet direc
 
 ## Setup
 
-<!-- This will be removed once the skill is responsible for ensuring the cli is installed -->
-**important**: Ensure that `infracost-poc` is available on the path and if it is not, direct the user to install from github.com/infracost/cli-poc. Do not attempt to install or modify the CLI yourself.
+**important**: Ensure that `infracost-poc` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
 
 
 ```bash
