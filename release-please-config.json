@@ -2,6 +2,7 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "separate-pull-requests": true,
+  "pull-request-header": ":package: Release ready for review",
   "changelog-sections": [
     { "type": "feat", "section": "Features" },
     { "type": "fix", "section": "Bug Fixes" },
