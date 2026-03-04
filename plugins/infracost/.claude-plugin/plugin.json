@@ -1,6 +1,6 @@
 {
   "name": "infracost",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Plugin for core Infracost functionality",
   "author": {
     "name": "Infracost",
@@ -10,5 +10,10 @@
   "homepage": "https://www.infracost.io/docs/",
   "repository": "https://github.com/infracost/claude-skills",
   "license": "Apache-2.0",
-  "keywords": ["FinOps", "IaC", "Terraform", "Cloudformation"]
+  "keywords": [
+    "FinOps",
+    "IaC",
+    "Terraform",
+    "Cloudformation"
+  ]
 }
