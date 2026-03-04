@@ -9,7 +9,7 @@ Look up cloud resource pricing without needing existing infrastructure code. Sup
 
 ## Setup
 
-**Important**: Ensure that `infracost-poc` is available on the path and if it is not, direct the user to install from github.com/infracost/cli-poc. Do not attempt to install or modify the CLI yourself.
+**Important**: Ensure that `infracost-poc` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
 
 ```bash
 infracost-poc login
