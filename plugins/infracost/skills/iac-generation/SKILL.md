@@ -16,8 +16,7 @@ Other IaC languages are also indirectly supported if you convert the resource de
 
 ## Setup
 
-<!-- This will be removed once the skill is responsible for ensuring the cli is installed -->
-**important**: Ensure that `infracost-poc` is available on the path and if it is not, direct the user to install from github.com/infracost/cli-poc. Do not attempt to install or modify the CLI yourself.
+**Important**: Ensure that `infracost-poc` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
 
 The user must be logged in - if not and you receive auth errors, prompt them to use the following:
 

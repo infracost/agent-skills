@@ -7,6 +7,7 @@ A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) sk
 | Skill                                                  | Description                                                                                                     |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
 | [analyze](./plugins/infracost/skills/analyze/SKILL.md) | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
+| [iac-generation](./plugins/infracost/skills/iac-generation/SKILL.md) | Generate infrastructure as code (IaC) based on user requirements, organizational policies, and industry best practices to optimize infrastructure costs |
 
 ## Usage
 
