@@ -11,11 +11,11 @@ Supported IaC types: Terraform, CloudFormation, Terragrunt. CDK is not yet direc
 
 ## Setup
 
-**important**: Ensure that `infracost-poc` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
+**important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
 
 
 ```bash
-infracost-poc login
+infracost-preview login
 ```
 
 ## Usage
@@ -24,13 +24,13 @@ Run the `scan` command, pointing to your IaC files or a repository root:
 
 ```bash
 # Single CloudFormation template
-infracost-poc scan /path/to/cloudformation.yaml
+infracost-preview scan /path/to/cloudformation.yaml
 
 # Terraform project directory
-infracost-poc scan /path/to/terraform/
+infracost-preview scan /path/to/terraform/
 
 # Repository root (auto-discovers all IaC projects in nested directories)
-infracost-poc scan /path/to/repo
+infracost-preview scan /path/to/repo
 ```
 
 
@@ -41,7 +41,7 @@ JSON is written to stdout. Diagnostics and warnings are written to stderr.
 The output can be very large for repos with many resources, so always pipe it to a file:
 
 ```bash
-infracost-poc scan /path/to/repo
+infracost-preview scan /path/to/repo
 ```
 
 ## Inspecting Results
@@ -52,12 +52,12 @@ After analyzing, use the `inspect` command to explore the results instead of par
 
 ```bash
 # Scan and save to file
-infracost-poc scan /path/to/repo
+infracost-preview scan /path/to/repo
 
 **Important**: The inspect command does not require the plugin paths to be specified, the command can be run without them
 
 # Inspect the results (always pass --file to read from the saved JSON)
-infracost-poc inspect [flags]
+infracost-preview inspect [flags]
 ```
 
 Available flags (combine as needed):
@@ -117,8 +117,8 @@ To compare cost changes between branches, use `git worktree`:
 git worktree add /tmp/infracost-baseline origin/main
 
 # Run against both and compare
-infracost-poc scan /path/to/repo
-infracost-poc scan /tmp/infracost-baseline/path/to/repo
+infracost-preview scan /path/to/repo
+infracost-preview scan /tmp/infracost-baseline/path/to/repo
 # Clean up
 git worktree remove /tmp/infracost-baseline
 ```

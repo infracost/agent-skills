@@ -16,12 +16,12 @@ Other IaC languages are also indirectly supported if you convert the resource de
 
 ## Setup
 
-**Important**: Ensure that `infracost-poc` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
+**Important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
 
 The user must be logged in - if not and you receive auth errors, prompt them to use the following:
 
 ```bash
-infracost-poc login
+infracost-preview login
 ```
 
 ## Usage
@@ -46,7 +46,7 @@ When writing IaC code, you should do the following:
 The `policies` command lists all tagging and FinOps policies that are configured for the user's organization. This is important to understand before writing any code, so you can ensure your code is compliant with the policies from the start.
 
 ```bash
-infracost-poc policies
+infracost-preview policies
 ```
 
 The output includes the policy name, type (tagging or FinOps), description, and any parameters. Use this information to guide your code writing and ensure you are following the organization's guidelines. For example, if there is a tagging policy that requires all resources to have a `cost_center` tag, make sure to include that in your resource definitions.
@@ -57,13 +57,13 @@ Run the `scan` command, pointing to your IaC files or a repository root:
 
 ```bash
 # Single CloudFormation template
-infracost-poc scan /path/to/cloudformation.yaml
+infracost-preview scan /path/to/cloudformation.yaml
 
 # Terraform project directory
-infracost-poc scan /path/to/terraform/
+infracost-preview scan /path/to/terraform/
 
 # Repository root (auto-discovers all IaC projects in nested directories)
-infracost-poc scan /path/to/repo
+infracost-preview scan /path/to/repo
 ```
 
 #### Output
@@ -73,7 +73,7 @@ JSON is written to stdout. Diagnostics and warnings are written to stderr.
 The output can be very large for repos with many resources, so always redirect output to a file:
 
 ```bash
-infracost-poc scan /path/to/repo > /tmp/whatever
+infracost-preview scan /path/to/repo > /tmp/whatever
 ```
 
 #### Inspecting Results
@@ -84,10 +84,10 @@ After analyzing, use the `inspect` command to explore the results instead of par
 
 ```bash
 # Scan and save to file
-infracost-poc scan /path/to/repo > /tmp/whatever
+infracost-preview scan /path/to/repo > /tmp/whatever
 
 # Inspect the results (always pass --file to read from the saved JSON)
-infracost-poc inspect [flags] --file /tmp/whatever
+infracost-preview inspect [flags] --file /tmp/whatever
 ```
 
 Available flags (combine as needed):
@@ -106,7 +106,7 @@ Available flags (combine as needed):
 The price command reads Terraform code directly from stdin. For example:
 
 ```bash
-echo 'resource "aws_instance" "x" { instance_type= "t2.micro" }' | infracost-poc price
+echo 'resource "aws_instance" "x" { instance_type= "t2.micro" }' | infracost-preview price
 ```
 
 The output is identical in format to the `scan` command, so the same `inspect` command can be used to explore the results.
