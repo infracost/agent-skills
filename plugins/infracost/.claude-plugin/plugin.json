@@ -8,7 +8,7 @@
     "url": "https://www.infracost.io/"
   },
   "homepage": "https://www.infracost.io/docs/",
-  "repository": "https://github.com/infracost/claude-skills",
+  "repository": "https://github.com/infracost/agent-skills",
   "license": "Apache-2.0",
   "keywords": ["FinOps", "IaC", "Terraform", "Cloudformation"]
 }
