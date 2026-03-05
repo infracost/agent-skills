@@ -5,7 +5,7 @@ allowed-tools: Bash
 
 # Install Infracost CLI
 
-Download and install the latest Infracost CLI binary from GitHub releases (`infracost/cli-poc`).
+Download and install the latest Infracost CLI binary from GitHub releases (`infracost/infracost`).
 
 The GitHub release packages the binary as `infracost`, but it must be installed as `infracost-poc`.
 
@@ -21,23 +21,23 @@ If the command is not found, proceed to step 2.
 
 ## Step 2: Look Up Latest Release
 
-Query the latest release tag from `infracost/cli-poc`.
+Query the latest release tag from `infracost/infracost`. **Important**: Only consider releases with tags matching `v2.x.x` or later (including pre-releases). The repository also contains older v0.x releases (a different product) and plugin releases tagged like `infracost-parser-plugin/v0.1.0` or `infracost-provider-plugin-aws/v0.1.0` — these must all be ignored.
 
 **Using `gh` (preferred):**
 
 ```bash
-gh release view --repo infracost/cli-poc --json tagName --jq '.tagName'
+gh release list --repo infracost/infracost --limit 20 --json tagName --jq '[.[] | select(.tagName | test("^v[2-9]"))][0].tagName'
 ```
 
 **Fallback using `curl`:**
 
 ```bash
-curl -sL -H "Authorization: Bearer $GITHUB_TOKEN" \
-  https://api.github.com/repos/infracost/cli-poc/releases/latest \
-  | grep '"tag_name"' | sed 's/.*"tag_name": *"//;s/".*//'
+curl -sL \
+  https://api.github.com/repos/infracost/infracost/releases?per_page=20 \
+  | grep '"tag_name"' | sed 's/.*"tag_name": *"//;s/".*//' | grep '^v[2-9]' | head -1
 ```
 
-The tag format is `v0.2.0`. Derive the version number by stripping the `v` prefix (e.g., `0.2.0`).
+The tag format is `v2.0.0`. Derive the version number by stripping the `v` prefix (e.g., `2.0.0`).
 
 ## Step 3: Compare Versions
 
@@ -60,7 +60,7 @@ Construct the asset filename:
 - **Linux/macOS**: `infracost_${VERSION}_${OS}_${ARCH}.tar.gz`
 - **Windows**: `infracost_${VERSION}_windows_${ARCH}.zip`
 
-For example: `infracost_0.2.0_darwin_arm64.tar.gz` or `infracost_0.2.0_windows_amd64.zip`
+For example: `infracost_2.0.0_darwin_arm64.tar.gz` or `infracost_2.0.0_windows_amd64.zip`
 
 ## Step 5: Download
 
@@ -72,7 +72,7 @@ Determine the asset name using the filename constructed in step 4 (`.tar.gz` for
 
 ```bash
 gh release download "$TAG" \
-  --repo infracost/cli-poc \
+  --repo infracost/infracost \
   --pattern "$ASSET_NAME" \
   --dir /tmp
 ```
@@ -80,8 +80,8 @@ gh release download "$TAG" \
 **Fallback using `curl`:**
 
 ```bash
-curl -sL -H "Authorization: Bearer $GITHUB_TOKEN" \
-  "https://github.com/infracost/cli-poc/releases/download/${TAG}/${ASSET_NAME}" \
+curl -sL \
+  "https://github.com/infracost/infracost/releases/download/${TAG}/${ASSET_NAME}" \
   -o "/tmp/${ASSET_NAME}"
 ```
 
@@ -131,6 +131,5 @@ The output should match the version that was just installed.
 ## Error Handling
 
 - **Permission denied on `/usr/local/bin`**: Retry the `mv` with `sudo`. If that also fails, inform the user they need to grant write access or run with elevated privileges.
-- **Unsupported platform**: If the OS is not `linux`, `darwin`, or `windows`, or the architecture is unsupported, inform the user and point them to the releases page at `https://github.com/infracost/cli-poc/releases`.
+- **Unsupported platform**: If the OS is not `linux`, `darwin`, or `windows`, or the architecture is unsupported, inform the user and point them to the releases page at `https://github.com/infracost/infracost/releases`.
 - **Network errors**: If the download fails, check connectivity and retry once. If it fails again, inform the user.
-- **Authentication errors**: If the GitHub API returns a 401 or 403, remind the user to set a `GITHUB_TOKEN` or run `gh auth login`.
