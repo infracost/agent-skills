@@ -1,26 +1,28 @@
-# claude-skills
+# agent-skills
 
-A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills for Infracost users and customers. These skills provide custom slash commands that integrate Infracost workflows directly into your Claude Code sessions.
+A collection of AI coding agent skills for Infracost users and customers. These skills integrate Infracost workflows directly into your AI coding agent, providing cost estimation, optimization recommendations, and FinOps policy compliance for infrastructure as code.
 
 ## Available Skills
 
-| Skill                                                            | Description                                                                                                     |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| [analyze](./plugins/infracost/skills/analyze/SKILL.md)           | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
-| [install](./plugins/infracost/skills/install/SKILL.md)           | Install or update the Infracost CLI from GitHub releases                                                        |
-| [price-lookup](./plugins/infracost/skills/price-lookup/SKILL.md) | Look up cloud resource pricing by generating sample Terraform and running Infracost                             |
-| [iac-generation](./plugins/infracost/skills/iac-generation/SKILL.md) | Generate infrastructure as code (IaC) based on user requirements, organizational policies, and industry best practices to optimize infrastructure costs |
+| Skill                                                                | Description                                                                                                     |
+|----------------------------------------------------------------------| --------------------------------------------------------------------------------------------------------------- |
+| [iac-generation](./plugins/infracost/skills/iac-generation/SKILL.md) | Ensure cost optimization and policy compliance when writing infrastructure as code                              |
+| [install](./plugins/infracost/skills/install/SKILL.md)               | Install or update the Infracost CLI from GitHub releases                                                        |
+| [price-lookup](./plugins/infracost/skills/price-lookup/SKILL.md)     | Look up cloud resource pricing by generating sample Terraform and running Infracost                             |
+| [scan](./plugins/infracost/skills/scan/SKILL.md)                     | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
+| [uninstall](./plugins/infracost/skills/uninstall/SKILL.md)           | Uninstall the Infracost CLI                                                                                     |
 
 ## Usage
 
-> [!NOTE]
-> While the cli-poc repository and the claude-skills repository are private, ensure you have a GITHUB_TOKEN env var set (`gh auth login`).
+### Claude Code
+
+Install the plugin from the marketplace:
 
 ```bash
 claude
-/plugin marketplace add infracost/claude-skills
+/plugin marketplace add infracost/agent-skills
 /plugin install infracost@infracost
 # Restart Claude
 ```
 
-The plugin skills will then be available as `/infracost:<skill>` slash command in Claude Code.
+The skills will then be available as `/infracost:<skill>` slash commands.
