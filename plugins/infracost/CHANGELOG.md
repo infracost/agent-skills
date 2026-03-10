@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/infracost/claude-skills/compare/infracost-plugin-v0.0.2...infracost-plugin-v0.0.3) (2026-03-06)
+
+
+### Miscellaneous
+
+* prepare for release ([#13](https://github.com/infracost/claude-skills/issues/13)) ([422bf82](https://github.com/infracost/claude-skills/commit/422bf8295ccde387e70d43e725aeda545eceb8fd))
+
 ## [0.0.2](https://github.com/infracost/claude-skills/compare/infracost-plugin-v0.0.1...infracost-plugin-v0.0.2) (2026-03-05)
 
 
