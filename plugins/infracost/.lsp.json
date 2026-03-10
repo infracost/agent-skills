@@ -1,0 +1,12 @@
+{
+  "infracost": {
+    "command": "infracost-ls",
+    "extensionToLanguage": {
+      ".tf": "terraform",
+      ".hcl": "hcl",
+      ".yaml": "yaml",
+      ".yml": "yaml",
+      ".json": "json"
+    }
+  }
+}
