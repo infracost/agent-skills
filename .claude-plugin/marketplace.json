@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Marketplace used to distribute Infracost Claude plugins",
-    "version": "0.0.3"
+    "version": "0.0.4"
   },
   "plugins": [
     {
