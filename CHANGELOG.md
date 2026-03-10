@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.3](https://github.com/infracost/agent-skills/compare/infracost-marketplace-v0.0.2...infracost-marketplace-v0.0.3) (2026-03-10)
+
+
+### Miscellaneous
+
+* **main:** release infracost-plugin 0.0.3 ([#17](https://github.com/infracost/agent-skills/issues/17)) ([92c9795](https://github.com/infracost/agent-skills/commit/92c979534920ce5ebf918f83fc1db4fb5937967e))
+* prepare for release ([#13](https://github.com/infracost/agent-skills/issues/13)) ([422bf82](https://github.com/infracost/agent-skills/commit/422bf8295ccde387e70d43e725aeda545eceb8fd))
+
 ## [0.0.2](https://github.com/infracost/claude-skills/compare/infracost-marketplace-v0.0.1...infracost-marketplace-v0.0.2) (2026-03-05)
 
 
