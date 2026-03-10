@@ -1,0 +1,15 @@
+{
+  "infracost": {
+    "command": "infracost-ls",
+    "env": {
+      "INFRACOST_DEBUG_UI": ":7100"
+    },
+    "extensionToLanguage": {
+      ".tf": "terraform",
+      ".hcl": "hcl",
+      ".yaml": "yaml",
+      ".yml": "yaml",
+      ".json": "json"
+    }
+  }
+}

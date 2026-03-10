@@ -28,6 +28,7 @@ as code.
 | [price-lookup](./plugins/infracost/skills/price-lookup/SKILL.md)     | Look up cloud resource pricing by generating sample Terraform and running Infracost — no existing IaC required  |
 | [install](./plugins/infracost/skills/install/SKILL.md)               | Install or update the Infracost CLI from GitHub releases                                                        |
 | [uninstall](./plugins/infracost/skills/uninstall/SKILL.md)           | Uninstall the Infracost CLI                                                                                     |
+| [install-lsp](./plugins/infracost/skills/install-lsp/SKILL.md)      | Install or update the Infracost Language Server                                                                  |
 
 Works with **Terraform, Terragrunt, and CloudFormation**. Supports **AWS, GCP, and Azure**.
 
