@@ -1,9 +1,11 @@
-# Infracost Agent Skills
+# Infracost AI Agent Skills
 
 Cloud cost intelligence for AI coding agents.
 
 [![License](https://img.shields.io/github/license/infracost/agent-skills)](LICENSE)
 [![Alpha](https://img.shields.io/badge/status-alpha-orange)](https://github.com/infracost/agent-skills/issues)
+
+![Demonstration of AI agent creating a fully compliant AWS stack within specified budget constraints](./demo.gif)
 
 > [!WARNING]
 >
@@ -34,6 +36,10 @@ Works with **Terraform, Terragrunt, and CloudFormation**. Supports **AWS, GCP, a
   under a minute; no credit card required).
 
 ## Installation
+
+> [!IMPORTANT]
+>
+> Make sure you've signed up for a [free **Infracost account**](https://dashboard.infracost.io) before trying to use the AI skills (takes under a minute; no credit card required).
 
 ### Claude Code
 
