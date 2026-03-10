@@ -1,0 +1,8 @@
+.release-please-manifest.json @infracost/developer-adoption
+release-please-config.json @infracost/developer-adoption
+
+CHANGELOG.md @infracost/developer-adoption
+.claude-plugin/marketplace.json @infracost/developer-adoption
+
+plugins/infracost/CHANGELOG.md @infracost/developer-adoption
+plugins/infracost/.claude-plugin/plugin.json @infracost/developer-adoption
