@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.3...infracost-plugin-v0.0.4) (2026-03-10)
+
+
+### Miscellaneous
+
+* prepare repository for publication ([c16b36d](https://github.com/infracost/agent-skills/commit/c16b36d0eed10852351051933f062e9ca22ccc2d))
+
 ## [0.0.3](https://github.com/infracost/claude-skills/compare/infracost-plugin-v0.0.2...infracost-plugin-v0.0.3) (2026-03-06)
 
 
