@@ -5,6 +5,14 @@
 
 ### Miscellaneous
 
+* **main:** release infracost-plugin 0.0.4 ([#19](https://github.com/infracost/agent-skills/issues/19)) ([ad36788](https://github.com/infracost/agent-skills/commit/ad367882ba841986a113a81b82130d8baf9ea51e))
+* prepare repository for publication ([c16b36d](https://github.com/infracost/agent-skills/commit/c16b36d0eed10852351051933f062e9ca22ccc2d))
+
+## [0.0.4](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.3...infracost-plugin-v0.0.4) (2026-03-10)
+
+
+### Miscellaneous
+
 * prepare repository for publication ([c16b36d](https://github.com/infracost/agent-skills/commit/c16b36d0eed10852351051933f062e9ca22ccc2d))
 
 ## [0.0.3](https://github.com/infracost/claude-skills/compare/infracost-plugin-v0.0.2...infracost-plugin-v0.0.3) (2026-03-06)
