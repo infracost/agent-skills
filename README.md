@@ -1,13 +1,13 @@
 # Infracost Agent Skills
 
-> Cloud cost intelligence for AI coding agents.
+Cloud cost intelligence for AI coding agents.
 
 [![License](https://img.shields.io/github/license/infracost/agent-skills)](LICENSE)
 [![Alpha](https://img.shields.io/badge/status-alpha-orange)](https://github.com/infracost/agent-skills/issues)
 
 ---
 
-> [!WARNING] Alpha release
+> [!WARNING]
 >
 > These skills are in early alpha. Features may change and rough edges are expected.
 > [Open a discussion thread](https://github.com/infracost/infracost/discussions) to report bugs or
