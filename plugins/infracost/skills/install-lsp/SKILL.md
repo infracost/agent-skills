@@ -103,19 +103,20 @@ mv /tmp/infracost-ls ~/.local/bin/infracost-ls
 If `~/.local/bin` is not already on the PATH, add it by appending to the user's shell profile:
 
 ```bash
-# Detect the current shell profile
-SHELL_NAME=$(basename "$SHELL")
-case "$SHELL_NAME" in
-  zsh)  PROFILE="$HOME/.zshrc" ;;
-  bash) PROFILE="$HOME/.bashrc" ;;
-  *)    PROFILE="$HOME/.profile" ;;
-esac
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+  SHELL_NAME=$(basename "$SHELL")
+  case "$SHELL_NAME" in
+    zsh)  SHELL_RC="$HOME/.zshrc" ;;
+    bash) SHELL_RC="$HOME/.bashrc" ;;
+    *)    SHELL_RC="$HOME/.profile" ;;
+  esac
 
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$PROFILE"
-export PATH="$HOME/.local/bin:$PATH"
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$SHELL_RC"
+  export PATH="$HOME/.local/bin:$PATH"
+fi
 ```
 
-Inform the user they may need to restart their shell or run `source <profile>` for the PATH change to take effect.
+Inform the user they may need to restart their shell or run `source <rc_file>` for the PATH change to take effect.
 
 ### Windows
 
