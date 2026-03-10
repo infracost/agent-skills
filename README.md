@@ -5,7 +5,8 @@ Cloud cost intelligence for AI coding agents.
 [![License](https://img.shields.io/github/license/infracost/agent-skills)](LICENSE)
 [![Alpha](https://img.shields.io/badge/status-alpha-orange)](https://github.com/infracost/agent-skills/issues)
 
-<video src="./demo.mp4" autoplay loop muted playsinline alt="Demonstration of AI agent creating a fully compliant AWS stack within specified budget constraints"></video>
+
+https://github.com/user-attachments/assets/16eef8f1-5bc1-4e5f-b5c4-c7594d883057
 
 > [!WARNING]
 >
