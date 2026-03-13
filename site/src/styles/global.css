@@ -14,9 +14,10 @@
   font-weight: 100 900;
   font-display: swap;
   src: url("/fonts/inter-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
-    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
@@ -25,9 +26,10 @@
   font-weight: 100 800;
   font-display: swap;
   src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
-    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 /* ─── Design Tokens ─────────────────────────────
@@ -35,32 +37,30 @@
    ─────────────────────────────────────────────── */
 :root {
   /* Colors */
-  --color-bg: #0a0a14;
-  --color-surface: #1a1a2e;
-  --color-surface-alt: #12121f;
-  /* Brand accent — target #d629ae; adjusted to #dc34b6 (4.57:1 on --color-surface-alt,
-     4.85:1 on --color-bg) to meet WCAG AA contrast for text on all dark backgrounds. */
-  --color-accent-primary: #dc34b6;
-  --color-accent-secondary: #7b47b8;
-  --color-text: #f0f0f8;
-  --color-text-muted: #9090b0;
-  --color-border: #2a2a3f;
-  --color-success: #22c55e;
-  --color-code-bg: #0d0d1a;
+  --color-bg: #141824;
+  --color-surface: #1a1f30;
+  --color-surface-alt: #1f2438;
+  --color-accent-primary: #f72585;
+  --color-accent-secondary: #4f46e5;
+  --color-text: #dcdcdc;
+  --color-text-muted: #8896b4;
+  --color-border: #2a3354;
+  --color-success: #16c172;
+  --color-code-bg: #0d1117;
 
   /* Gradients */
-  --gradient-brand: linear-gradient(135deg, #7b47b8, #dc34b6);
-  --gradient-brand-overlay: linear-gradient(
-    135deg,
-    rgba(123, 71, 184, 0.12),
-    rgba(220, 52, 182, 0.12)
-  );
+  --gradient-brand: #f72585;
+  --gradient-brand-overlay: rgba(247, 37, 133, 0.08);
 
   /* Typography */
-  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas",
-    monospace;
+  --font-sans:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --font-heading:
+    "Zalando Sans SemiExpanded", "Zalando Sans Expanded", "Zalando Sans",
+    "Inter", system-ui, sans-serif;
+  --font-mono:
+    "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
 
   /* Type scale */
   --text-xs: 0.75rem; /* 12px */
@@ -99,8 +99,8 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --shadow-glow: 0 0 40px rgba(220, 52, 182, 0.15);
-  --shadow-glow-hover: 0 0 60px rgba(220, 52, 182, 0.25);
+  --shadow-glow: none;
+  --shadow-glow-hover: none;
 
   /* Z-index */
   --z-base: 0;
@@ -147,6 +147,11 @@ body {
   line-height: 1.7;
   color: var(--color-text);
   background-color: var(--color-bg);
+  background-image: radial-gradient(
+    ellipse 120% 60% at 50% -5%,
+    rgba(79, 70, 229, 0.13) 0%,
+    transparent 60%
+  );
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -260,12 +265,12 @@ samp {
   gap: var(--space-2);
   padding: var(--space-3) var(--space-6);
   background: transparent;
-  color: var(--color-accent-primary);
+  color: var(--color-accent-secondary);
   font-family: var(--font-sans);
   font-size: var(--text-base);
   font-weight: 500;
   line-height: 1;
-  border: 1px solid var(--color-accent-primary);
+  border: 1px solid var(--color-accent-secondary);
   border-radius: var(--radius-md);
   cursor: pointer;
   text-decoration: none;
@@ -276,7 +281,7 @@ samp {
 }
 
 .btn-secondary:hover {
-  background-color: rgba(220, 52, 182, 0.08);
+  background-color: rgba(79, 70, 229, 0.1);
   box-shadow: var(--shadow-glow);
   transform: translateY(-1px);
 }
@@ -328,7 +333,7 @@ samp {
   inset: 0;
   background: radial-gradient(
     ellipse 60% 50% at 50% 50%,
-    rgba(123, 71, 184, 0.15) 0%,
+    rgba(247, 37, 133, 0.06) 0%,
     transparent 70%
   );
   pointer-events: none;

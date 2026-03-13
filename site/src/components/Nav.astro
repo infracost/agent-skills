@@ -33,7 +33,8 @@
       <div class="container nav-inner">
         <!-- Logo / wordmark -->
         <a href={import.meta.env.BASE_URL} class="nav-logo" aria-label="Infracost AI home">
-          <span class="gradient-text">Infracost AI</span>
+          <img src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/images/infracost-logo.svg`} alt="Infracost" class="nav-logo-img" />
+          <span class="nav-logo-ai">AI</span>
         </a>
 
         <!-- Desktop links -->
@@ -82,7 +83,7 @@
   /* Nav bar wrapper — visually first (order:-1), visual styling applied here */
   .nav-inner-wrap {
     order: -1;
-    background-color: rgba(10, 10, 20, 0.85);
+    background-color: rgba(20, 24, 36, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-border);
@@ -97,10 +98,27 @@
   }
 
   .nav-logo {
-    font-size: var(--text-lg);
-    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     text-decoration: none;
     flex-shrink: 0;
+  }
+
+  .nav-logo-img {
+    height: 1.4rem;
+    width: auto;
+  }
+
+  .nav-logo-ai {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent-primary);
+    background: rgba(247, 37, 133, 0.12);
+    border: 1px solid rgba(247, 37, 133, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 0.1rem 0.4rem;
+    line-height: 1.2;
   }
 
   .nav-links {

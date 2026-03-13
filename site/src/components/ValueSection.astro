@@ -20,10 +20,7 @@
     <div class="value-grid">
       <div class="value-card card">
         <div class="card-icon" aria-hidden="true">
-          <!-- Heroicons: exclamation-triangle (MIT) -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-          </svg>
+          <i class="ph-bold ph-warning" aria-hidden="true"></i>
         </div>
         <h3 class="card-title">Caught late, cost more</h3>
         <p class="card-body">A misconfigured instance spotted at code review costs minutes to fix. The same issue found in production costs days of incident response and thousands in unexpected spend.</p>
@@ -31,11 +28,7 @@
 
       <div class="value-card card">
         <div class="card-icon" aria-hidden="true">
-          <!-- Heroicons: tag (MIT) -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
-            <path d="M6 6h.008v.008H6V6Z" />
-          </svg>
+          <i class="ph-bold ph-tag" aria-hidden="true"></i>
         </div>
         <h3 class="card-title">Tagging debt compounds</h3>
         <p class="card-body">Untagged resources are invisible to FinOps teams. Every untagged resource deployed today becomes a compliance gap, a cost attribution blind spot, and a manual cleanup task next quarter.</p>
@@ -43,10 +36,7 @@
 
       <div class="value-card card">
         <div class="card-icon" aria-hidden="true">
-          <!-- Heroicons: check-badge (MIT) -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.745 3.745 0 0 1 3.296-1.043A3.745 3.745 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 0 1 3.296 1.043 3.745 3.745 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-          </svg>
+          <i class="ph-bold ph-seal-check" aria-hidden="true"></i>
         </div>
         <h3 class="card-title">Compliance from the&nbsp;start</h3>
         <p class="card-body">When cost and compliance awareness is built into your IaC authoring workflow, engineers ship compliant infrastructure on the first try — eliminating the FinOps review bottleneck entirely.</p>
@@ -123,15 +113,10 @@
   }
 
   .card-icon {
-    width: 40px;
-    height: 40px;
+    font-size: 2rem;
     color: var(--color-accent-primary);
     flex-shrink: 0;
-  }
-
-  .card-icon svg {
-    width: 100%;
-    height: 100%;
+    line-height: 1;
   }
 
   .card-title {
