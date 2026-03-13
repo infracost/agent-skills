@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./site
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,11 +32,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        working_directory: ./site
 
       - name: Build
         run: npm run build
-        working_directory: ./site
         env:
           ASTRO_SITE: https://infracost.github.io
           ASTRO_BASE: /agent-skills
@@ -41,7 +42,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: /docs
+          path: ../docs
 
   deploy:
     needs: build
