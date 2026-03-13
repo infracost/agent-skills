@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+lighthouse-report.json
+.worktrees/*
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db

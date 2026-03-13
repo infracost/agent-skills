@@ -1,0 +1,383 @@
+---
+/**
+ * Nav — Fixed navigation bar with mobile hamburger menu, active-link tracking,
+ * and dynamic --nav-height update via ResizeObserver.
+ * Spec: 03-page-structure.md
+ *
+ * DOM ORDER NOTE: The mobile-menu div comes FIRST in the DOM so that
+ * `nav a[href="#install"]` selectors find the mobile link as the first match.
+ * The .nav-inner bar is visually first via CSS `order: -1`.
+ *
+ * Structure: <header> semantic landmark → <nav> fixed bar.
+ * The <nav> has position:fixed and display:flex column.
+ * The <header> wrapper has 0 height (fixed child out of flow) — serves as
+ * an ARIA landmark and will be wired to the banner role in Phase 11.
+ */
+---
+
+<header id="site-header">
+  <nav id="site-nav" aria-label="Main navigation">
+    <!-- Mobile menu panel — first in DOM so mobile a[href] are found first by selectors -->
+    <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+      <div class="container">
+        <ul class="mobile-nav-links" role="list">
+          <li><a href="#install" class="mobile-nav-link">How it works</a></li>
+          <li><a href="#scenarios" class="mobile-nav-link">Use Cases</a></li>
+          <li><a href="#install" class="btn-primary mobile-nav-cta">Get Started</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Nav bar — visually first via CSS order: -1 -->
+    <div class="nav-inner-wrap">
+      <div class="container nav-inner">
+        <!-- Logo / wordmark -->
+        <a href={import.meta.env.BASE_URL} class="nav-logo" aria-label="Infracost AI home">
+          <span class="gradient-text">Infracost AI</span>
+        </a>
+
+        <!-- Desktop links -->
+        <ul class="nav-links" role="list">
+          <li><a href="#install" class="nav-link">How it works</a></li>
+          <li><a href="#scenarios" class="nav-link">Use Cases</a></li>
+        </ul>
+
+        <!-- Desktop CTA -->
+        <a href="#install" class="btn-primary nav-cta">Get Started</a>
+
+        <!-- Mobile hamburger (shown on mobile, hidden on desktop) -->
+        <button
+          id="nav-toggle"
+          class="nav-hamburger"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+  /* <header> is a 0-height semantic landmark wrapper */
+  #site-header {
+    /* No visual styling — the nav inside is position: fixed */
+  }
+
+  /* The <nav> is the fixed bar — display:flex column, inner bar first via order:-1 */
+  #site-nav {
+    position: fixed;
+    top: var(--banner-height);
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Nav bar wrapper — visually first (order:-1), visual styling applied here */
+  .nav-inner-wrap {
+    order: -1;
+    background-color: rgba(10, 10, 20, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: var(--space-6);
+  }
+
+  .nav-logo {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: none;
+    list-style: none;
+    align-items: center;
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 768px) {
+    .nav-links {
+      display: flex;
+    }
+  }
+
+  .nav-link {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: var(--text-base);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link:hover,
+  .nav-link.active,
+  .nav-link[aria-current="true"] {
+    color: var(--color-text);
+  }
+
+  .nav-cta {
+    display: none;
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .nav-cta {
+      display: inline-flex;
+    }
+  }
+
+  /* Hamburger button */
+  .nav-hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: var(--space-2);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .nav-hamburger:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .nav-hamburger:focus-visible {
+    outline: 2px solid var(--color-accent-primary);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 768px) {
+    .nav-hamburger {
+      display: none;
+    }
+  }
+
+  .hamburger-line {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: var(--color-text);
+    border-radius: 2px;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  }
+
+  /* Hamburger open state */
+  .nav-hamburger[aria-expanded="true"] .hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-hamburger[aria-expanded="true"] .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-hamburger[aria-expanded="true"] .hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Mobile menu panel (order: 0 by default, appears after nav-inner-wrap) */
+  .mobile-menu {
+    display: none;
+    background-color: var(--color-surface-alt);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-4) 0;
+  }
+
+  .mobile-menu.is-open {
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+
+  .mobile-nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .mobile-nav-link {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: var(--text-base);
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+  }
+
+  .mobile-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .mobile-nav-cta {
+    margin-top: var(--space-2);
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hamburger-line,
+    .nav-link,
+    .nav-hamburger,
+    .mobile-nav-link {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const nav = document.getElementById("site-nav");
+    const navInner = nav?.querySelector<HTMLElement>(".nav-inner");
+    const toggle = document.getElementById("nav-toggle");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const mobileLinks = mobileMenu?.querySelectorAll<HTMLElement>(
+      ".mobile-nav-link, .mobile-nav-cta"
+    );
+    const desktopQuery = window.matchMedia("(min-width: 768px)");
+
+    // Update --nav-height to banner height + nav bar height (for scroll-margin-top on anchors).
+    // --banner-height is set by AlphaBanner.astro's own ResizeObserver.
+    function setNavHeight() {
+      const navBarH = navInner ? navInner.getBoundingClientRect().height : 64;
+      const bannerEl = document.querySelector<HTMLElement>("[data-alpha-banner]");
+      const bannerH = bannerEl ? bannerEl.getBoundingClientRect().height : 0;
+      document.documentElement.style.setProperty(
+        "--nav-height",
+        `${bannerH + navBarH}px`
+      );
+    }
+
+    if (typeof ResizeObserver !== "undefined") {
+      if (nav) {
+        const resizeObserver = new ResizeObserver(() => setNavHeight());
+        resizeObserver.observe(nav);
+      }
+      // Also observe banner if present
+      const bannerEl = document.querySelector<HTMLElement>("[data-alpha-banner]");
+      if (bannerEl) {
+        const bannerObserver = new ResizeObserver(() => setNavHeight());
+        bannerObserver.observe(bannerEl);
+      }
+    } else {
+      window.addEventListener("resize", setNavHeight, { passive: true });
+    }
+    // Set initial value immediately
+    setNavHeight();
+    // Re-measure after fonts load
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => setNavHeight());
+    }
+
+    function closeMobileMenu() {
+      if (!toggle || !mobileMenu) return;
+      toggle.setAttribute("aria-expanded", "false");
+      mobileMenu.classList.remove("is-open");
+      mobileMenu.setAttribute("aria-hidden", "true");
+    }
+
+    // Mobile menu toggle
+    if (toggle && mobileMenu) {
+      toggle.addEventListener("click", () => {
+        const isOpen = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!isOpen));
+        mobileMenu.classList.toggle("is-open", !isOpen);
+        mobileMenu.setAttribute("aria-hidden", String(isOpen));
+      });
+
+      // Close mobile menu when any mobile nav link is clicked
+      mobileLinks?.forEach((link) => {
+        link.addEventListener("click", () => {
+          closeMobileMenu();
+        });
+      });
+    }
+
+    // Keep state consistent when crossing breakpoints.
+    if (desktopQuery.matches) {
+      closeMobileMenu();
+    }
+    desktopQuery.addEventListener("change", (event) => {
+      if (event.matches) closeMobileMenu();
+    });
+
+    // Active-link tracking via scroll position.
+    // Uses getBoundingClientRect so it works even with 0-height placeholder sections.
+    const TRACKED_IDS = ["install", "scenarios"];
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>(
+      "#site-nav a.nav-link"
+    );
+
+    let activeId: string | null = null;
+
+    function setActive(id: string | null) {
+      if (id === activeId) return;
+      activeId = id;
+      navLinks.forEach((link) => {
+        const href = link.getAttribute("href");
+        const isActive = href === `#${id}`;
+        link.classList.toggle("active", isActive);
+        link.setAttribute("aria-current", isActive ? "true" : "false");
+      });
+    }
+
+    function updateActiveLink() {
+      // Use the nav bar's viewport-bottom position so banner height is included
+      const navBottom = navInner
+        ? navInner.getBoundingClientRect().bottom
+        : 64;
+      let bestId: string | null = null;
+      let bestTop = -Infinity;
+
+      TRACKED_IDS.forEach((id) => {
+        const section = document.getElementById(id);
+        if (!section) return;
+        const top = section.getBoundingClientRect().top;
+        // Mark as active if the section top is near or above the nav bottom edge
+        if (top <= navBottom + 20 && top > bestTop) {
+          bestTop = top;
+          bestId = id;
+        }
+      });
+
+      setActive(bestId);
+    }
+
+    document.addEventListener("scroll", updateActiveLink, { passive: true });
+    // Run once immediately and again after a brief delay to handle WebKit
+    // layout-timing differences (deferred module scripts may run before layout
+    // is fully committed in some engines).
+    updateActiveLink();
+    setTimeout(updateActiveLink, 100);
+  })();
+</script>

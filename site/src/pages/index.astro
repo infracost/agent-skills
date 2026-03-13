@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AlphaBanner from "../components/AlphaBanner.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Hero from "../components/Hero.astro";
+import TrustBar from "../components/TrustBar.astro";
+import ValueSection from "../components/ValueSection.astro";
+import InstallSection from "../components/InstallSection.astro";
+import ScenariosSection from "../components/ScenariosSection.astro";
+import Testimonials from "../components/Testimonials.astro";
+import FinalCTA from "../components/FinalCTA.astro";
+---
+
+<BaseLayout title="Infracost AI — Cloud Cost Intelligence for IaC" description="Infracost AI for Claude Code gives your IaC workflow real-time cost awareness. Catch over-budget, untagged, and non-compliant resources before they ship.">
+  <AlphaBanner />
+  <Nav />
+  <main id="main-content">
+    <!-- Phase 7: Hero + Trust Bar -->
+    <Hero />
+    <TrustBar />
+
+    <!-- Phase 8: Value + Install sections -->
+    <ValueSection />
+    <InstallSection />
+
+    <!-- Phase 9: Scenarios + Testimonials -->
+    <ScenariosSection />
+    <Testimonials />
+
+    <!-- Phase 10: Final CTA -->
+    <FinalCTA />
+  </main>
+  <Footer />
+</BaseLayout>

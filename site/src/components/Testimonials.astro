@@ -1,0 +1,213 @@
+---
+/**
+ * Testimonials — alpha-honest placeholder social proof cards.
+ * Specs: 07-social-proof.md, 11-alpha-testimonials.md
+ *
+ * Layout: 3-column grid on desktop, 1-column on mobile.
+ * Cards use align-items: stretch to maintain equal height in a row.
+ *
+ * All testimonials are placeholder content:
+ * - Marked in code with: <!-- PLACEHOLDER: replace with real testimonial -->
+ * - data-testimonial attribute on each card for test targeting
+ *
+ * STATS BAR: omitted at launch — see docs/open-decisions.md
+ */
+---
+
+<section id="testimonials" class="testimonials-section" style="scroll-margin-top: var(--nav-height)">
+  <div class="container testimonials-inner">
+    <p class="eyebrow">Alpha invitees only</p>
+    <h2 class="testimonials-heading" data-testimonials-heading>What engineers will say</h2>
+
+    <div class="testimonials-grid">
+      <!-- PLACEHOLDER: replace with real testimonial -->
+      <article class="card testimonial-card" data-testimonial>
+        <blockquote class="testimonial-quote">
+          <p>
+            This could be your quote here. Install it, use it, tell us what you really think.
+          </p>
+        </blockquote>
+        <div class="testimonial-footer">
+          <div class="testimonial-avatar" aria-hidden="true">?</div>
+          <div class="testimonial-attribution">
+            <em class="testimonial-name">You, hopefully</em>
+            <span class="testimonial-role">Early Alpha Tester</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- PLACEHOLDER: replace with real testimonial -->
+      <article class="card testimonial-card" data-testimonial>
+        <blockquote class="testimonial-quote">
+          <p>
+            Something something tags, something something budget, something something I actually shipped on Friday.
+          </p>
+        </blockquote>
+        <div class="testimonial-footer">
+          <div class="testimonial-avatar" aria-hidden="true">?</div>
+          <div class="testimonial-attribution">
+            <em class="testimonial-name">Your name here</em>
+            <span class="testimonial-role">Platform Engineer, [Your Company]</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- PLACEHOLDER: replace with real testimonial -->
+      <article class="card testimonial-card" data-testimonial>
+        <blockquote class="testimonial-quote">
+          <p>
+            We can't tell you what other people think yet. Be the one who tells us.
+          </p>
+        </blockquote>
+        <div class="testimonial-footer">
+          <div class="testimonial-avatar" aria-hidden="true">?</div>
+          <div class="testimonial-attribution">
+            <em class="testimonial-name">The first reviewer</em>
+            <span class="testimonial-role">Whoever installs this first</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <p class="testimonials-note" data-testimonials-note>
+      Real testimonials incoming. You could be first. <a href="#install">Install now →</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .testimonials-section {
+    padding: var(--space-24) 0;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+
+  .testimonials-inner {
+    text-align: center;
+  }
+
+  /* ─── Section header ───────────────────────────────────────────────── */
+  .eyebrow {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+    margin-bottom: var(--space-3);
+  }
+
+  .testimonials-heading {
+    font-size: clamp(var(--text-2xl), 3.5vw, var(--text-4xl));
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    margin-bottom: var(--space-12);
+  }
+
+  /* ─── Grid ─────────────────────────────────────────────────────────── */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    text-align: left;
+  }
+
+  @media (min-width: 768px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: stretch;
+    }
+  }
+
+  /* ─── Card ─────────────────────────────────────────────────────────── */
+  .testimonial-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-8);
+  }
+
+  /* ─── Quote ────────────────────────────────────────────────────────── */
+  .testimonial-quote {
+    flex: 1;
+    margin: 0;
+  }
+
+  .testimonial-quote p {
+    font-size: var(--text-base);
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    quotes: "\201C" "\201D";
+  }
+
+  .testimonial-quote p::before {
+    content: open-quote;
+    color: var(--color-accent-primary);
+    font-size: 1.5em;
+    line-height: 0;
+    vertical-align: -0.4em;
+    margin-right: 0.15em;
+  }
+
+  /* ─── Footer / attribution ─────────────────────────────────────────── */
+  .testimonial-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .testimonial-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .testimonial-attribution {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+  }
+
+  .testimonial-name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .testimonial-role {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* ─── Section note ──────────────────────────────────────────────────── */
+  .testimonials-note {
+    margin-top: var(--space-10);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  .testimonials-note a {
+    color: var(--color-accent-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .testimonials-note a:hover {
+    color: var(--color-accent-primary);
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+/**
+ * VideoPlaceholder — renders either a YouTube privacy-enhanced embed
+ * or a placeholder card (when videoId is absent).
+ * Spec: 05-install-section.md, 06-scenarios.md
+ *
+ * Props:
+ *   videoId    — YouTube video ID. If empty/undefined, shows placeholder.
+ *   videoLabel — Caption shown on/below the video or iframe title.
+ *
+ * IMPORTANT: Always use youtube-nocookie.com, never youtube.com.
+ */
+interface Props {
+  videoId?: string;
+  videoLabel?: string;
+  embedUrl?: string;
+}
+
+const { videoId, videoLabel = "Video walkthrough", embedUrl } = Astro.props;
+const embedSrc = embedUrl
+  ? embedUrl
+  : videoId
+    ? `https://www.youtube-nocookie.com/embed/${videoId}`
+    : null;
+---
+
+{
+  embedSrc ? (
+    <div class="video-container" data-testid="video-embed">
+      <iframe
+        src={embedSrc}
+        title={videoLabel}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        loading="lazy"
+      />
+    </div>
+  ) : (
+    <div class="video-container video-placeholder" data-testid="video-placeholder">
+      <div class="placeholder-inner">
+        {/* Play icon — inline SVG from Heroicons (MIT) */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="play-icon"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <p class="placeholder-label">{videoLabel} — coming soon</p>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  /* 16:9 aspect ratio container — covers both placeholder and embed states */
+  .video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  /* Placeholder card */
+  .video-placeholder {
+    background-color: var(--color-surface);
+    border: 2px dashed var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .placeholder-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    color: var(--color-text-muted);
+    padding: var(--space-6);
+    text-align: center;
+  }
+
+  .play-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--color-accent-primary);
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  .placeholder-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    max-width: 24ch;
+  }
+
+  /* Embed iframe fills the container */
+  .video-container iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>

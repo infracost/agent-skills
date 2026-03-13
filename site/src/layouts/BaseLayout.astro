@@ -1,0 +1,90 @@
+---
+import "../styles/global.css";
+import { existsSync } from "node:fs";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImagePath = new URL("../../public/images/og-image.png", import.meta.url);
+const hasOgImage = existsSync(ogImagePath);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google Tag Manager -->
+    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TNQRQLLD');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/favicon.png`} />
+
+    <!-- Font preloads for above-fold weights -->
+    <link rel="preload" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/fonts/inter-latin.woff2`} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/fonts/jetbrains-mono-latin.woff2`} as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    {hasOgImage && <meta property="og:image" content={new URL(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/images/og-image.png`, Astro.site)} />}
+  </head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TNQRQLLD"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <slot />
+
+    <!-- Scroll-reveal: progressively-enhanced, gated by prefers-reduced-motion.
+         Without JS: sections remain visible (no data-reveal applied).
+         Under reduced-motion: skips applying data-reveal entirely.
+         Phase 11: 01-design-system.md (motion spec) -->
+    <script>
+      (function () {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!("IntersectionObserver" in window)) return;
+
+        // Sections to reveal on scroll (hero is above fold — excluded)
+        const SECTIONS = [
+          "#value",
+          "#install",
+          "#scenarios",
+          "#testimonials",
+          "#cta",
+        ];
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-revealed");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: "0px 0px -80px 0px" }
+        );
+
+        SECTIONS.forEach((sel) => {
+          const el = document.querySelector(sel);
+          if (!el) return;
+          el.setAttribute("data-reveal", "");
+          observer.observe(el);
+        });
+      })();
+    </script>
+  </body>
+</html>

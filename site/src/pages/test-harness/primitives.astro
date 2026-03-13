@@ -1,0 +1,59 @@
+---
+/**
+ * Primitives test harness — mounts primitive components in isolation.
+ * Route: /test-harness/primitives
+ *
+ * This page is used exclusively by Phase 6 Playwright tests to verify
+ * CodeBlock and VideoPlaceholder behavior in a controlled environment.
+ * It is not linked from any public page.
+ *
+ * Spec: 05-install-section.md, 06-scenarios.md
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import VideoPlaceholder from "../../components/VideoPlaceholder.astro";
+---
+
+<BaseLayout
+  title="Primitives Test Harness"
+  description="Internal test page for Phase 6 primitive components."
+>
+  <main style="padding: 2rem; background: var(--color-bg); min-height: 100vh;">
+    <h1 style="color: var(--color-text); margin-bottom: 2rem;">Primitives Test Harness</h1>
+
+    <!-- ─── CodeBlock ──────────────────────────── -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1rem;">
+        CodeBlock — copy button
+      </h2>
+      <CodeBlock code="/plugin install infracost" lang="bash" />
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+      <h2 style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1rem;">
+        CodeBlock — second block (for multi-button scenarios)
+      </h2>
+      <CodeBlock code="/plugin auth infracost" />
+    </section>
+
+    <!-- ─── VideoPlaceholder — placeholder state ──────────────── -->
+    <section style="margin-bottom: 3rem; max-width: 640px;">
+      <h2 style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1rem;">
+        VideoPlaceholder — no videoId (placeholder)
+      </h2>
+      <VideoPlaceholder videoLabel="Installation walkthrough" />
+    </section>
+
+    <!-- ─── VideoPlaceholder — embed state ───────────────────── -->
+    <section style="margin-bottom: 3rem; max-width: 640px;">
+      <h2 style="color: var(--color-text-muted); font-size: 1rem; margin-bottom: 1rem;">
+        VideoPlaceholder — with videoId (embed)
+      </h2>
+      <!--
+        Use a real YouTube video ID to render the embed.
+        dQw4w9WgXcQ is used purely as a deterministic test fixture.
+      -->
+      <VideoPlaceholder videoId="dQw4w9WgXcQ" videoLabel="Test embed" />
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,108 @@
+---
+/**
+ * FinalCTA — closing call-to-action section.
+ * Spec: 08-final-cta.md
+ *
+ * Background: Option A — gradient overlay (#7b47b8 → #d629ae at 12% opacity)
+ * over dark page bg. See 08-final-cta.md for alternatives.
+ *
+ * <!-- CTA bg: Option A — see 08-final-cta.md for alternatives -->
+ *
+ * Includes compact install commands (required per Gap Analysis decision #14).
+ */
+import CodeBlock from "./CodeBlock.astro";
+---
+
+<section id="cta" class="final-cta" style="scroll-margin-top: var(--nav-height)">
+  <div class="cta-bg-overlay" aria-hidden="true"></div>
+  <div class="container cta-inner">
+      <h2 class="cta-headline">Your IaC workflow,<br/>cost-aware from day one.</h2>
+    <p class="cta-subtext">
+        Install Infracost AI for Claude Code and start shipping compliant,<br/>on-budget infrastructure — in minutes.
+    </p>
+
+    <a href="#install" class="btn-primary cta-btn">Install in 2 steps →</a>
+
+    <p class="cta-note">Free · Requires Claude Code · 2 commands to install</p>
+
+    <!-- Compact install commands -->
+    <div class="cta-commands">
+      <CodeBlock code="/plugin marketplace add infracost/agent-skills" />
+      <CodeBlock code="/plugin install infracost@infracost" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .final-cta {
+    position: relative;
+    padding: var(--space-24) 0;
+    background-image: linear-gradient(
+      135deg,
+      rgba(123, 71, 184, 0.12) 0%,
+      rgba(214, 41, 174, 0.12) 100%
+    );
+    border-top: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  /* Extra radial glow for visual punch */
+  .cta-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 50%,
+      rgba(214, 41, 174, 0.08) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  .cta-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-6);
+  }
+
+  .cta-headline {
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    max-width: 20ch;
+  }
+
+  .cta-subtext {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    max-width: 52ch;
+    margin-top: calc(-1 * var(--space-2));
+  }
+
+  .cta-btn {
+    margin-top: var(--space-2);
+  }
+
+  .cta-note {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    letter-spacing: 0.02em;
+    margin-top: calc(-1 * var(--space-2));
+  }
+
+  /* Compact commands — constrained width, centered */
+  .cta-commands {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 480px;
+    margin-top: var(--space-4);
+    text-align: left;
+  }
+</style>

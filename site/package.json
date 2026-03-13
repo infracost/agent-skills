@@ -1,0 +1,29 @@
+{
+  "name": "ai-devtools-landingpage",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "ASTRO_BASE=/agent-skills astro build",
+    "preview": "astro preview --host 127.0.0.1 --port 4173 --strictPort",
+    "astro": "astro",
+    "astro:check": "astro check",
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:lighthouse": "node scripts/lighthouse.mjs"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.58.2",
+    "astro": "^5.18.0",
+    "lighthouse": "^12.8.2",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.3"
+  }
+}

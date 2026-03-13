@@ -1,0 +1,368 @@
+/* =============================================
+   INFRACOST AI — GLOBAL DESIGN SYSTEM
+   Spec: 01-design-system.md
+   ============================================= */
+
+/* ─── Self-Hosted Fonts ─────────────────────────
+   Variable fonts downloaded from Google Fonts (Latin subset).
+   Single @font-face per family covers all required weights.
+   Files: public/fonts/inter-latin.woff2, jetbrains-mono-latin.woff2
+   ─────────────────────────────────────────────── */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ─── Design Tokens ─────────────────────────────
+   Spec: 01-design-system.md
+   ─────────────────────────────────────────────── */
+:root {
+  /* Colors */
+  --color-bg: #0a0a14;
+  --color-surface: #1a1a2e;
+  --color-surface-alt: #12121f;
+  /* Brand accent — target #d629ae; adjusted to #dc34b6 (4.57:1 on --color-surface-alt,
+     4.85:1 on --color-bg) to meet WCAG AA contrast for text on all dark backgrounds. */
+  --color-accent-primary: #dc34b6;
+  --color-accent-secondary: #7b47b8;
+  --color-text: #f0f0f8;
+  --color-text-muted: #9090b0;
+  --color-border: #2a2a3f;
+  --color-success: #22c55e;
+  --color-code-bg: #0d0d1a;
+
+  /* Gradients */
+  --gradient-brand: linear-gradient(135deg, #7b47b8, #dc34b6);
+  --gradient-brand-overlay: linear-gradient(
+    135deg,
+    rgba(123, 71, 184, 0.12),
+    rgba(220, 52, 182, 0.12)
+  );
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas",
+    monospace;
+
+  /* Type scale */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.5rem; /* 24px */
+  --text-2xl: 1.75rem; /* 28px */
+  --text-3xl: 2.25rem; /* 36px */
+  --text-4xl: 3rem; /* 48px */
+  --text-5xl: 3.5rem; /* 56px */
+  --text-6xl: 4.5rem; /* 72px */
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Border radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 40px rgba(220, 52, 182, 0.15);
+  --shadow-glow-hover: 0 0 60px rgba(220, 52, 182, 0.25);
+
+  /* Z-index */
+  --z-base: 0;
+  --z-above: 1;
+  --z-nav: 100;
+  --z-banner: 101;
+  --z-modal: 200;
+  --z-toast: 300;
+
+  /* Banner height fallback for JS-disabled environments.
+     AlphaBanner/Nav scripts overwrite with measured values when JS is enabled. */
+  --banner-height: 64px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease-out;
+  --transition-base: 250ms ease-out;
+  --transition-slow: 400ms ease-out;
+
+  /* Navigation height fallback includes nav bar + banner.
+     Nav script overwrites with measured values when JS is enabled. */
+  --nav-height: calc(64px + var(--banner-height));
+}
+
+/* ─── Reset & Base ──────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+}
+
+/* Scroll margin for anchor targets (accounts for sticky nav) */
+[id] {
+  scroll-margin-top: var(--nav-height);
+}
+
+/* ─── Reduced Motion ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Layout Utilities ──────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-inline: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-inline: var(--space-12);
+  }
+}
+
+/* ─── Typography Utilities ──────────────────────── */
+.gradient-text {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* Fallback for Safari */
+}
+
+/* ─── Button Utilities ──────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--gradient-brand);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    opacity var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  box-shadow: var(--shadow-glow-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 3px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: transparent;
+  color: var(--color-accent-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1;
+  border: 1px solid var(--color-accent-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(220, 52, 182, 0.08);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 3px;
+}
+
+/* ─── Card Utility ──────────────────────────────── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* ─── Background Effects ────────────────────────── */
+.bg-dot-grid {
+  background-image: radial-gradient(
+    circle,
+    rgba(144, 144, 176, 0.03) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+.bg-glow {
+  position: relative;
+}
+
+.bg-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 50%,
+    rgba(123, 71, 184, 0.15) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: var(--z-base);
+}
+
+/* ─── Scroll Reveal ─────────────────────────────── */
+/*
+ * data-reveal is applied by JS (scroll-reveal script in BaseLayout.astro).
+ * Without JS: no data-reveal attribute → sections stay visible.
+ * Under prefers-reduced-motion: JS skips adding data-reveal entirely;
+ * this @media rule is a safety net for static use.
+ *
+ * Transform-only reveal (no opacity) to ensure elements are always fully
+ * opaque and pass WCAG AA contrast checks at any point in the transition.
+ */
+[data-reveal] {
+  transform: translateY(24px);
+  transition: transform var(--transition-slow);
+}
+
+[data-reveal].is-revealed {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ─── Focus Styles ──────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}

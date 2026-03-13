@@ -1,0 +1,196 @@
+---
+/**
+ * ScenarioBlock — a single use-case section with text + video.
+ * Spec: 06-scenarios.md
+ *
+ * Props:
+ *   number      — zero-padded string, e.g. "01", "02". Used to build the anchor ID.
+ *   title       — scenario heading
+ *   tagline     — one-line hook shown above description
+ *   description — 2–3 sentence paragraph
+ *   bullets     — array of capability bullet strings
+ *   videoId     — YouTube video ID (optional; absent = placeholder)
+ *   videoLabel  — label shown on/below the video placeholder
+ *   icon        — inline SVG path data for the scenario icon (optional)
+ *
+ * Alternating layout (chess pattern on desktop):
+ *   Odd  blocks (01, 03): text left, video right  (DOM order)
+ *   Even blocks (02, 04): video left, text right  (CSS :nth-child(even) reversal)
+ *
+ * The reversal is applied by the PARENT via a .scenarios-container rule so adding
+ * a 5th or 6th scenario requires zero CSS changes here.
+ * See: src/pages/index.astro and src/components/ScenariosSection.astro (Phase 9).
+ */
+import VideoPlaceholder from "./VideoPlaceholder.astro";
+
+interface Props {
+  number: string;
+  title: string;
+  tagline: string;
+  description: string;
+  bullets: string[];
+  videoId?: string;
+  videoLabel?: string;
+  embedUrl?: string;
+  icon?: string;
+}
+
+const { number, title, tagline, description, bullets, videoId, videoLabel, embedUrl, icon } =
+  Astro.props;
+
+const anchorId = `scenario-${number}`;
+---
+
+<article class="scenario-block" id={anchorId}>
+  <!-- Text column — first in DOM (left on odd scenarios by default) -->
+  <div class="scenario-text" data-scenario-text>
+    <div class="scenario-eyebrow">
+      {
+        icon && (
+          <span class="scenario-icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d={icon} />
+            </svg>
+          </span>
+        )
+      }
+      <span class="scenario-number" aria-hidden="true">{number}</span>
+    </div>
+    <h3 class="scenario-title">{title}</h3>
+    <p class="scenario-tagline">{tagline}</p>
+    <p class="scenario-description">{description}</p>
+    <ul class="scenario-bullets" role="list">
+      {bullets.map((bullet) => (
+        <li class="scenario-bullet">
+          <span class="bullet-check" aria-hidden="true">✓</span>
+          <span class="bullet-text">{bullet}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Video column — second in DOM (right on odd scenarios by default) -->
+  <div class="scenario-video" data-scenario-video>
+    <VideoPlaceholder videoId={videoId} videoLabel={videoLabel} embedUrl={embedUrl} />
+  </div>
+</article>
+
+<style>
+  /* Base: single-column (mobile-first) */
+  .scenario-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    padding: var(--space-20) 0;
+  }
+
+  /* Desktop: two-column side by side */
+  @media (min-width: 1024px) {
+    .scenario-block {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: var(--space-16);
+      padding: var(--space-24) 0;
+    }
+  }
+
+  /* ─── Text column ─────────────────────────────── */
+  .scenario-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .scenario-icon {
+    display: flex;
+    align-items: center;
+    color: var(--color-accent-primary);
+  }
+
+  .scenario-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .scenario-number {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+  }
+
+  .scenario-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+    margin-bottom: var(--space-3);
+  }
+
+  @media (min-width: 1024px) {
+    .scenario-title {
+      font-size: var(--text-4xl);
+    }
+  }
+
+  .scenario-tagline {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-accent-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .scenario-description {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-6);
+  }
+
+  /* ─── Bullets ─────────────────────────────────── */
+  .scenario-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .scenario-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .bullet-check {
+    color: var(--color-success);
+    font-weight: 700;
+    font-size: var(--text-base);
+    flex-shrink: 0;
+    margin-top: 0.1em;
+  }
+
+  .bullet-text {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+  }
+
+  /* ─── Video column ────────────────────────────── */
+  .scenario-video {
+    width: 100%;
+  }
+</style>

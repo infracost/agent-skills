@@ -1,0 +1,242 @@
+---
+/**
+ * Hero — Above-the-fold section with headline, subheadline, CTAs, and terminal visual.
+ * Layout: two-column on desktop (≥ 1024px), single column on mobile.
+ * Spec: 04-hero-section.md
+ */
+import TerminalMockup from "./TerminalMockup.astro";
+---
+
+<section id="hero" class="hero bg-dot-grid">
+  <div class="container hero-inner">
+    <!-- Left column: text content -->
+    <div class="hero-text">
+      <!-- Eyebrow + Alpha pill row — pill adjacent to eyebrow (spec 09 Treatment 2: "adjacent to") -->
+      <div class="eyebrow-row">
+        <p class="eyebrow">AI Agent Skill for Claude Code</p>
+        <span class="alpha-pill" data-alpha-pill>⚗️ Alpha</span>
+      </div>
+
+      <!-- Headline — gradient on "Infracost AI" -->
+      <h1 class="headline" data-headline>
+        <span class="gradient-text">Infracost AI</span> — cloud cost intelligence, built into how&nbsp;you already&nbsp;work
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="subheadline">
+        The Infracost AI skill for Claude Code gives your IaC workflow real-time cost awareness.
+        Catch over-budget resources before they ship, fix tagging violations instantly, and generate
+        compliant infrastructure on the first try — without leaving your editor.
+      </p>
+
+      <!-- CTAs -->
+      <div class="cta-group">
+        <a href="#install" class="btn-primary">Install in 2 steps →</a>
+        <a href="#scenarios" class="cta-secondary">See how it works ↓</a>
+      </div>
+
+      <!-- Trust indicators -->
+      <ul class="trust-indicators" role="list">
+        <li class="trust-item">
+          <span class="check-icon" aria-hidden="true">✓</span>
+          Free to install
+        </li>
+        <li class="trust-item">
+          <span class="check-icon" aria-hidden="true">✓</span>
+          Works with your existing IaC
+        </li>
+        <li class="trust-item">
+          <span class="check-icon" aria-hidden="true">✓</span>
+          No new tools to learn
+        </li>
+      </ul>
+
+    </div>
+
+    <!-- Right column: terminal visual -->
+    <div class="hero-visual">
+      <div class="glow-backdrop" aria-hidden="true"></div>
+      <TerminalMockup />
+    </div>
+    <!-- Alpha callout — spec 09-alpha-hero-signal.md Treatment 3 -->
+    <!-- Spans both grid columns so it doesn't affect row-1 vertical alignment -->
+    <div class="alpha-callout card" data-alpha-callout>
+      <span class="alpha-callout-label">⚠️ Alpha release</span> — interfaces may change &amp; there may be rough edges.
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--nav-height) + var(--space-8));
+    padding-bottom: var(--space-8);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    align-items: center;
+    position: relative;
+    z-index: var(--z-above);
+  }
+
+  @media (min-width: 1024px) {
+    .hero-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16);
+    }
+  }
+
+  /* Eyebrow row — flex container for eyebrow + alpha pill side by side */
+  .eyebrow-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  /* Eyebrow tag */
+  .eyebrow {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+    background: rgba(214, 41, 174, 0.1);
+    border: 1px solid rgba(214, 41, 174, 0.25);
+    border-radius: var(--radius-full);
+    padding: var(--space-1) var(--space-4);
+    margin-bottom: 0;
+  }
+
+  /* Alpha pill — Treatment 2, adjacent to eyebrow */
+  .alpha-pill {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+    background: rgba(220, 52, 182, 0.12);
+    border: 1px solid rgba(220, 52, 182, 0.3);
+    border-radius: var(--radius-full);
+    padding: var(--space-1) var(--space-3);
+  }
+
+  /* Alpha callout — Treatment 3 */
+  /* grid-column: 1 / -1 spans both columns; this keeps it out of row-1 alignment */
+  .alpha-callout {
+    grid-column: 1 / -1;
+    border-left: 3px solid var(--color-accent-primary);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    max-width: 52ch;
+  }
+
+  .alpha-callout-label {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  /* Headline */
+  .headline {
+    font-size: clamp(var(--text-4xl), 5vw, var(--text-6xl));
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-2);
+    color: var(--color-text);
+  }
+
+  /* Subheadline */
+  .subheadline {
+    font-size: var(--text-base);
+    line-height: 1.65;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    max-width: 52ch;
+  }
+
+  /* CTA group */
+  .cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .cta-secondary {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .cta-secondary:hover {
+    color: var(--color-text);
+  }
+
+  /* Trust indicators */
+  .trust-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-6);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  .check-icon {
+    color: var(--color-success);
+    font-weight: 700;
+  }
+
+  /* Hero visual */
+  .hero-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Radial glow behind terminal */
+  .glow-backdrop {
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(
+      ellipse 70% 70% at 50% 50%,
+      rgba(123, 71, 184, 0.15) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: var(--z-base);
+  }
+
+  /* Reduced motion: disable decorative glow transitions */
+  @media (prefers-reduced-motion: reduce) {
+    .glow-backdrop {
+      display: none;
+    }
+  }
+</style>
