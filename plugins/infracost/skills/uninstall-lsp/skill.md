@@ -1,4 +1,5 @@
 ---
+name: infracost-uninstall-lsp
 description: Uninstall the Infracost Language Server. Use this skill when the user asks to uninstall or remove the Infracost LSP from their system.
 allowed-tools: Bash
 ---

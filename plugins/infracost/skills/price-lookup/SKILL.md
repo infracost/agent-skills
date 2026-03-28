@@ -1,4 +1,5 @@
 ---
+name: infracost-price-lookup
 description: Look up cloud resource pricing by generating sample Terraform and running Infracost against it. Use this skill when the user asks "how much does X cost?" or wants to compare pricing between resource configurations, instance types, regions, or cloud providers. This does not require the user to have any existing infrastructure code.
 allowed-tools: Bash(infracost-preview*)
 ---
@@ -89,13 +90,14 @@ Present pricing in a clear, structured way:
 > **AWS RDS MySQL — db.r5.xlarge, 100GB gp3**
 > Region: us-east-1
 >
-> | Component | Monthly Cost |
-> |-----------|-------------|
-> | Instance (on-demand) | $365.00 |
-> | Storage (100GB gp3) | $11.50 |
-> | **Total** | **$376.50** |
+> | Component            | Monthly Cost |
+> | -------------------- | ------------ |
+> | Instance (on-demand) | $365.00      |
+> | Storage (100GB gp3)  | $11.50       |
+> | **Total**            | **$376.50**  |
 >
 > Usage-based costs (estimated):
+>
 > - I/O requests: ~$X/mo based on typical usage
 >
 > Savings opportunity: Consider Graviton (db.r6g.xlarge) for ~20% savings (~$73/mo).
@@ -103,6 +105,6 @@ Present pricing in a clear, structured way:
 ## Important Guidelines
 
 - Do not commit any generated Terraform files — they are throwaway.
-- Do not modify the CLI source code — this skill is for *using* the CLI.
+- Do not modify the CLI source code — this skill is for _using_ the CLI.
 - If `infracost-preview scan` prompts for login, ask the user to run `infracost-preview login` first.
 - If the user asks about a resource type you're unsure of the Terraform resource name for, look it up rather than guessing — an incorrect resource type will produce no pricing data.

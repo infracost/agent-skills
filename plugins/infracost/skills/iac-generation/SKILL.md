@@ -1,4 +1,5 @@
 ---
+name: iac-generation
 description: >-
   Ensures cost optimization and FinOps/tagging policy compliance for infrastructure as code.
   BLOCKING REQUIREMENT - Invoke this skill BEFORE generating any IaC code, entering plan mode, or asking clarification questions.
@@ -37,6 +38,7 @@ Three commands are relevant for this skill:
 More information on each is available below.
 
 When writing IaC code, you should do the following:
+
 - Before starting, run the `policies` command to understand the organization's policies and ensure your code will be compliant from the start. You should ask the user for clarification for which tag values to use if the policy allows a list of acceptable values (or no specific value), or for any other parameters that are needed to ensure compliance. For example, if there is a tagging policy that requires all resources to have a `cost_center` tag with an accepted value of either `engineering` or `marketing`, ask the user which cost center to use for the resources they are creating.
 - As you write code, use the `price` command to get quick feedback on the cost implications of the resources you are defining. This will help you make informed decisions about resource types and configurations as you go, rather than waiting until the end to analyze everything.
 - Once you have a complete set of IaC files, run the `scan` command to get a comprehensive analysis of costs, savings opportunities, and any policy violations. Use the `inspect` command to explore the results and identify any areas that need optimization or changes to comply with policies before deploying the code.
@@ -91,6 +93,7 @@ infracost-preview inspect [flags] --file /tmp/whatever
 ```
 
 Available flags (combine as needed):
+
 - `--summary` — high-level overview of projects, costs, and policy counts (default when no flags given)
 - `--failing` — only show policies that have failing resources (finops and tagging)
 - `--group-by <key>[,<key>]` — group results by one or more dimensions: `type`, `provider`, `project`, `policy`. Comma-separated or repeated. Single dimension aggregates with counts; multiple dimensions show individual rows with file locations.

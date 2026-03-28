@@ -1,4 +1,5 @@
 ---
+name: infracost-uninstall
 description: Uninstall the Infracost CLI. Use this skill when the user asks to uninstall or remove Infracost from their system.
 allowed-tools: Bash
 ---
