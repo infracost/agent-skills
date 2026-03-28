@@ -11,7 +11,7 @@ Supported IaC types: Terraform, CloudFormation, Terragrunt. CDK is not yet direc
 
 ## Setup
 
-**important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
+**important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill (it may also be named `infracost-install`).
 
 ```bash
 infracost-preview login

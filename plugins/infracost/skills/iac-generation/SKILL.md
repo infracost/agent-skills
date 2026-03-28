@@ -17,7 +17,7 @@ Other IaC languages are also indirectly supported if you convert the resource de
 
 ## Setup
 
-**Important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
+**Important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill (it may also be named `infracost-install`).
 
 The user must be logged in - if not and you receive auth errors, prompt them to use the following:
 
