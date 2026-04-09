@@ -1,4 +1,5 @@
 ---
+name: infracost-install-lsp
 description: Install or update the Infracost Language Server. Use this skill when the user asks to install the Infracost LSP, or when infracost-ls is missing from the system.
 allowed-tools: Bash
 ---
@@ -57,6 +58,7 @@ esac
 On Windows (where `uname` may not be available or returns `MINGW`/`MSYS`/`CYGWIN`), set `OS=windows`.
 
 Construct the asset filename:
+
 - **Linux/macOS**: `lsp_${OS}_${ARCH}.tar.gz`
 - **Windows**: `lsp_windows_${ARCH}.zip`
 
