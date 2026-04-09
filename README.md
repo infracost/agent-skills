@@ -4,7 +4,6 @@ Cloud cost intelligence for AI coding agents.
 
 [![License](https://img.shields.io/github/license/infracost/agent-skills)](LICENSE)
 
-
 https://github.com/user-attachments/assets/16eef8f1-5bc1-4e5f-b5c4-c7594d883057
 
 A collection of AI coding agent skills for [Infracost](https://infracost.io) users. These
@@ -21,7 +20,7 @@ as code.
 | [price-lookup](./plugins/infracost/skills/price-lookup/SKILL.md)     | Look up cloud resource pricing by generating sample Terraform and running Infracost — no existing IaC required  |
 | [install](./plugins/infracost/skills/install/SKILL.md)               | Install or update the Infracost CLI from GitHub releases                                                        |
 | [uninstall](./plugins/infracost/skills/uninstall/SKILL.md)           | Uninstall the Infracost CLI                                                                                     |
-| [install-lsp](./plugins/infracost/skills/install-lsp/SKILL.md)      | Install or update the Infracost Language Server                                                                  |
+| [install-lsp](./plugins/infracost/skills/install-lsp/SKILL.md)       | Install or update the Infracost Language Server                                                                 |
 
 Works with **Terraform, Terragrunt, and CloudFormation**. Supports **AWS, GCP, and Azure**.
 
@@ -88,6 +87,14 @@ generate compliant new resources.
 ## Docs
 
 - [AI Skills overview](https://infracost.io/docs/infracost_cloud/ai_skills/)
+
+## Contributing
+
+We welcome contributions! Please start by opening a thread in [GitHub Discussions](https://github.com/infracost/infracost/discussions) to discuss your idea before submitting a PR.
+
+## Bugs and feedback
+
+If you run into any issues or have feedback, please open a thread in [GitHub Discussions](https://github.com/infracost/infracost/discussions). We'd love to hear from you!
 
 ## Links
 
