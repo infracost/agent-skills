@@ -29,19 +29,31 @@ infracost-preview login
 
 There are several tools available to you for this job.
 
-Three commands are relevant for this skill:
+Four commands are relevant for this skill:
 
 1. `policies` - list all policies for the user's organization, so we can ensure we produce code that is compliant with them
-2. `scan` - analyze IaC files and output JSON with costs, diagnostics, and policy violations
-3. `price` - takes a (typically smaller) standalone piece of Terraform and estimates the cost of it, which is useful for quicker feedback for faster iteration on individual (or small groups of) resources
+2. `guardrails` - list cost guardrails (spending thresholds) configured for the repository, so we can ensure the infrastructure we generate stays within budget
+3. `scan` - analyze IaC files and output JSON with costs, diagnostics, and policy violations
+4. `price` - takes a (typically smaller) standalone piece of Terraform and estimates the cost of it, which is useful for quicker feedback for faster iteration on individual (or small groups of) resources
 
 More information on each is available below.
 
 When writing IaC code, you should do the following:
 
 - Before starting, run the `policies` command to understand the organization's policies and ensure your code will be compliant from the start. You should ask the user for clarification for which tag values to use if the policy allows a list of acceptable values (or no specific value), or for any other parameters that are needed to ensure compliance. For example, if there is a tagging policy that requires all resources to have a `cost_center` tag with an accepted value of either `engineering` or `marketing`, ask the user which cost center to use for the resources they are creating.
+- Before starting, also run the `guardrails` command to understand the cost thresholds configured for this repository. If there are guardrails with total monthly cost thresholds, you must ensure the infrastructure you generate stays within those limits. If a guardrail would block PRs, treat its threshold as a hard constraint. If it only creates alerts or PR comments, treat it as a soft constraint and warn the user if the estimated cost approaches the threshold.
 - As you write code, use the `price` command to get quick feedback on the cost implications of the resources you are defining. This will help you make informed decisions about resource types and configurations as you go, rather than waiting until the end to analyze everything.
-- Once you have a complete set of IaC files, run the `scan` command to get a comprehensive analysis of costs, savings opportunities, and any policy violations. Use the `inspect` command to explore the results and identify any areas that need optimization or changes to comply with policies before deploying the code.
+- Once you have a complete set of IaC files, run the `scan` command to get a comprehensive analysis of costs, savings opportunities, and any policy violations. Use the `inspect` command to explore the results and identify any areas that need optimization or changes to comply with policies before deploying the code. Pay attention to the guardrail results in the output — if any guardrails are triggered, you must adjust the code to bring costs within the configured thresholds before presenting the final result.
+
+### Guardrails Command
+
+The `guardrails` command lists cost guardrails configured for the repository. Guardrails define spending thresholds that, when exceeded, can trigger alerts, PR comments, or block PRs entirely.
+
+```bash
+infracost-preview guardrails
+```
+
+The output shows each guardrail with its name, scope (repo or project-level), thresholds (total monthly cost, cost increase amount, cost increase percentage), and actions (PR comment, block PR, or alert only). Use this to understand the budget constraints before writing any infrastructure code.
 
 ### Policies Command
 
