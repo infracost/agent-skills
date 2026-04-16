@@ -1,4 +1,5 @@
 ---
+name: infracost-install
 description: Install or update the Infracost CLI. Use this skill when the user asks to install, update, or upgrade Infracost, or when the CLI is missing from the system.
 allowed-tools: Bash
 ---
@@ -57,6 +58,7 @@ esac
 On Windows (where `uname` may not be available or returns `MINGW`/`MSYS`/`CYGWIN`), set `OS=windows`. You can also detect Windows via the `OS` environment variable (`$env:OS -eq "Windows_NT"` in PowerShell).
 
 Construct the asset filename:
+
 - **Linux/macOS**: `infracost-preview_${VERSION}_${OS}_${ARCH}.tar.gz`
 - **Windows**: `infracost-preview_${VERSION}_windows_${ARCH}.zip`
 

@@ -1,22 +1,22 @@
 ---
-name: infracost-uninstall
-description: Uninstall the Infracost CLI. Use this skill when the user asks to uninstall or remove Infracost from their system.
+name: infracost-uninstall-lsp
+description: Uninstall the Infracost Language Server. Use this skill when the user asks to uninstall or remove the Infracost LSP from their system.
 allowed-tools: Bash
 ---
 
-# Uninstall Infracost CLI
+# Uninstall Infracost Language Server
 
-Remove the Infracost CLI binary from the system.
+Remove the Infracost Language Server binary from the system.
 
 ## Step 1: Locate the Binary
 
-Find the installed `infracost-preview` binary:
+Find the installed `infracost-ls` binary:
 
 ```bash
-command -v infracost-preview
+command -v infracost-ls
 ```
 
-If the command is not found, inform the user that Infracost is not installed and stop.
+If the command is not found, inform the user that the Infracost Language Server is not installed and stop.
 
 ## Step 2: Check for Package Manager Installation
 
@@ -25,7 +25,7 @@ Resolve the real path of the binary (following symlinks) and check whether it ap
 ### Linux/macOS
 
 ```bash
-REAL_PATH=$(realpath "$(command -v infracost-preview)")
+REAL_PATH=$(realpath "$(command -v infracost-ls)")
 ```
 
 - `/opt/homebrew/` (Homebrew on Apple Silicon)
@@ -38,7 +38,7 @@ REAL_PATH=$(realpath "$(command -v infracost-preview)")
 ### Windows
 
 ```powershell
-$resolvedPath = (Get-Command infracost-preview).Source | Resolve-Path
+$resolvedPath = (Get-Command infracost-ls).Source | Resolve-Path
 ```
 
 - `C:\ProgramData\chocolatey\` (Chocolatey)
@@ -55,19 +55,19 @@ Delete the binary at the path returned by step 1.
 ### Linux/macOS
 
 ```bash
-rm -f /path/to/infracost-preview
+rm -f /path/to/infracost-ls
 ```
 
 If `rm` fails with a permission error, retry with `sudo`:
 
 ```bash
-sudo rm -f /path/to/infracost-preview
+sudo rm -f /path/to/infracost-ls
 ```
 
 ### Windows
 
 ```powershell
-Remove-Item -Path (Get-Command infracost-preview).Source -Force
+Remove-Item -Path (Get-Command infracost-ls).Source -Force
 ```
 
 ## Step 4: Verify
@@ -75,12 +75,12 @@ Remove-Item -Path (Get-Command infracost-preview).Source -Force
 Confirm the binary has been removed:
 
 ```bash
-command -v infracost-preview
+command -v infracost-ls
 ```
 
-The command should return nothing or report that `infracost-preview` is not found.
+The command should return nothing or report that `infracost-ls` is not found.
 
 ## Error Handling
 
-- **Not installed**: If `command -v infracost-preview` returns nothing, inform the user that Infracost is not installed and stop.
+- **Not installed**: If `command -v infracost-ls` returns nothing, inform the user that the Infracost Language Server is not installed and stop.
 - **Permission denied**: Retry the removal with `sudo`. If that also fails, inform the user they need to grant write access or run with elevated privileges.

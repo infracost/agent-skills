@@ -1,4 +1,5 @@
 ---
+name: infracost-scan
 description: Analyze infrastructure as code (IaC) projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations. This skill should be used when asking about the cost of a cloud project, how to optimize costs, or when there are specific questions about FinOps policies or tagging compliance in an IaC codebase. The skill uses the Infracost CLI and its plugins to perform the analysis, so it requires the user to have those set up and authenticated. The output is a detailed cost report that highlights key insights and recommendations for cost optimization.
 ---
 
@@ -8,11 +9,9 @@ Analyze infrastructure as code (IaC) projects to estimate cloud costs, identify 
 
 Supported IaC types: Terraform, CloudFormation, Terragrunt. CDK is not yet directly supported.
 
-
 ## Setup
 
-**important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill.
-
+**important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill (it may also be named `infracost-install`).
 
 ```bash
 infracost-preview login
@@ -32,7 +31,6 @@ infracost-preview scan /path/to/terraform/
 # Repository root (auto-discovers all IaC projects in nested directories)
 infracost-preview scan /path/to/repo
 ```
-
 
 ## Output
 
@@ -88,6 +86,7 @@ Always start with a summary or high-level grouping, then offer to drill deeper. 
 When presenting results, always offer the user a list of policies or resources they can drill into next. For example:
 
 > You have 3 failing FinOps policies. Would you like to drill into one?
+>
 > 1. **Use GP3** — 2 failing resources
 > 2. **Use Graviton** — 5 failing resources
 > 3. **Required Tags** — 12 failing resources
@@ -95,6 +94,7 @@ When presenting results, always offer the user a list of policies or resources t
 After showing a policy overview, offer to drill into specific resources:
 
 > **Use GP3** has 2 failing resources. Want to see the detail for one?
+>
 > 1. `aws_ebs_volume.data` — modules/storage/main.tf:10
 > 2. `aws_ebs_volume.logs` — modules/logging/main.tf:25
 
@@ -154,6 +154,7 @@ When a budget is over, always drill in with `--budget <name>` to check for relat
 Make the output engaging with emojis, tables, and graphs where appropriate.
 
 Summarize the costs of the cloud resources, focusing on the following:
+
 - Add clear headlines: depending on the project, break costs down by one or more of environment, module, project, service, resource type, or individual resource. The goal is to make it easy for the user to quickly understand the biggest cost drivers and where to focus their attention.
 - Highlight any resources that are particularly expensive or have large savings opportunities. For example, if there are EC2 instances that could be switched to Graviton for a 20% cost saving, call that out clearly with the potential savings amount.
 - If there are any FinOps policy violations, highlight those clearly with the potential savings and recommendations for how to fix them. If any violations could be fixed with a simple configuration change or version upgrade, call those out as low-hanging fruit and describe the code change briefly.
@@ -182,7 +183,6 @@ git worktree remove /tmp/infracost-baseline
 
 Compare the two JSON files to identify cost differences introduced by the current branch.
 
-
 ## Presenting Results
 
 Always present cost analysis in an engaging, actionable way tailored to what the data shows. Don't just dump raw numbers — tell a story with the data:
@@ -191,18 +191,17 @@ Always present cost analysis in an engaging, actionable way tailored to what the
 - **Use bullet points** for recommendations and action items
 - **Highlight the biggest cost drivers** — call out the top spenders and what % of total they represent
 - **Include savings opportunities** with concrete dollar amounts (monthly and annualized)
-- **Add context and tips** — e.g., explain *why* Graviton is cheaper, what a lifecycle policy does, or why a version upgrade avoids extended support costs
+- **Add context and tips** — e.g., explain _why_ Graviton is cheaper, what a lifecycle policy does, or why a version upgrade avoids extended support costs
 - **Show environmental metrics** (CO2, water) when available — these add real value
 - **For diffs**, clearly show before/after with the delta, and explain what the change means in plain language
 - **Group by module or service** when there are many resources — don't list 400 resources flat
 - **Tailor depth to complexity** — a 3-resource repo gets a concise summary, a 500-resource repo gets a structured breakdown with sections
 
-
 ## Important Guidelines
 
 - Do not modify or rebuild the plugin binaries — they are managed in their own repositories.
 - Do not commit the authentication token or any env var values to the repository.
-- Do not modify the CLI source code unless the user explicitly asks for it — this skill is for *using* the CLI, not developing it.
+- Do not modify the CLI source code unless the user explicitly asks for it — this skill is for _using_ the CLI, not developing it.
 - Always clean up git worktrees created for diffing when done.
 - Pipe JSON output to a file — do not attempt to read it inline from the command.
 - Do not stash or affect the target repository's git state when running the CLI — it should be non-destructive and read-only. Create separate directories or worktrees away from the user's working directory if you need to run multiple analyses or compare branches.
