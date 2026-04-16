@@ -61,19 +61,25 @@ infracost-preview inspect [flags]
 ```
 
 Available flags (combine as needed):
-- `--summary` — high-level overview of projects, costs, and policy counts (default when no flags given)
+- `--summary` — high-level overview of projects, costs, policy counts, guardrails, and budgets (default when no flags given)
 - `--failing` — only show policies that have failing resources (finops and tagging)
-- `--group-by <key>[,<key>]` — group results by one or more dimensions: `type`, `provider`, `project`, `policy`. Comma-separated or repeated. Single dimension aggregates with counts; multiple dimensions show individual rows with file locations.
-- `--policy <name>` — drill into a specific policy to see its failing resources, file locations, and issue counts
+- `--group-by <key>[,<key>]` — group results by one or more dimensions: `type`, `provider`, `project`, `policy`, `budget`, `guardrail`. Comma-separated or repeated. Single dimension aggregates with counts; multiple dimensions show individual rows with file locations.
+- `--policy <name>` — drill into a specific FinOps or tagging policy to see its failing resources, file locations, and issue counts
 - `--policy <name> --resource <address>` — full detail for one resource under a policy: issue descriptions, savings, attributes, file location with a code snippet
+- `--budget <name>` — drill into a specific budget to see its scope (tag filters), amount, current cost, and how much is remaining or over
+- `--guardrail <name>` — drill into a specific guardrail to see its status (triggered or not) and total monthly cost
 - `--top N` — show only the top N most expensive resources
 - `--project <name>` — filter to a specific project
 - `--provider <name>` — filter by cloud provider (`aws`, `google`, `azurerm`)
 - `--costs-only` — hide free resources
 
+Note: `--policy`, `--budget`, and `--guardrail` are mutually exclusive — use only one at a time.
+
 ### Drill-down workflow
 
 Always start with a summary or high-level grouping, then offer to drill deeper. The inspect command supports a progressive drill-down:
+
+#### Policies
 
 1. **Start broad** — `--summary` or `--group-by=policy` to see what's failing
 2. **Pick a policy** — `--policy "Use GP3"` to list the failing resources for that policy, with file locations
@@ -96,6 +102,55 @@ The resource detail view includes a code snippet showing the relevant lines from
 
 **Important**: When the user asks about a specific resource (e.g., "show me the issue with the lambda", "what's wrong with the RDS instance?"), always drill down to the resource level using `--policy <name> --resource <address>` and include the code snippet in your response. Don't just describe the issue — show it with the snippet so the user can see exactly what needs to change.
 
+#### Guardrails
+
+When the summary shows triggered guardrails (e.g., `Guardrails: 2 (1 triggered)`), drill into them:
+
+1. **List all** — `--group-by=guardrail` to see all guardrails with their status and monthly cost
+2. **Pick one** — `--guardrail "Cost increase > $100"` to see detail: whether it triggered, the total monthly cost, and configured thresholds
+
+Present triggered guardrails prominently — they may block the PR. For example:
+
+> 1 guardrail triggered. The total monthly cost of $500 exceeded the "Cost increase > $100" threshold.
+> Would you like to see the detail?
+
+#### Budgets
+
+**Important context:** Budget costs represent **actual org-wide cloud spend** from cloud billing data — they are NOT computed from the IaC scan and are NOT affected by the changes in the current PR. Budgets are shown on a PR because the PR touches resources with matching tags, but the dollar amounts reflect what the org has already spent across all repos and resources with those tags. Do not describe budget costs as "estimated" or imply the PR caused them.
+
+When the summary shows budgets over limit (e.g., `Budgets: 3 (1 over)`), drill into them:
+
+1. **List all** — `--group-by=budget` to see all budgets with their name, status, actual spend, and limit
+2. **Pick one** — `--budget "Production budget"` to see full detail: tag scope, limit, actual spend, remaining/over, custom message, matching resources from the scan, and potential savings from FinOps policies on those resources
+
+The budget detail view shows:
+- **Limit and actual spend** — the org-wide cloud billing spend against the budget
+- **Resources in this scan matching budget tags** — which resources in the current scan are tagged with the budget's scope, grouped by type with count and monthly cost
+- **FinOps policy violations on matching resources** — any policy violations on resources with the budget's tags, with estimated per-policy savings
+
+**Important:** The savings shown are estimates from the IaC scan. They may not directly reduce the org-wide budget spend — for example, if the resources are newly created and haven't been deployed yet, or if the savings depend on usage changes. Present savings as "areas to investigate" rather than guaranteed reductions.
+
+Present over-budget items clearly with the dollar amount over. For example:
+
+> 1 of 3 budgets is relevant to this change (matched by resource tags):
+> | Budget | Status | Actual Spend | Limit |
+> |--------|--------|---------|-------|
+> | Production budget | under | $500 | $1,000 (50% left) |
+> | Frontend Q2 | **OVER** | $400 | $300 |
+> | Backend annual | under | $200 | $5,000 (96% left) |
+>
+> **Frontend Q2** is $100 over its org-wide budget. Let me drill in for detail...
+>
+> (runs `--budget "Frontend Q2"`)
+>
+> The budget detail shows 3 resources matching `team=frontend` tags in this scan. There are also FinOps policy violations on some of these resources (Use GP3: up to $30/mo, Use Graviton: up to $45/mo) — addressing these could help reduce spend over time.
+>
+> *Note: Actual spend is based on cloud billing data across the organization. Savings estimates are from the IaC scan and may not directly translate to budget reductions.*
+
+When a budget is over, always drill in with `--budget <name>` to check for related FinOps violations — they highlight areas where spend on matching resources could potentially be reduced.
+
+### Presenting scan results
+
 Make the output engaging with emojis, tables, and graphs where appropriate.
 
 Summarize the costs of the cloud resources, focusing on the following:
@@ -103,6 +158,8 @@ Summarize the costs of the cloud resources, focusing on the following:
 - Highlight any resources that are particularly expensive or have large savings opportunities. For example, if there are EC2 instances that could be switched to Graviton for a 20% cost saving, call that out clearly with the potential savings amount.
 - If there are any FinOps policy violations, highlight those clearly with the potential savings and recommendations for how to fix them. If any violations could be fixed with a simple configuration change or version upgrade, call those out as low-hanging fruit and describe the code change briefly.
 - If there are tagging policy violations, call those out with the number of untagged resources and any interesting patterns. For example, if all the untagged resources are in a specific module or environment, that could indicate a gap in the tagging strategy that should be addressed.
+- If any cost guardrails are triggered, highlight them clearly. Distinguish between guardrails that block PRs (hard constraints requiring changes before merging) and those that only create alerts or PR comments (soft constraints). Show the configured threshold alongside the actual cost so the user can see how far over they are. Always offer to drill in with `--guardrail <name>`.
+- If any budgets are over their limit, highlight them prominently with the amount over and any custom overrun messages. Even for budgets that are under, show how much headroom remains. Always offer to drill in with `--budget <name>`. Remember: budget costs are actual org-wide cloud spend, not IaC estimates — frame them as "your organization has spent $X against this budget" not "this change costs $X."
 - If there are any resources with significant environmental impact, call those out with the relevant metrics and recommendations for reducing the impact.
 - Note that usage costs may be less reliable, as we don't have _actual_ usage data for the resources, just estimated defaults based on typical usage patterns. If there are usage-based resources, call out the uncertainty around those estimates and recommend that the user review actual usage once the resources are deployed.
 - Make sure to highlight what actions the user should take - the report should be _actionable_, not just informational. For example, if there are savings opportunities, clearly state "You could save $X per month by doing Y". If there are policy violations, clearly state "You have 3 resources that violate policy Z, which could be fixed by doing A, B, and C for a potential savings of $X per month".
