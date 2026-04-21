@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/infracost/agent-skills/compare/infracost-marketplace-v0.0.4...infracost-marketplace-v0.0.5) (2026-04-21)
+
+
+### Features
+
+* add the lsp plugin install ([#23](https://github.com/infracost/agent-skills/issues/23)) ([d81d0e9](https://github.com/infracost/agent-skills/commit/d81d0e91a954ce299ebaeea8a3a90fc39a02e198))
+
 ## [0.0.4](https://github.com/infracost/agent-skills/compare/infracost-marketplace-v0.0.3...infracost-marketplace-v0.0.4) (2026-03-10)
 
 
