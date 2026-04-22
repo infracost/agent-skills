@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.4](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.3...infracost-plugin-v0.0.4) (2026-04-21)
+## [0.0.5](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.4...infracost-plugin-v0.0.5) (2026-04-21)
 
 
 ### Features
@@ -8,12 +8,6 @@
 * add guardrails awareness to iac-generation and scan skills (DEV-235) ([#30](https://github.com/infracost/agent-skills/issues/30)) ([edb8436](https://github.com/infracost/agent-skills/commit/edb8436d214b39a53a413f44f8c879d4866a5ba9))
 * add the lsp plugin install ([#23](https://github.com/infracost/agent-skills/issues/23)) ([d81d0e9](https://github.com/infracost/agent-skills/commit/d81d0e91a954ce299ebaeea8a3a90fc39a02e198))
 * update scan skill with budget and guardrail drill-down workflows DEV-138 ([#31](https://github.com/infracost/agent-skills/issues/31)) ([006311c](https://github.com/infracost/agent-skills/commit/006311ccc9e75b0202931aa6e5eda1f77c0177af))
-
-
-### Miscellaneous
-
-* **main:** release infracost-plugin 0.0.4 ([#19](https://github.com/infracost/agent-skills/issues/19)) ([ad36788](https://github.com/infracost/agent-skills/commit/ad367882ba841986a113a81b82130d8baf9ea51e))
-* prepare repository for publication ([c16b36d](https://github.com/infracost/agent-skills/commit/c16b36d0eed10852351051933f062e9ca22ccc2d))
 
 ## [0.0.4](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.3...infracost-plugin-v0.0.4) (2026-03-10)
 
