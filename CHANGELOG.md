@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.6](https://github.com/infracost/agent-skills/compare/infracost-marketplace-v0.0.5...infracost-marketplace-v0.0.6) (2026-04-27)
+
+
+### Features
+
+* gemini is particular about file locations ([#35](https://github.com/infracost/agent-skills/issues/35)) ([007f377](https://github.com/infracost/agent-skills/commit/007f377a891a36016f39034abf7ec8b8d239979e))
+
+
+### Miscellaneous
+
+* **main:** release infracost-plugin 0.0.4 ([#22](https://github.com/infracost/agent-skills/issues/22)) ([949ca38](https://github.com/infracost/agent-skills/commit/949ca38eed19bc83637b643ab7ee46f35bc756c0))
+* release infracost-plugin 0.0.5 ([#32](https://github.com/infracost/agent-skills/issues/32)) ([6146c4f](https://github.com/infracost/agent-skills/commit/6146c4f9e89dc910e349164ebb2545127df11e51))
+
 ## [0.0.5](https://github.com/infracost/agent-skills/compare/infracost-marketplace-v0.0.4...infracost-marketplace-v0.0.5) (2026-04-21)
 
 
