@@ -35,17 +35,7 @@ Works with **Terraform, Terragrunt, and CloudFormation**. Supports **AWS, GCP, a
 >
 > Make sure you've signed up for a [free **Infracost account**](https://dashboard.infracost.io) before trying to use the AI skills (takes under a minute; no credit card required).
 
-### Claude Code
-
-Install the plugin from the marketplace:
-
-```claude-code
-/plugin marketplace add infracost/agent-skills
-/plugin install infracost@infracost
-# Restart Claude
-```
-
-The skills will then be available as `/infracost:<skill>` slash commands.
+Instructions on how to install these skills in your favorite agent are available via our [official AI Agent Skills docs](https://www.infracost.io/docs/ai_editor_plugins/ai_skills/)
 
 ## Quick Start
 
