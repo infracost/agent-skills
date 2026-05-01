@@ -17,12 +17,12 @@ Other IaC languages are also indirectly supported if you convert the resource de
 
 ## Setup
 
-**Important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill (it may also be named `infracost-install`).
+**Important**: Ensure that `infracost` is available on the path. If it is not, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
 
 The user must be logged in - if not and you receive auth errors, prompt them to use the following:
 
 ```bash
-infracost-preview login
+infracost login
 ```
 
 ## Usage
@@ -52,7 +52,7 @@ When writing IaC code, you should do the following:
 The `guardrails` command lists cost guardrails configured for the repository. Guardrails define spending thresholds that, when exceeded, can trigger alerts, PR comments, or block PRs entirely.
 
 ```bash
-infracost-preview guardrails
+infracost guardrails
 ```
 
 The output shows each guardrail with its name, scope (repo or project-level), thresholds (total monthly cost, cost increase amount, cost increase percentage), and actions (PR comment, block PR, or alert only). Use this to understand the budget constraints before writing any infrastructure code.
@@ -62,7 +62,7 @@ The output shows each guardrail with its name, scope (repo or project-level), th
 The `policies` command lists all tagging and FinOps policies that are configured for the user's organization. This is important to understand before writing any code, so you can ensure your code is compliant with the policies from the start.
 
 ```bash
-infracost-preview policies
+infracost policies
 ```
 
 The output includes the policy name, type (tagging or FinOps), description, and any parameters. Use this information to guide your code writing and ensure you are following the organization's guidelines. For example, if there is a tagging policy that requires all resources to have a `cost_center` tag, make sure to include that in your resource definitions.
@@ -72,7 +72,7 @@ The output includes the policy name, type (tagging or FinOps), description, and 
 The `budgets` command lists tag-scoped budgets configured for the user's organization. Each budget has a tag scope (e.g. `env=production`), a limit, a period, and the actual cloud spend recorded against that scope so far.
 
 ```bash
-infracost-preview budgets
+infracost budgets
 ```
 
 **Important:** Budget spend reflects **actual cloud billing data** across the whole organization, not a preview of the current change. Use this as context for the user, not as a hard constraint on the code you generate.
@@ -85,65 +85,88 @@ Run the `scan` command, pointing to your IaC files or a repository root:
 
 ```bash
 # Single CloudFormation template
-infracost-preview scan /path/to/cloudformation.yaml
+infracost scan /path/to/cloudformation.yaml
 
 # Terraform project directory
-infracost-preview scan /path/to/terraform/
+infracost scan /path/to/terraform/
 
 # Repository root (auto-discovers all IaC projects in nested directories)
-infracost-preview scan /path/to/repo
+infracost scan /path/to/repo
 ```
 
 #### Output
 
-JSON is written to stdout. Diagnostics and warnings are written to stderr.
-
-The output can be very large for repos with many resources, so always redirect output to a file:
+By default, `scan` prints a human-readable summary to stdout (projects, resources, monthly cost, FinOps and tagging policy counts, guardrails, budgets, diagnostics) followed by a "What's next?" section with suggested `inspect` commands. Diagnostics and warnings go to stderr. Pass the global `--json` flag for the full machine-readable JSON output:
 
 ```bash
-infracost-preview scan /path/to/repo > /tmp/whatever
+# Human-readable summary (default)
+infracost scan /path/to/repo
+
+# Full JSON, redirected for large repos
+infracost scan --json /path/to/repo > /tmp/scan.json
 ```
+
+`--json` is global — it works on `scan`, `price`, and `inspect` and also switches log output to JSON.
 
 #### Inspecting Results
 
-After analyzing, use the `inspect` command to explore the results instead of parsing raw JSON. Always start with a summary, then drill into areas of interest using the available flags.
+Scan results are cached automatically, so `inspect` picks them up with no extra arguments. You don't need to redirect output or pass `--file` unless you specifically saved a JSON file with `--json`.
 
-**Important**: The `inspect` command reads from JSON and you DO NOT NEED to write any scripts to handle the JSON output yourself. Just use the `inspect` command with the appropriate flags to view the data in an engaging, actionable way.
+**Important**: The `inspect` command reads cached results and you DO NOT NEED to write any scripts to handle JSON yourself.
 
 ```bash
-# Scan and save to file
-infracost-preview scan /path/to/repo > /tmp/whatever
+# Scan first (caches the result)
+infracost scan /path/to/repo
 
-# Inspect the results (always pass --file to read from the saved JSON)
-infracost-preview inspect [flags] --file /tmp/whatever
+# Drill in — no --file needed
+infracost inspect [flags]
+
+# Or, if you saved JSON yourself
+infracost inspect --file /tmp/scan.json [flags]
 ```
 
 Available flags (combine as needed):
 
 - `--summary` — high-level overview of projects, costs, and policy counts (default when no flags given)
 - `--failing` — only show policies that have failing resources (finops and tagging)
-- `--group-by <key>[,<key>]` — group results by one or more dimensions: `type`, `provider`, `project`, `policy`. Comma-separated or repeated. Single dimension aggregates with counts; multiple dimensions show individual rows with file locations.
+- `--group-by <key>[,<key>]` — group results by one or more dimensions. Comma-separated or repeated. See valid dimensions and combinations below.
 - `--policy <name>` — drill into a specific policy to see its failing resources, file locations, and issue counts
 - `--policy <name> --resource <address>` — full detail for one resource under a policy: issue descriptions, savings, attributes, file location with a code snippet
+- `--budget <name>` — drill into a specific budget to see its scope, limit, actual spend, and status
+- `--guardrail <name>` — drill into a specific guardrail to see its status and total monthly cost
 - `--top N` — show only the top N most expensive resources
 - `--project <name>` — filter to a specific project
 - `--provider <name>` — filter by cloud provider (`aws`, `google`, `azurerm`)
 - `--costs-only` — hide free resources
+- `--json` (global) — emit the inspect result as JSON instead of a table
+
+##### `--group-by` dimensions
+
+Resource-context dims (aggregate the resource list): `type`, `provider`, `project`, `resource`, `file`. Use `resource` to list every resource sorted by cost (no `--top` limit needed).
+
+Anchor dims (each routes to its own collector): `policy`, `guardrail`, `budget`.
+
+Compatibility rules (validated up-front):
+- `policy`, `guardrail`, and `budget` are pairwise mutually exclusive in a single `--group-by`.
+- `guardrail` and `budget` cannot combine with resource-context dims — those rows have no resource context.
+- `policy` *can* combine with resource-context dims (e.g. `--group-by policy,type`).
+
+The same mutual-exclusion rule applies to the drill-in flags `--policy`, `--budget`, and `--guardrail` — pick one.
 
 ### Price Command
 
-The price command reads Terraform code directly from stdin. For example:
+The price command reads Terraform code directly from stdin and prints a human-readable cost summary by default. For example:
 
 ```bash
-echo 'resource "aws_instance" "x" { instance_type= "t2.micro" }' | infracost-preview price
+echo 'resource "aws_instance" "x" { instance_type = "t2.micro" }' | infracost price
 ```
 
-The output is identical in format to the `scan` command, so the same `inspect` command can be used to explore the results.
+Pass `--json` for the same JSON shape as `scan`. Like `scan`, results are cached, so the same `inspect` command can be used to drill into the result without `--file`.
 
 ## Important Guidelines
 
 - Do not modify or rebuild the plugin binaries — they are managed in their own repositories.
 - Do not commit the authentication token or any env var values to the repository.
-- Pipe JSON output to a file — do not attempt to read it inline from the command.
+- When you do request `--json` output for a large repo, pipe it to a file — do not attempt to read it inline from the command. By default `scan` and `price` already print a small human-readable summary, so the file pipe is only needed when you specifically need the raw JSON.
 - Do not stash or affect the target repository's git state when running the CLI — it should be non-destructive and read-only. Create separate directories or worktrees away from the user's working directory if you need to run multiple analyses or compare branches.
 - When making decisions based on infracost output, add comments to the affected IaC resources/attributes that explain your decision if it's not obvious from the code itself. This will help reviewers understand the reasoning and make it easier for future maintainers to understand why certain choices were made. For example, if you choose a more expensive resource type for performance reasons, add a comment explaining that tradeoff. Or if you add specific tags to comply with a policy, comment on which policy requires those tags. Be terse, and avoid mentioning Infracost unless absolutely necessary.

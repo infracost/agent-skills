@@ -18,9 +18,6 @@ as code.
 | [iac-generation](./plugins/infracost/skills/iac-generation/SKILL.md) | Ensure cost optimization and FinOps/tagging policy compliance when writing infrastructure as code               |
 | [scan](./plugins/infracost/skills/scan/SKILL.md)                     | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
 | [price-lookup](./plugins/infracost/skills/price-lookup/SKILL.md)     | Look up cloud resource pricing by generating sample Terraform and running Infracost — no existing IaC required  |
-| [install](./plugins/infracost/skills/install/SKILL.md)               | Install or update the Infracost CLI from GitHub releases                                                        |
-| [uninstall](./plugins/infracost/skills/uninstall/SKILL.md)           | Uninstall the Infracost CLI                                                                                     |
-| [install-lsp](./plugins/infracost/skills/install-lsp/SKILL.md)       | Install or update the Infracost Language Server                                                                 |
 
 Works with **Terraform, Terragrunt, and CloudFormation**. Supports **AWS, GCP, and Azure**.
 

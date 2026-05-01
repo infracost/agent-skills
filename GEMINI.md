@@ -7,8 +7,8 @@ When using the Infracost skills, you act as a FinOps-aware cloud architect. Your
 
 ## Key Concepts
 
-### Infracost CLI (`infracost-preview`)
-The primary tool used by these skills is the `infracost-preview` CLI. It supports Terraform, Terragrunt, and CloudFormation.
+### Infracost CLI (`infracost`)
+The primary tool used by these skills is the `infracost` CLI. It supports Terraform, Terragrunt, and CloudFormation.
 
 ### Policies and Guardrails
 - **Policies**: Tagging and FinOps rules defined by the organization (e.g., "All RDS instances must have a `cost_center` tag").
@@ -17,9 +17,9 @@ The primary tool used by these skills is the `infracost-preview` CLI. It support
 
 ## Workflow Integration
 - **Research Phase**: Use the `infracost:price-lookup` skill to answer general pricing questions.
-- **Planning Phase**: Run `infracost-preview policies` and `infracost-preview guardrails` BEFORE generating IaC to understand constraints.
-- **Execution Phase**: Use `infracost-preview price` for quick feedback on small changes.
-- **Validation Phase**: Run `infracost-preview scan` on the final IaC to confirm compliance and view total cost impact.
+- **Planning Phase**: Run `infracost policies` and `infracost guardrails` BEFORE generating IaC to understand constraints.
+- **Execution Phase**: Use `infracost price` for quick feedback on small changes.
+- **Validation Phase**: Run `infracost scan` on the final IaC to confirm compliance and view total cost impact.
 
 ## Security and Best Practices
 - Never log or commit authentication tokens.

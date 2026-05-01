@@ -1,7 +1,7 @@
 ---
 name: infracost-price-lookup
 description: Look up cloud resource pricing by generating sample Terraform and running Infracost against it. Use this skill when the user asks "how much does X cost?" or wants to compare pricing between resource configurations, instance types, regions, or cloud providers. This does not require the user to have any existing infrastructure code.
-allowed-tools: Bash(infracost-preview*)
+allowed-tools: Bash(infracost*)
 ---
 
 # Price Lookup
@@ -10,20 +10,22 @@ Look up cloud resource pricing without needing existing infrastructure code. Sup
 
 ## Setup
 
-**Important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill (it may also be named `infracost-install`).
+**Important**: Ensure that `infracost` is available on the path. If it is not, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
 
 ```bash
-infracost-preview login
+infracost login
 ```
 
 ## Workflow
 
 ### 1. Run Infracost
 
-Pipe the Terraform configuration directly into `infracost-preview price`. This command reads Terraform from stdin, analyzes it, and prints the cost estimate as JSON to stdout. Temporary files are created and cleaned up automatically.
+Pipe the Terraform configuration directly into `infracost price`. This command reads Terraform from stdin, analyzes it, and prints a human-readable cost summary to stdout, followed by suggested `inspect` commands for drilling deeper. Temporary files are created and cleaned up automatically.
+
+Pass the global `--json` flag if you need the raw JSON output instead — for example, when piping into another tool. The same `--json` flag also switches log output to JSON and works on `scan` and `inspect`.
 
 ```bash
-infracost-preview price << 'EOF'
+infracost price << 'EOF'
 provider "aws" {
   region = "us-east-1"
 }
@@ -52,7 +54,7 @@ Rules for writing the Terraform:
 **Currency**: If the user requests pricing in a non-USD currency, set the `INFRACOST_CLI_CURRENCY` environment variable when running the command. For example:
 
 ```bash
-INFRACOST_CLI_CURRENCY=EUR infracost-preview price << 'EOF'
+INFRACOST_CLI_CURRENCY=EUR infracost price << 'EOF'
 ...
 EOF
 ```
@@ -61,17 +63,20 @@ Use standard [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency codes (
 
 ### 2. Inspect the results
 
-Use the `inspect` command to read the results rather than parsing JSON manually.
+`price` already prints a summary, but you can drill in further with `inspect`. Results are cached, so you don't need to redirect output or pass `--file`.
 
 ```bash
-# Summary overview
-infracost-preview inspect --summary
+# Summary overview (same shape as the default price output)
+infracost inspect --summary
 
-# Detailed cost breakdown
-infracost-preview inspect --costs-only
+# Detailed cost breakdown, hiding free resources
+infracost inspect --costs-only
 
 # Top expensive resources
-infracost-preview inspect --top 5
+infracost inspect --top 5
+
+# Every resource sorted by cost (no row limit)
+infracost inspect --group-by resource
 ```
 
 ## Presenting Results
@@ -106,5 +111,5 @@ Present pricing in a clear, structured way:
 
 - Do not commit any generated Terraform files — they are throwaway.
 - Do not modify the CLI source code — this skill is for _using_ the CLI.
-- If `infracost-preview scan` prompts for login, ask the user to run `infracost-preview login` first.
+- If `infracost scan` prompts for login, ask the user to run `infracost login` first.
 - If the user asks about a resource type you're unsure of the Terraform resource name for, look it up rather than guessing — an incorrect resource type will produce no pricing data.

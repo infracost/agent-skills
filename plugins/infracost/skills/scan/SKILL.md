@@ -11,10 +11,10 @@ Supported IaC types: Terraform, CloudFormation, Terragrunt. CDK is not yet direc
 
 ## Setup
 
-**important**: Ensure that `infracost-preview` is available on the path. If it is not, offer to install it for the user by triggering the `/infracost:install` skill (it may also be named `infracost-install`).
+**important**: Ensure that `infracost` is available on the path. If it is not, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
 
 ```bash
-infracost-preview login
+infracost login
 ```
 
 ## Usage
@@ -23,45 +23,52 @@ Run the `scan` command, pointing to your IaC files or a repository root:
 
 ```bash
 # Single CloudFormation template
-infracost-preview scan /path/to/cloudformation.yaml
+infracost scan /path/to/cloudformation.yaml
 
 # Terraform project directory
-infracost-preview scan /path/to/terraform/
+infracost scan /path/to/terraform/
 
 # Repository root (auto-discovers all IaC projects in nested directories)
-infracost-preview scan /path/to/repo
+infracost scan /path/to/repo
 ```
 
 ## Output
 
-JSON is written to stdout. Diagnostics and warnings are written to stderr.
+By default, `scan` prints a human-readable summary table to stdout (projects, resources, monthly cost, FinOps and tagging policy counts, guardrails, budgets, diagnostics) followed by a "What's next?" section that suggests context-aware `inspect` commands you can run to dive deeper. Diagnostics and warnings go to stderr.
 
-The output can be very large for repos with many resources, so always pipe it to a file:
+For the full machine-readable JSON output, pass the global `--json` flag:
 
 ```bash
-infracost-preview scan /path/to/repo
+# Human-readable summary (default)
+infracost scan /path/to/repo
+
+# Full JSON output (large; redirect to a file for big repos)
+infracost scan --json /path/to/repo > /tmp/scan.json
 ```
+
+`--json` is a global flag — it works on `scan`, `price`, and `inspect` and also switches log output to JSON.
 
 ## Inspecting Results
 
-After analyzing, use the `inspect` command to explore the results instead of parsing raw JSON. Always start with a summary, then drill into areas of interest using the available flags.
+After analyzing, use the `inspect` command to explore the results instead of parsing raw JSON. Scan results are cached automatically, so `inspect` picks them up with no extra arguments — you do not need to redirect scan output or pass `--file` unless you saved a JSON file yourself.
 
-**Important**: The `inspect` command reads from JSON and you DO NOT NEED to write any scripts to handle the JSON output yourself. Just use the `inspect` command with the appropriate flags to view the data in an engaging, actionable way.
+**Important**: The `inspect` command reads cached results and you DO NOT NEED to write any scripts to handle JSON yourself. Just run `inspect` with the appropriate flags.
 
 ```bash
-# Scan and save to file
-infracost-preview scan /path/to/repo
+# Scan first (caches the result)
+infracost scan /path/to/repo
 
-**Important**: The inspect command does not require the plugin paths to be specified, the command can be run without them
+# Then drill in — no --file needed
+infracost inspect [flags]
 
-# Inspect the results (always pass --file to read from the saved JSON)
-infracost-preview inspect [flags]
+# Or, if you saved JSON yourself with --json, point inspect at it
+infracost inspect --file /tmp/scan.json [flags]
 ```
 
 Available flags (combine as needed):
 - `--summary` — high-level overview of projects, costs, policy counts, guardrails, and budgets (default when no flags given)
 - `--failing` — only show policies that have failing resources (finops and tagging)
-- `--group-by <key>[,<key>]` — group results by one or more dimensions: `type`, `provider`, `project`, `policy`, `budget`, `guardrail`. Comma-separated or repeated. Single dimension aggregates with counts; multiple dimensions show individual rows with file locations.
+- `--group-by <key>[,<key>]` — group results by one or more dimensions. Comma-separated or repeated. See valid dimensions and combinations below.
 - `--policy <name>` — drill into a specific FinOps or tagging policy to see its failing resources, file locations, and issue counts
 - `--policy <name> --resource <address>` — full detail for one resource under a policy: issue descriptions, savings, attributes, file location with a code snippet
 - `--budget <name>` — drill into a specific budget to see its scope (tag filters), amount, current cost, and how much is remaining or over
@@ -70,8 +77,28 @@ Available flags (combine as needed):
 - `--project <name>` — filter to a specific project
 - `--provider <name>` — filter by cloud provider (`aws`, `google`, `azurerm`)
 - `--costs-only` — hide free resources
+- `--json` (global) — emit the inspect result as JSON instead of a table
 
-Note: `--policy`, `--budget`, and `--guardrail` are mutually exclusive — use only one at a time.
+#### `--group-by` dimensions
+
+Resource-context dimensions (aggregate the resource list):
+- `type` — Terraform resource type (e.g. `aws_instance`)
+- `provider` — `aws`, `google`, `azurerm`, or `other`
+- `project` — scan project name
+- `resource` — full resource address; one row per resource sorted by cost (use this to list every resource by cost with no `--top` limit)
+- `file` — `path:line` of the resource definition
+
+Anchor dimensions (each routes to its own collector):
+- `policy` — one row per failing policy / resource pairing
+- `guardrail` — one row per guardrail with status and monthly cost
+- `budget` — one row per budget with status, limit, and actual spend
+
+Compatibility rules (validated up-front):
+- `policy`, `guardrail`, and `budget` are pairwise mutually exclusive in a single `--group-by`.
+- `guardrail` and `budget` cannot combine with resource-context dims (`type`, `provider`, `project`, `resource`, `file`) — those rows have no resource context.
+- `policy` *can* combine with resource-context dims (e.g. `--group-by policy,type`).
+
+The same mutual-exclusion rule applies to the drill-in flags: `--policy`, `--budget`, and `--guardrail` cannot be used together — pick one.
 
 ### Drill-down workflow
 
@@ -168,15 +195,16 @@ Summarize the costs of the cloud resources, focusing on the following:
 
 ## Diffing Against a Baseline
 
-To compare cost changes between branches, use `git worktree`:
+To compare cost changes between branches, use `git worktree` and capture each scan's JSON output:
 
 ```bash
 # Create a worktree for the baseline
 git worktree add /tmp/infracost-baseline origin/main
 
-# Run against both and compare
-infracost-preview scan /path/to/repo
-infracost-preview scan /tmp/infracost-baseline/path/to/repo
+# Run against both and capture full JSON for diffing
+infracost scan --json /path/to/repo > /tmp/head.json
+infracost scan --json /tmp/infracost-baseline/path/to/repo > /tmp/base.json
+
 # Clean up
 git worktree remove /tmp/infracost-baseline
 ```
@@ -203,5 +231,5 @@ Always present cost analysis in an engaging, actionable way tailored to what the
 - Do not commit the authentication token or any env var values to the repository.
 - Do not modify the CLI source code unless the user explicitly asks for it — this skill is for _using_ the CLI, not developing it.
 - Always clean up git worktrees created for diffing when done.
-- Pipe JSON output to a file — do not attempt to read it inline from the command.
+- When you do request `--json` output for a large repo, pipe it to a file — do not attempt to read it inline from the command. By default `scan` already prints a small human-readable summary, so the file pipe is only needed when you specifically need the raw JSON.
 - Do not stash or affect the target repository's git state when running the CLI — it should be non-destructive and read-only. Create separate directories or worktrees away from the user's working directory if you need to run multiple analyses or compare branches.
