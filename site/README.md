@@ -58,7 +58,7 @@ npm run astro:check
 
 ## Deployment
 
-**Automatic:** Merging to `main` triggers the GitHub Actions deploy workflow, which builds and deploys to GitHub Pages.
+**Automatic:** Merging to `site` triggers the GitHub Actions deploy workflow, which builds and deploys to GitHub Pages.
 
 **GitHub Pages setup (one-time):**
 
@@ -66,7 +66,7 @@ npm run astro:check
 2. Ensure Actions have Pages write permission
 
 **Custom domain:**
-When the domain is finalized, copy `public/CNAME.example` to `public/CNAME` and set the domain name. Update `ASTRO_SITE` in `deploy.yml` accordingly.
+The custom domain is configured via `public/CNAME`. `astro.config.mjs` defaults to `https://cost.dev` with `/` as the base path.
 
 ## Icon Strategy
 
@@ -76,5 +76,5 @@ Icons use inline SVG paths sourced from [Heroicons](https://heroicons.com) (MIT 
 
 | Variable     | Default                       | Description                                                    |
 | ------------ | ----------------------------- | -------------------------------------------------------------- |
-| `ASTRO_SITE` | `https://infracost.github.io` | Full URL of deployed site                                      |
-| `ASTRO_BASE` | `/agent-skills`               | Base path (set to `/ai-devtools-landingpage` for GitHub Pages) |
+| `ASTRO_SITE` | `https://cost.dev` | Full URL of deployed site                                      |
+| `ASTRO_BASE` | `/`                | Base path (set to `/agent-skills` for GitHub project Pages)    |
