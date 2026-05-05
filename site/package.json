@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "ASTRO_BASE=/agent-skills astro build",
+    "build": "astro build",
     "preview": "astro preview --host 127.0.0.1 --port 4173 --strictPort",
     "astro": "astro",
     "astro:check": "astro check",
