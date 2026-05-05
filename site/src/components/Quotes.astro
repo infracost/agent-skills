@@ -1,0 +1,116 @@
+---
+const quotes = [
+  {
+    text: "We used to dedicate one person's time to updating Google labels to match our tagging policies. With the Infracost Claude Integration, we were able to exceed last year's labeling work in minutes.",
+    initials: "CA",
+    name: "Chris Avila",
+    role: "Staff DevOps Engineer, EvolutionIQ",
+    avatarColor: "var(--indigo)",
+  },
+  {
+    text: "It didn't just clear the tagging backlog to zero instantly. Cruise's efficiency literally crashed the graph.",
+    initials: "JH",
+    name: "Joe Hutchinson",
+    role: "Head of Platform, Vega Investments",
+    avatarColor: "var(--violet)",
+  },
+  {
+    text: "Software teams are shipping code at a breakneck pace. With Cruise, we're preventing 95% of new issues before deployment.",
+    initials: "SE",
+    name: "Sr. Staff Software Engineer",
+    role: "Fortune 100 company",
+    avatarColor: "var(--pink)",
+  },
+];
+---
+
+<section class="quotes">
+  <div class="container">
+    <div class="quotes-grid">
+      {quotes.map((q) => (
+        <div class="quote">
+          <div class="quote-mark">"</div>
+          <p class="quote-text">{q.text}</p>
+          <div class="quote-attr">
+            <div class="quote-avatar" style={`background: ${q.avatarColor};`}>{q.initials}</div>
+            <div>
+              <div class="quote-name">{q.name}</div>
+              <div class="quote-role">{q.role}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .quotes {
+    padding: 80px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .quotes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .quote {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .quote-mark {
+    font-family: var(--font-display);
+    font-size: 56px;
+    line-height: 0.5;
+    color: var(--indigo);
+    height: 24px;
+  }
+  .quote-text {
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    flex: 1;
+  }
+  .quote-attr {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .quote-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--indigo);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+  }
+  .quote-name {
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+  .quote-role {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 900px) {
+    .quotes-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+</style>

@@ -1,130 +1,40 @@
 /* =============================================
-   INFRACOST AI — GLOBAL DESIGN SYSTEM
-   Spec: 01-design-system.md
+   INFRACOST DEV — GLOBAL DESIGN SYSTEM
    ============================================= */
 
-/* ─── Self-Hosted Fonts ─────────────────────────
-   Variable fonts downloaded from Google Fonts (Latin subset).
-   Single @font-face per family covers all required weights.
-   Files: public/fonts/inter-latin.woff2, jetbrains-mono-latin.woff2
-   ─────────────────────────────────────────────── */
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/fonts/inter-latin.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-weight: 100 800;
-  font-display: swap;
-  src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-/* ─── Design Tokens ─────────────────────────────
-   Spec: 01-design-system.md
-   ─────────────────────────────────────────────── */
 :root {
   /* Colors */
-  --color-bg: #141824;
-  --color-surface: #1a1f30;
-  --color-surface-alt: #1f2438;
-  --color-accent-primary: #f72585;
-  --color-accent-secondary: #4f46e5;
-  --color-text: #dcdcdc;
-  --color-text-muted: #8896b4;
-  --color-border: #2a3354;
-  --color-success: #16c172;
-  --color-code-bg: #0d1117;
-
-  /* Gradients */
-  --gradient-brand: #f72585;
-  --gradient-brand-overlay: rgba(247, 37, 133, 0.08);
+  --canvas: #0d132c;
+  --panel: #161f3c;
+  --sunken: #090f1c;
+  --panel-alpha: #192138;
+  --text-primary: #eae9f2;
+  --text-secondary: #a6adc8;
+  --text-tertiary: #747ca2;
+  --link: #70cfdb;
+  --pink: #f72585;
+  --indigo: #4f46e5;
+  --violet: #7c3aed;
+  --cyan: #22d3ee;
+  --mint: #10d9a0;
+  --border: rgba(99, 108, 148, 0.25);
+  --border-strong: rgba(99, 108, 148, 0.45);
 
   /* Typography */
-  --font-sans:
-    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif;
-  --font-heading:
-    "Zalando Sans SemiExpanded", "Zalando Sans Expanded", "Zalando Sans",
-    "Inter", system-ui, sans-serif;
+  --font-display:
+    "Zalando Sans Expanded", -apple-system, BlinkMacSystemFont,
+    "SF Pro Display", sans-serif;
+  --font-body:
+    "Zalando Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   --font-mono:
-    "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
-
-  /* Type scale */
-  --text-xs: 0.75rem; /* 12px */
-  --text-sm: 0.875rem; /* 14px */
-  --text-base: 1rem; /* 16px */
-  --text-lg: 1.125rem; /* 18px */
-  --text-xl: 1.5rem; /* 24px */
-  --text-2xl: 1.75rem; /* 28px */
-  --text-3xl: 2.25rem; /* 36px */
-  --text-4xl: 3rem; /* 48px */
-  --text-5xl: 3.5rem; /* 56px */
-  --text-6xl: 4.5rem; /* 72px */
-
-  /* Spacing */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
-  --space-32: 8rem;
-
-  /* Border radii */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --shadow-glow: none;
-  --shadow-glow-hover: none;
+    "IBM Plex Mono", ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+    Consolas, monospace;
 
   /* Z-index */
-  --z-base: 0;
-  --z-above: 1;
   --z-nav: 100;
-  --z-banner: 101;
-  --z-modal: 200;
-  --z-toast: 300;
-
-  /* Banner height fallback for JS-disabled environments.
-     AlphaBanner/Nav scripts overwrite with measured values when JS is enabled. */
-  --banner-height: 64px;
-
-  /* Transitions */
-  --transition-fast: 150ms ease-out;
-  --transition-base: 250ms ease-out;
-  --transition-slow: 400ms ease-out;
-
-  /* Navigation height fallback includes nav bar + banner.
-     Nav script overwrites with measured values when JS is enabled. */
-  --nav-height: calc(64px + var(--banner-height));
 }
 
-/* ─── Reset & Base ──────────────────────────────── */
+/* ─── Reset & Base ────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -142,19 +52,13 @@ html {
 }
 
 body {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.7;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  background-image: radial-gradient(
-    ellipse 120% 60% at 50% -5%,
-    rgba(79, 70, 229, 0.13) 0%,
-    transparent 60%
-  );
+  background: var(--canvas);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
 img,
@@ -165,7 +69,11 @@ svg {
 }
 
 a {
-  color: inherit;
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--cyan);
 }
 
 code,
@@ -175,12 +83,95 @@ samp {
   font-family: var(--font-mono);
 }
 
-/* Scroll margin for anchor targets (accounts for sticky nav) */
-[id] {
-  scroll-margin-top: var(--nav-height);
+/* ─── Container ────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
 }
 
-/* ─── Reduced Motion ────────────────────────────── */
+/* ─── Buttons ──────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--pink);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #ff3a96;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+.btn-secondary:hover {
+  background: var(--panel);
+  color: var(--text-primary);
+  border-color: var(--text-tertiary);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: transparent;
+  padding: 10px 16px;
+}
+.btn-ghost:hover {
+  color: var(--cyan);
+}
+
+/* ─── Section primitives ──────────────────────── */
+section {
+  padding: 96px 0;
+}
+
+.section-eyebrow {
+  font-family: "Zalando Sans", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--cyan);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1.15;
+  text-align: center;
+  margin: 0 auto 16px;
+  max-width: 720px;
+}
+
+.section-sub {
+  font-size: 18px;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 56px;
+}
+
+/* ─── Reduced Motion ─────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -197,177 +188,21 @@ samp {
   }
 }
 
-/* ─── Layout Utilities ──────────────────────────── */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-inline: var(--space-6);
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding-inline: var(--space-8);
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding-inline: var(--space-12);
-  }
-}
-
-/* ─── Typography Utilities ──────────────────────── */
-.gradient-text {
-  background: var(--gradient-brand);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent; /* Fallback for Safari */
-}
-
-/* ─── Button Utilities ──────────────────────────── */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  background: var(--gradient-brand);
-  color: #fff;
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  font-weight: 500;
-  line-height: 1;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  text-decoration: none;
-  transition:
-    opacity var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-  box-shadow: var(--shadow-glow-hover);
-  transform: translateY(-1px);
-}
-
-.btn-primary:focus-visible {
-  outline: 2px solid var(--color-accent-primary);
-  outline-offset: 3px;
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  background: transparent;
-  color: var(--color-accent-secondary);
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  font-weight: 500;
-  line-height: 1;
-  border: 1px solid var(--color-accent-secondary);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  text-decoration: none;
-  transition:
-    background-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.btn-secondary:hover {
-  background-color: rgba(79, 70, 229, 0.1);
-  box-shadow: var(--shadow-glow);
-  transform: translateY(-1px);
-}
-
-.btn-secondary:focus-visible {
-  outline: 2px solid var(--color-accent-primary);
-  outline-offset: 3px;
-}
-
-/* ─── Card Utility ──────────────────────────────── */
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base);
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card:hover {
-    transform: none;
-  }
-}
-
-/* ─── Background Effects ────────────────────────── */
-.bg-dot-grid {
-  background-image: radial-gradient(
-    circle,
-    rgba(144, 144, 176, 0.03) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
-}
-
-.bg-glow {
-  position: relative;
-}
-
-.bg-glow::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 60% 50% at 50% 50%,
-    rgba(247, 37, 133, 0.06) 0%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: var(--z-base);
-}
-
-/* ─── Scroll Reveal ─────────────────────────────── */
-/*
- * data-reveal is applied by JS (scroll-reveal script in BaseLayout.astro).
- * Without JS: no data-reveal attribute → sections stay visible.
- * Under prefers-reduced-motion: JS skips adding data-reveal entirely;
- * this @media rule is a safety net for static use.
- *
- * Transform-only reveal (no opacity) to ensure elements are always fully
- * opaque and pass WCAG AA contrast checks at any point in the transition.
- */
-[data-reveal] {
-  transform: translateY(24px);
-  transition: transform var(--transition-slow);
-}
-
-[data-reveal].is-revealed {
-  transform: translateY(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
-    transform: none;
-    transition: none;
-  }
-}
-
-/* ─── Focus Styles ──────────────────────────────── */
+/* ─── Focus Styles ───────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-accent-primary);
+  outline: 2px solid var(--pink);
   outline-offset: 2px;
+}
+
+/* ─── Responsive ─────────────────────────────── */
+@media (max-width: 900px) {
+  section {
+    padding: 64px 0;
+  }
+  .section-title {
+    font-size: 32px;
+  }
+  .container {
+    padding: 0 20px;
+  }
 }

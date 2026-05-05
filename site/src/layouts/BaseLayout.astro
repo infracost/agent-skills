@@ -30,17 +30,13 @@ const hasOgImage = existsSync(ogImagePath);
 
     <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/favicon.png`} />
 
-    <!-- Font preloads for above-fold weights -->
-    <link rel="preload" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/fonts/inter-latin.woff2`} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/fonts/jetbrains-mono-latin.woff2`} as="font" type="font/woff2" crossorigin />
-
-    <!-- Google Fonts (Zalando Sans family) -->
+    <!-- Google Fonts: IBM Plex Mono + Zalando Sans family -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Zalando+Sans:wght@400;500;600&family=Zalando+Sans+Expanded:wght@400;600&family=Zalando+Sans+SemiExpanded:wght@400;600&display=swap" rel="stylesheet" />
-
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" is:inline></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Zalando+Sans:ital,wght@0,300..900;1,300..700&family=Zalando+Sans+Expanded:ital,wght@0,300..900;1,300..700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -55,44 +51,5 @@ const hasOgImage = existsSync(ogImagePath);
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <slot />
-
-    <!-- Scroll-reveal: progressively-enhanced, gated by prefers-reduced-motion.
-         Without JS: sections remain visible (no data-reveal applied).
-         Under reduced-motion: skips applying data-reveal entirely.
-         Phase 11: 01-design-system.md (motion spec) -->
-    <script>
-      (function () {
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        if (!("IntersectionObserver" in window)) return;
-
-        // Sections to reveal on scroll (hero is above fold — excluded)
-        const SECTIONS = [
-          "#value",
-          "#install",
-          "#scenarios",
-          "#testimonials",
-          "#cta",
-        ];
-
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("is-revealed");
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.05, rootMargin: "0px 0px -80px 0px" }
-        );
-
-        SECTIONS.forEach((sel) => {
-          const el = document.querySelector(sel);
-          if (!el) return;
-          el.setAttribute("data-reveal", "");
-          observer.observe(el);
-        });
-      })();
-    </script>
   </body>
 </html>

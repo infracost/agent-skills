@@ -1,153 +1,38 @@
 ---
-/**
- * Footer — 3-column layout + copyright strip.
- * Unknown legal URLs (Privacy, Terms) are rendered as non-interactive <span>
- * elements to avoid dead href="#" links.
- * Spec: 03-page-structure.md
- */
-const currentYear = new Date().getFullYear();
+const year = new Date().getFullYear();
 ---
 
-<footer id="site-footer">
-  <div class="container footer-inner">
-    <!-- Left: wordmark + tagline -->
-    <div class="footer-col footer-brand">
-      <p class="footer-wordmark"><span class="gradient-text">Infracost AI</span></p>
-      <p class="footer-tagline">Cloud cost intelligence, built into how you already work.</p>
+<footer>
+  <div class="container">
+    <div class="footer-mark">
+      <img
+        src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/images/infracost-logo.svg`}
+        alt="Infracost"
+        width="115"
+        height="20"
+      />
     </div>
-
-    <!-- Center: links (using <div> to avoid creating a second <nav> landmark
-         which would cause strict-mode violations in Playwright locator("nav")) -->
-    <div class="footer-col footer-nav">
-      <ul role="list">
-        <li>
-          <a
-            href="https://github.com/infracost/agent-skills"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="footer-link"
-          >GitHub</a>
-        </li>
-        <li>
-          <a
-            href="https://infracost.io"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="footer-link"
-          >Infracost.io</a>
-        </li>
-        <li><a href="https://www.infracost.io/docs/privacy-policy/" class="footer-link">Privacy</a></li>
-        <li><a href="https://www.infracost.io/docs/terms-of-service/" class="footer-link">Terms</a></li>
-      </ul>
-    </div>
-
-    <!-- Right: built by -->
-    <div class="footer-col footer-built-by">
-      <p>
-        Built by
-        <a
-          href="https://infracost.io"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="footer-link"
-        >
-          Infracost
-        </a>
-      </p>
-    </div>
-  </div>
-
-  <!-- Bottom strip: copyright -->
-  <div class="footer-bottom">
-    <div class="container">
-      <p class="footer-copyright">
-        &copy; {currentYear} Infracost, Inc. All rights reserved.
-      </p>
-    </div>
+    Copyright © {year} Infracost Inc.
   </div>
 </footer>
 
 <style>
   footer {
-    background-color: #0e0e26;
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-12);
-  }
-
-  .footer-inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-    padding-bottom: var(--space-12);
-  }
-
-  @media (min-width: 768px) {
-    .footer-inner {
-      grid-template-columns: 1fr 1fr 1fr;
-      align-items: start;
-    }
-  }
-
-  .footer-wordmark {
-    font-size: var(--text-xl);
-    font-weight: 700;
-    margin-bottom: var(--space-2);
-  }
-
-  .footer-tagline {
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
-    line-height: 1.6;
-    max-width: 240px;
-  }
-
-  .footer-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .footer-link {
-    color: var(--color-text-muted);
-    text-decoration: none;
-    font-size: var(--text-sm);
-    transition: color var(--transition-fast);
-  }
-
-  a.footer-link:hover {
-    color: var(--color-text);
-  }
-
-  .footer-link-placeholder {
-    cursor: default;
-    /* Opacity removed — the muted text colour already reads as placeholder.
-       opacity: 0.5 dropped effective contrast to ~2.4:1 on the footer background,
-       failing WCAG AA. The aria-hidden attribute handles screen-reader exclusion. */
-  }
-
-  .footer-built-by {
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
-  }
-
-  /* Bottom strip */
-  .footer-bottom {
-    border-top: 1px solid var(--color-border);
-    padding: var(--space-4) 0;
-  }
-
-  .footer-copyright {
-    color: var(--color-text-muted);
-    font-size: var(--text-xs);
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
     text-align: center;
+    color: var(--text-tertiary);
+    font-size: 14px;
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .footer-link {
-      transition: none;
-    }
+  .footer-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    opacity: 0.75;
+  }
+  .footer-mark img {
+    height: 20px;
+    width: auto;
   }
 </style>

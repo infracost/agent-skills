@@ -1,108 +1,115 @@
 ---
-/**
- * FinalCTA — closing call-to-action section.
- * Spec: 08-final-cta.md
- *
- * Background: Option A — gradient overlay (#7b47b8 → #d629ae at 12% opacity)
- * over dark page bg. See 08-final-cta.md for alternatives.
- *
- * <!-- CTA bg: Option A — see 08-final-cta.md for alternatives -->
- *
- * Includes compact install commands (required per Gap Analysis decision #14).
- */
-import CodeBlock from "./CodeBlock.astro";
 ---
 
-<section id="cta" class="final-cta" style="scroll-margin-top: var(--nav-height)">
-  <div class="cta-bg-overlay" aria-hidden="true"></div>
-  <div class="container cta-inner">
-      <h2 class="cta-headline">Your IaC workflow,<br/>cost-aware from day one.</h2>
-    <p class="cta-subtext">
-        Install Infracost AI for Claude Code and start shipping compliant,<br/>on-budget infrastructure — in minutes.
+<section class="final-cta" id="get-started">
+  <div class="container">
+    <div class="section-eyebrow">Get started</div>
+    <h2 class="section-title">Two ways to roll out Infracost Dev</h2>
+    <p class="section-sub">
+      Install it on your own machine in five minutes, or talk to us about deploying it across your team.
     </p>
 
-    <a href="#install" class="btn-primary cta-btn">Install in 2 steps →</a>
+    <div class="final-cta-grid">
+      <div class="cta-card dev">
+        <div class="cta-card-accent"></div>
+        <div class="cta-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 7L4 12L9 17M15 7L20 12L15 17" stroke="#22d3ee" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Set it up for yourself</h3>
+        <p>
+          Install the AI agent skill or IDE extension and get cost-aware IaC in your local
+          workflow. Free to try, no credit card.
+        </p>
+        <a href="https://www.infracost.io/docs/" class="btn btn-secondary cta-btn">Read the docs</a>
+      </div>
 
-    <p class="cta-note">Free · Requires Claude Code · 2 commands to install</p>
-
-    <!-- Compact install commands -->
-    <div class="cta-commands">
-      <CodeBlock code="/plugin marketplace add infracost/agent-skills" />
-      <CodeBlock code="/plugin install infracost@infracost" />
+      <div class="cta-card admin">
+        <div class="cta-card-accent"></div>
+        <div class="cta-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 7C3 5.34 4.34 4 6 4H18C19.66 4 21 5.34 21 7V17C21 18.66 19.66 20 18 20H6C4.34 20 3 18.66 3 17V7Z" stroke="#f72585" stroke-width="1.6"/>
+            <path d="M3 8L12 13L21 8" stroke="#f72585" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Set it up for your team</h3>
+        <p>
+          Roll out custom price books, FinOps policies, tagging standards, and more across every
+          developer and repo in your org.
+        </p>
+        <a href="https://www.infracost.io/about/contact-us" class="btn btn-primary cta-btn">Contact us</a>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
   .final-cta {
+    padding: 96px 0 120px;
+  }
+  .final-cta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .cta-card {
+    background: var(--panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 48px 40px;
+    text-align: center;
+    transition: all 0.2s ease;
     position: relative;
-    padding: var(--space-24) 0;
-    background-image: linear-gradient(
-      135deg,
-      rgba(123, 71, 184, 0.12) 0%,
-      rgba(214, 41, 174, 0.12) 100%
-    );
-    border-top: 1px solid var(--color-border);
     overflow: hidden;
   }
-
-  /* Extra radial glow for visual punch */
-  .cta-bg-overlay {
+  .cta-card:hover {
+    border-color: var(--text-tertiary);
+    transform: translateY(-4px);
+  }
+  .cta-card-accent {
     position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      ellipse 80% 60% at 50% 50%,
-      rgba(214, 41, 174, 0.08) 0%,
-      transparent 70%
-    );
-    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
   }
-
-  .cta-inner {
-    position: relative;
+  .cta-card.dev .cta-card-accent {
+    background: var(--cyan);
+  }
+  .cta-card.admin .cta-card-accent {
+    background: var(--pink);
+  }
+  .cta-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--sunken);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
-    gap: var(--space-6);
+    justify-content: center;
+    margin: 0 auto 20px;
   }
-
-  .cta-headline {
-    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
-    font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: var(--color-text);
-    max-width: 20ch;
+  .cta-card h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 26px;
+    margin-bottom: 12px;
   }
-
-  .cta-subtext {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    line-height: 1.7;
-    max-width: 52ch;
-    margin-top: calc(-1 * var(--space-2));
+  .cta-card p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    line-height: 1.5;
   }
-
   .cta-btn {
-    margin-top: var(--space-2);
-  }
-
-  .cta-note {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    letter-spacing: 0.02em;
-    margin-top: calc(-1 * var(--space-2));
-  }
-
-  /* Compact commands — constrained width, centered */
-  .cta-commands {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
     width: 100%;
-    max-width: 480px;
-    margin-top: var(--space-4);
-    text-align: left;
+  }
+
+  @media (max-width: 900px) {
+    .final-cta-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
   }
 </style>

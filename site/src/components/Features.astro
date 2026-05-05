@@ -1,0 +1,571 @@
+---
+const checkIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8L7 12L13 4" stroke="#10d9a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+---
+
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-eyebrow">What you get</div>
+    <h2 class="section-title">Cost intelligence wired into every IaC change</h2>
+    <p class="section-sub">Five capabilities that turn your agent or IDE into a cost-aware engineering partner.</p>
+
+    <!-- Feature 1: 1000+ services -->
+    <div class="feature-row">
+      <div class="feature-content">
+        <div class="feature-tag">Coverage</div>
+        <h3>Supports 1,000+ services across all three clouds</h3>
+        <p>
+          AWS, Azure, and Google Cloud — every priced resource your IaC can deploy. Whether you're
+          spinning up an EC2 fleet, a Cosmos DB instance, or a GKE cluster, Infracost Dev returns
+          accurate, region-aware pricing in real time. No spreadsheets, no stale rate cards, no
+          guessing at instance families.
+        </p>
+        <ul class="feature-list">
+          <li><Fragment set:html={checkIcon} /> Region- and SKU-accurate pricing</li>
+          <li><Fragment set:html={checkIcon} /> Updated continuously from cloud provider price feeds</li>
+          <li><Fragment set:html={checkIcon} /> Terraform, CloudFormation, and AWS CDK</li>
+        </ul>
+      </div>
+      <div class="screenshot-box">
+        <div class="ss-header">
+          <div class="ss-file-icon"></div>
+          <div class="ss-filename">claude-code · cloud-comparison</div>
+        </div>
+        <div class="ss-body">
+          <div class="code-line"><span class="code-cyan">&gt;</span>&nbsp;is a 3-tier app with a SQL db cheaper on AWS or GCP?</div>
+          <div class="code-line">&nbsp;</div>
+          <div class="code-line"><span class="code-comment"># priced both stacks · us-east, on-demand, 24/7</span></div>
+          <div class="code-line">&nbsp;&nbsp;<span class="code-attr">AWS</span>&nbsp;&nbsp;ALB + ECS Fargate + RDS Postgres&nbsp;&nbsp;&nbsp;<span class="code-pink">$847/mo</span></div>
+          <div class="code-line">&nbsp;&nbsp;<span class="code-attr">GCP</span>&nbsp;&nbsp;Load Balancer + Cloud Run + Cloud SQL&nbsp;&nbsp;<span class="code-mint">$612/mo</span></div>
+          <div class="ss-callout mint">
+            <div class="ss-callout-header">
+              <svg class="ss-callout-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="#10d9a0" stroke-width="1.5"/>
+                <path d="M8 5V8.5M8 11V11.01" stroke="#10d9a0" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span class="ss-callout-label">GCP wins by <span class="ss-callout-delta-down">$235/mo</span> · 28% cheaper</span>
+            </div>
+            <div class="ss-callout-body">Cloud Run scale-to-zero saves on idle compute. Caveat: AWS becomes cheaper above ~80% utilization.</div>
+            <div class="ss-callout-actions">
+              <a>Generate GCP IaC</a>
+              <a class="dismiss">See AWS breakdown</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2: Cost tradeoffs -->
+    <div class="feature-row reverse">
+      <div class="feature-content">
+        <div class="feature-tag">Inline reasoning</div>
+        <h3>Make cost tradeoffs without looking up a calculator</h3>
+        <p>
+          Ask your agent "what if we move this workload to spot instances?" or "compare gp3 vs io2
+          for this volume" and get a real answer with real numbers — right in the chat. No
+          tab-switching, no copy-pasting into a pricing calculator, no waiting for a FinOps review.
+          Cost reasoning becomes part of how you write infrastructure.
+        </p>
+        <ul class="feature-list">
+          <li><Fragment set:html={checkIcon} /> Natural-language cost queries against your live IaC</li>
+          <li><Fragment set:html={checkIcon} /> Side-by-side resource comparisons</li>
+          <li><Fragment set:html={checkIcon} /> Reasoning that respects budgets and constraints</li>
+        </ul>
+      </div>
+      <div class="screenshot-box">
+        <div class="ss-header">
+          <div class="ss-file-icon"></div>
+          <div class="ss-filename">claude-code · cost-tradeoff</div>
+        </div>
+        <div class="ss-body">
+          <div class="code-line"><span class="code-cyan">&gt;</span>&nbsp;can we hit &lt;$400/mo on this 3-tier app?</div>
+          <div class="code-line">&nbsp;</div>
+          <div class="code-line"><span class="code-comment"># suggested change to main.tf</span></div>
+          <div class="code-line removed"><span class="line-num">−</span>&nbsp;<span class="code-attr">instance_type</span> = <span class="code-string">"m5.2xlarge"</span></div>
+          <div class="code-line added"><span class="line-num">+</span>&nbsp;<span class="code-attr">instance_type</span> = <span class="code-string">"m6g.large"</span></div>
+          <div class="ss-callout mint">
+            <div class="ss-callout-header">
+              <svg class="ss-callout-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="#10d9a0" stroke-width="1.5"/>
+                <path d="M8 5V8.5M8 11V11.01" stroke="#10d9a0" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span class="ss-callout-label">monthly: <span class="ss-callout-delta-up">$612</span> → <span class="ss-callout-delta-down">$378</span> · saves $234/mo (38%)</span>
+            </div>
+            <div class="ss-callout-body">m6g.large meets your performance budget at the target price.</div>
+            <div class="ss-callout-actions">
+              <a>Apply suggestion</a>
+              <a class="dismiss">Dismiss</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trial callout -->
+    <div class="trial-callout">
+      <div class="trial-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 8V12L14.5 14.5M21 12C21 16.97 16.97 21 12 21C7.03 21 3 16.97 3 12C3 7.03 7.03 3 12 3C16.97 3 21 7.03 21 12Z" stroke="#10d9a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="trial-body">
+        <div class="trial-title">Free 14-day trial of Infracost Cloud included</div>
+        <div class="trial-text">
+          Provide best practices, include custom prices, and enforce FinOps policies in your coding
+          agent, IDE, and CI/CD pipeline with a free trial of Infracost Cloud.
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3: Well-Architected -->
+    <div class="feature-row">
+      <div class="feature-content">
+        <div class="feature-tag">Best practices</div>
+        <h3>FinOps practices from each cloud's Well-Architected Framework</h3>
+        <p>
+          Infracost Dev applies the cost optimization pillar of AWS, Azure, and GCP's
+          Well-Architected Frameworks automatically. The same guidance your cloud architect would
+          surface in a review — applied during the write step, not after deployment.
+        </p>
+        <ul class="feature-list">
+          <li><Fragment set:html={checkIcon} /> Right-sizing and instance family recommendations</li>
+          <li><Fragment set:html={checkIcon} /> Storage tier and lifecycle policy guidance</li>
+          <li><Fragment set:html={checkIcon} /> Reserved capacity and savings plan signals</li>
+        </ul>
+      </div>
+      <div class="screenshot-box">
+        <div class="ss-header">
+          <div class="ss-file-icon"></div>
+          <div class="ss-filename">claude-code · well-architected</div>
+        </div>
+        <div class="ss-body">
+          <div class="code-line"><span class="code-cyan">&gt;</span>&nbsp;set up an S3 bucket for our access logs</div>
+          <div class="code-line">&nbsp;</div>
+          <div class="code-line"><span class="code-comment"># before I generate this, one Well-Architected nudge:</span></div>
+          <div class="code-line">&nbsp;&nbsp;access logs are write-heavy and rarely re-read</div>
+          <div class="code-line">&nbsp;&nbsp;a lifecycle rule moves them to Glacier after 90d</div>
+          <div class="ss-callout cyan">
+            <div class="ss-callout-header">
+              <svg class="ss-callout-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M8 1L14 4V8C14 11.5 11.5 13.5 8 15C4.5 13.5 2 11.5 2 8V4L8 1Z" stroke="#22d3ee" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M5.5 8L7 9.5L10.5 6" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="ss-callout-label">AWS Well-Architected · Cost Pillar</span>
+            </div>
+            <div class="ss-callout-body">
+              At your projected ingestion (~2 TB/mo), this saves <span class="ss-callout-delta-down">$312/mo</span> by year one. Want me to include the lifecycle rule?
+            </div>
+            <div class="ss-callout-actions">
+              <a>Yes, add it</a>
+              <a class="dismiss">Skip</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 4: Tagging -->
+    <div class="feature-row reverse">
+      <div class="feature-content">
+        <div class="feature-tag">AutoFix</div>
+        <h3>Fix tagging issues in seconds instead of months</h3>
+        <p>
+          Tagging compliance is the FinOps backlog that never gets done — until your agent does it.
+          Infracost Dev reads your tagging policy, scans your IaC, and proposes a single PR that
+          fixes every violation across the repo. Months of cleanup, condensed to one merge.
+        </p>
+        <ul class="feature-list">
+          <li><Fragment set:html={checkIcon} /> Detects missing, malformed, and inconsistent tags</li>
+          <li><Fragment set:html={checkIcon} /> Propagates required tags through modules</li>
+          <li><Fragment set:html={checkIcon} /> One PR per repo — review and merge</li>
+        </ul>
+      </div>
+      <div class="screenshot-box">
+        <div class="ss-header">
+          <div class="ss-file-icon"></div>
+          <div class="ss-filename">lambda.tf</div>
+        </div>
+        <div class="ss-body">
+          <div class="code-line"><span class="line-num">31</span><span class="code-keyword">resource</span>&nbsp;<span class="code-string">"aws_lambda_function"</span>&nbsp;<span class="code-string">"api"</span>&nbsp;{`{`}</div>
+          <div class="code-line"><span class="line-num">32</span>&nbsp;&nbsp;<span class="code-attr">function_name</span> = <span class="code-string">"acme-api"</span></div>
+          <div class="code-line"><span class="line-num">33</span>&nbsp;&nbsp;<span class="code-attr">runtime</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="code-string">"nodejs20.x"</span></div>
+          <div class="code-line added"><span class="line-num">+34</span>&nbsp;&nbsp;<span class="code-attr">tags</span> = {`{`}</div>
+          <div class="code-line added"><span class="line-num">+35</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-attr">Owner</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="code-string">"platform-team"</span></div>
+          <div class="code-line added"><span class="line-num">+36</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-attr">CostCenter</span> = <span class="code-string">"eng-1042"</span></div>
+          <div class="code-line added"><span class="line-num">+37</span>&nbsp;&nbsp;{`}`}</div>
+          <div class="ss-callout mint">
+            <div class="ss-callout-header">
+              <svg class="ss-callout-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M2 5L6 5L8 3L13 3C13.55 3 14 3.45 14 4V11C14 11.55 13.55 12 13 12L2 12C1.45 12 1 11.55 1 11L1 6C1 5.45 1.45 5 2 5Z" stroke="#10d9a0" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+              <span class="ss-callout-label">Infracost AutoFix · tagging policy</span>
+            </div>
+            <div class="ss-callout-stat">
+              <span class="ss-stat-num">34</span>
+              <span class="ss-stat-label">resources fixed in&nbsp;<span class="ss-stat-emph">one PR</span></span>
+            </div>
+            <div class="ss-callout-body">All resources now match your tagging policy. Ready to open a single PR for the whole repo.</div>
+            <div class="ss-callout-actions">
+              <a>Open PR</a>
+              <a class="dismiss">Review changes</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 5: Custom prices and policies -->
+    <div class="feature-row">
+      <div class="feature-content">
+        <div class="feature-tag">Enterprise</div>
+        <h3>Integrate custom prices and policies</h3>
+        <p>
+          Bring your enterprise discount program (EDP) rates, private pricing agreements, and
+          internal FinOps policies. Infracost Dev applies them everywhere — in your agent's
+          reasoning, in IDE code lenses, and in PR comments — so the cost numbers your developers
+          see match the costs your finance team actually pays.
+        </p>
+        <ul class="feature-list">
+          <li><Fragment set:html={checkIcon} /> Custom price books for negotiated rates</li>
+          <li><Fragment set:html={checkIcon} /> Org-specific tagging and cost guardrails</li>
+          <li><Fragment set:html={checkIcon} /> Centrally managed, locally enforced</li>
+        </ul>
+      </div>
+      <div class="screenshot-box">
+        <div class="ss-header">
+          <div class="ss-file-icon"></div>
+          <div class="ss-filename">claude-code · custom-policy</div>
+        </div>
+        <div class="ss-body">
+          <div class="code-line"><span class="code-cyan">&gt;</span>&nbsp;scaffold the new analytics pipeline I described</div>
+          <div class="code-line">&nbsp;</div>
+          <div class="code-line"><span class="code-comment"># priced the stack against your org's pricebook + policies</span></div>
+          <div class="code-line">&nbsp;&nbsp;<span class="code-attr">EKS + Kafka + Redshift</span>&nbsp;&nbsp;&nbsp;<span class="code-pink">$6,240/mo</span></div>
+          <div class="code-line">&nbsp;&nbsp;<span class="code-attr">guardrail</span>&nbsp;&nbsp;<span class="code-comment">monthly_max</span>&nbsp;<span class="code-cyan">$5,000</span></div>
+          <div class="ss-callout cyan">
+            <div class="ss-callout-header">
+              <svg class="ss-callout-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 3H13V13H3V3Z" stroke="#22d3ee" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M5.5 8L7 9.5L10.5 6" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="ss-callout-label">Custom guardrail · acme-platform-team</span>
+            </div>
+            <div class="ss-callout-body">
+              This stack exceeds your team's $5K/mo budget by <span class="ss-callout-delta-up">$1,240</span>.
+              I can swap Redshift for BigQuery + scale Kafka to 2 brokers — same throughput,
+              <span class="ss-callout-delta-down">$4,680/mo</span>.
+            </div>
+            <div class="ss-callout-actions">
+              <a>Apply alternative</a>
+              <a class="dismiss">Request exception</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-section {
+    padding: 96px 0;
+    background: linear-gradient(180deg, var(--canvas) 0%, var(--sunken) 100%);
+  }
+  .feature-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-bottom: 120px;
+  }
+  .feature-row:last-child {
+    margin-bottom: 0;
+  }
+  .feature-row.reverse {
+    direction: rtl;
+  }
+  .feature-row.reverse > * {
+    direction: ltr;
+  }
+
+  .feature-content h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .feature-content p {
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+  .feature-list {
+    list-style: none;
+    margin-top: 20px;
+  }
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    color: var(--text-primary);
+    font-size: 15px;
+  }
+  .feature-list li :global(svg) {
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .feature-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    border-radius: 100px;
+    color: var(--cyan);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+
+  /* Screenshot — code editor style */
+  .screenshot-box {
+    background: var(--canvas);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    font-family: var(--font-mono);
+  }
+  .ss-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ss-file-icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--violet);
+    flex-shrink: 0;
+  }
+  .ss-filename {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .ss-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .code-line {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    padding: 0 8px;
+  }
+  .code-line .line-num {
+    color: var(--text-tertiary);
+    width: 32px;
+    flex-shrink: 0;
+    text-align: right;
+    margin-right: 16px;
+    font-size: 13px;
+  }
+  .code-line.removed {
+    background: rgba(247, 37, 133, 0.18);
+    color: #ffb3d1;
+  }
+  .code-line.removed .line-num {
+    color: #ff6ba6;
+  }
+  .code-line.added {
+    background: rgba(16, 217, 160, 0.18);
+    color: #9cf3d3;
+  }
+  .code-line.added .line-num {
+    color: #5fdfae;
+  }
+  .code-keyword {
+    color: var(--text-tertiary);
+  }
+  .code-string {
+    color: var(--text-primary);
+  }
+  .code-attr {
+    color: var(--text-secondary);
+  }
+
+  .ss-callout {
+    margin-top: 16px;
+    margin-left: 56px;
+    padding: 14px 16px;
+    background: rgba(247, 37, 133, 0.08);
+    border-left: 2px solid var(--pink);
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+  .ss-callout.mint {
+    background: rgba(16, 217, 160, 0.08);
+    border-left-color: var(--mint);
+  }
+  .ss-callout.cyan {
+    background: rgba(34, 211, 238, 0.08);
+    border-left-color: var(--cyan);
+  }
+  .ss-callout-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .ss-callout-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .ss-callout-label {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .ss-callout-delta-up {
+    color: var(--pink);
+    font-weight: 500;
+  }
+  .ss-callout-delta-down {
+    color: var(--mint);
+    font-weight: 500;
+  }
+  .ss-callout-body {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    padding-left: 26px;
+  }
+  .ss-callout-actions {
+    display: flex;
+    gap: 18px;
+    padding-left: 26px;
+  }
+  .ss-callout-actions a {
+    color: var(--cyan);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .ss-callout-actions a.dismiss {
+    color: var(--text-tertiary);
+  }
+
+  .ss-callout-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 4px 0 10px 26px;
+  }
+  .ss-stat-num {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--mint);
+    letter-spacing: -0.01em;
+  }
+  .ss-stat-label {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+  }
+  .ss-stat-emph {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .code-comment {
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+  .code-violet {
+    color: #b8a5f7;
+  }
+  .code-cyan {
+    color: #7adee9;
+  }
+  .code-mint {
+    color: #5fdfae;
+  }
+  .code-pink {
+    color: #ff6ba6;
+  }
+
+  /* Trial callout */
+  .trial-callout {
+    margin: 0 0 80px;
+    padding: 36px 40px;
+    background: var(--panel);
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--mint);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .trial-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(16, 217, 160, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .trial-body {
+    flex: 1;
+    min-width: 280px;
+  }
+  .trial-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+  .trial-text {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .feature-row,
+    .feature-row.reverse {
+      grid-template-columns: 1fr;
+      direction: ltr;
+      gap: 48px;
+      margin-bottom: 80px;
+    }
+    .feature-content h3 {
+      font-size: 26px;
+    }
+  }
+</style>
