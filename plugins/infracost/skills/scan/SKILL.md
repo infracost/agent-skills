@@ -102,6 +102,14 @@ Available flags (combine as needed):
 - `--fields a,b,c` — per-view canonical column projection in the requested order. One field → bare value per line; multiple fields → TSV with a header row. Unknown field names error with the available set listed.
 - `--addresses-only` — alias for `--fields=address`
 
+Available fields per view (use with `--fields`):
+
+- `--summary`: `projects`, `projects_with_errors`, `resources`, `costed_resources`, `free_resources`, `monthly_cost`, `finops_policies`, `failing_policies` (failing FinOps), `distinct_failing_finops_resources` (count of unique addresses that fail any FinOps policy), `tagging_policies`, `failing_tagging_policies`, `distinct_failing_tagging_resources` (count of unique addresses that fail any tagging policy), `guardrails`, `triggered_guardrails`, `budgets`, `over_budget`, `critical_diagnostics`, `warning_diagnostics`.
+- `--top-savings`: `address`, `policy`, `policy_slug`, `project`, `monthly_savings`, `description`.
+- `--missing-tag` / `--invalid-tag` / `--min-cost` / `--max-cost`: `address`, `type`, `project`, `monthly_cost`, `is_free`.
+
+For "how many distinct resources fail X policy" questions, prefer `--summary --fields distinct_failing_finops_resources` / `distinct_failing_tagging_resources` over enumerating the failing-resource list and piping through `sort -u | wc -l` or awk. The summary already de-dupes addresses across multiple policies.
+
 **Format**
 
 - `--json` (global) — emit results as JSON instead of a table
@@ -135,17 +143,55 @@ The same mutual-exclusion rule applies to the drill-in flags: `--policy`, `--bud
 
 Many common queries that look like they need `--json | jq` or a `python3 -c` heredoc have dedicated `inspect` flags. Reach for these first:
 
-| Question                          | Use this                                                              | Not this                                                            |
-| --------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Total monthly cost?               | `infracost inspect --summary --fields total_monthly_cost`             | `infracost scan --json \| jq '.summary.total_monthly_cost'`         |
-| How many failing FinOps policies? | `infracost inspect --summary --fields failing_policies`               | `infracost inspect --failing --group-by policy \| sort -u \| wc -l` |
-| Total potential savings?          | `infracost inspect --total-savings`                                   | `jq '[..monthly_savings] \| add'`                                   |
-| Top N savings opportunities?      | `infracost inspect --top-savings N`                                   | `jq 'sort_by(.savings)' \| head`                                    |
-| Resources missing the `team` tag? | `infracost inspect --missing-tag team`                                | `jq 'select(.tags.team == null)'`                                   |
-| Just the addresses for a view?    | `infracost inspect --policy "X" --addresses-only`                     | `... \| awk '{print $1}'`                                           |
-| Custom column projection?         | `infracost inspect --top-savings 10 --fields address,monthly_savings` | `... \| awk '{print $1, $5}'`or`cut -f1,5`                          |
+| Question                                  | Use this                                                                  | Not this                                                            |
+| ----------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Total monthly cost?                       | `infracost inspect --summary --fields monthly_cost`                       | `infracost scan --json \| jq '.summary.total_monthly_cost'`         |
+| How many failing FinOps policies?         | `infracost inspect --summary --fields failing_policies`                   | `infracost inspect --failing --group-by policy \| sort -u \| wc -l` |
+| How many resources fail FinOps policies?  | `infracost inspect --summary --fields distinct_failing_finops_resources`  | `... --policy "X" --addresses-only \| sort -u \| wc -l` per policy  |
+| How many resources fail tagging policies? | `infracost inspect --summary --fields distinct_failing_tagging_resources` | `... --policy "X" --addresses-only \| sort -u \| wc -l` per policy  |
+| Total potential savings?                  | `infracost inspect --total-savings`                                       | `jq '[..monthly_savings] \| add'`                                   |
+| Top N savings opportunities?              | `infracost inspect --top-savings N`                                       | `jq 'sort_by(.savings)' \| head`                                    |
+| Resources missing the `team` tag?         | `infracost inspect --missing-tag team`                                    | `jq 'select(.tags.team == null)'`                                   |
+| Just the addresses for a view?            | `infracost inspect --policy "X" --addresses-only`                         | `... \| awk '{print $1}'`                                           |
+| Custom column projection?                 | `infracost inspect --top-savings 10 --fields address,monthly_savings`     | `... \| awk '{print $1, $5}'`or`cut -f1,5`                          |
 
 These flags exist because they capture intent in a structured way the CLI logs as telemetry — when you reach for a flag instead of an ad-hoc pipeline, we can see which patterns are common and decide what to support natively next.
+
+#### Worked examples
+
+```bash
+# Setup: populate the cache.
+infracost scan /path/to/repo
+
+# Counts and totals (single --summary call answers most "how many" questions):
+infracost inspect --summary                                                   # full summary block
+infracost inspect --summary --fields failing_policies                         # just the count, bare value
+infracost inspect --summary --fields failing_policies,failing_tagging_policies,resources
+infracost inspect --summary --fields distinct_failing_tagging_resources       # distinct resources failing tagging
+infracost inspect --summary --fields distinct_failing_finops_resources        # distinct resources failing finops
+infracost inspect --total-savings                                             # one number
+
+# "List the top N highest-savings opportunities" (no jq, no awk):
+infracost inspect --top-savings 5 --fields address,monthly_savings
+
+# "Which resources fail the tagging policy?":
+infracost inspect --missing-tag team                        # default: one address per line
+infracost inspect --missing-tag team --fields address,type  # with type column
+
+# "All resources failing a specific policy" (preserves full list, no truncation):
+infracost inspect --policy "Required Tags" --addresses-only
+
+# Composable filter (multiple predicates, AND'd):
+infracost inspect --filter "tag.team=missing,provider=aws" --fields address,monthly_cost
+```
+
+#### Anti-patterns
+
+Do not:
+
+- Write `jq` pipelines or `python3 -c` heredocs over the raw scan output for any of the patterns above. The dedicated flags exist for them.
+- Pipe through `cut -f` or `awk '{print $N}'` — use `--fields` to project columns directly.
+- Run `infracost scan --json` and parse the result yourself for aggregates that `--summary` already computes.
 
 ### Drill-down workflow
 

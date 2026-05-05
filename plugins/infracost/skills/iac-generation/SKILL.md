@@ -162,6 +162,14 @@ Available flags (combine as needed):
 - `--fields a,b,c` — per-view canonical column projection in the requested order. One field → bare value per line; multiple fields → TSV with a header row. Unknown field names error with the available set listed.
 - `--addresses-only` — alias for `--fields=address`
 
+Available fields per view (use with `--fields`):
+
+- `--summary`: `projects`, `projects_with_errors`, `resources`, `costed_resources`, `free_resources`, `monthly_cost`, `finops_policies`, `failing_policies` (failing FinOps), `distinct_failing_finops_resources` (count of unique addresses that fail any FinOps policy), `tagging_policies`, `failing_tagging_policies`, `distinct_failing_tagging_resources` (count of unique addresses that fail any tagging policy), `guardrails`, `triggered_guardrails`, `budgets`, `over_budget`, `critical_diagnostics`, `warning_diagnostics`.
+- `--top-savings`: `address`, `policy`, `policy_slug`, `project`, `monthly_savings`, `description`.
+- `--missing-tag` / `--invalid-tag` / `--min-cost` / `--max-cost`: `address`, `type`, `project`, `monthly_cost`, `is_free`.
+
+For "how many distinct resources fail X policy" questions, prefer `--summary --fields distinct_failing_finops_resources` / `distinct_failing_tagging_resources` over enumerating the failing-resource list and piping through `sort -u | wc -l` or awk. The summary already de-dupes addresses across multiple policies.
+
 **Format**
 
 - `--json` (global) — emit results as JSON instead of a table
