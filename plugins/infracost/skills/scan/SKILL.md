@@ -48,6 +48,10 @@ infracost scan --json /path/to/repo > /tmp/scan.json
 
 `--json` is a global flag — it works on `scan`, `price`, and `inspect` and also switches log output to JSON.
 
+For a compact, token-efficient text format suitable for piping into LLM prompts or other agentic tooling, pass `--llm` instead of `--json`. It carries the same data model in roughly 30–40% fewer tokens, with arrays of uniform records rendered as tabular rows so they grep cleanly.
+
+Both `--json` and `--llm` outputs include a top-level `summary` block with pre-computed totals (`total_monthly_cost`, `total_potential_monthly_savings`, distinct failing-resource counts per policy class, per-class policy counts, guardrails triggered, budgets over). Read the `summary` first — most "how many X are failing?" or "what's the total Y?" questions can be answered from it without walking `projects[]` yourself.
+
 ## Inspecting Results
 
 After analyzing, use the `inspect` command to explore the results instead of parsing raw JSON. Scan results are cached automatically, so `inspect` picks them up with no extra arguments — you do not need to redirect scan output or pass `--file` unless you saved a JSON file yourself.
@@ -66,22 +70,47 @@ infracost inspect --file /tmp/scan.json [flags]
 ```
 
 Available flags (combine as needed):
-- `--summary` — high-level overview of projects, costs, policy counts, guardrails, and budgets (default when no flags given)
+
+**Views**
+
+- `--summary` — high-level overview of projects, costs, policy counts, guardrails, and budgets (default when no flags given). Combine with `--fields` to project specific scalars (e.g. `--summary --fields failing_policies` emits the bare integer).
 - `--failing` — only show policies that have failing resources (finops and tagging)
 - `--group-by <key>[,<key>]` — group results by one or more dimensions. Comma-separated or repeated. See valid dimensions and combinations below.
 - `--policy <name>` — drill into a specific FinOps or tagging policy to see its failing resources, file locations, and issue counts
 - `--policy <name> --resource <address>` — full detail for one resource under a policy: issue descriptions, savings, attributes, file location with a code snippet
 - `--budget <name>` — drill into a specific budget to see its scope (tag filters), amount, current cost, and how much is remaining or over
 - `--guardrail <name>` — drill into a specific guardrail to see its status (triggered or not) and total monthly cost
-- `--top N` — show only the top N most expensive resources
+
+**Aggregations**
+
+- `--total-savings` — scalar sum of `monthly_savings` across every FinOps issue
+- `--top-savings N` — top N FinOps issues sorted by `monthly_savings` desc
+
+**Resource selection**
+
+- `--top N` — top N most expensive resources
 - `--project <name>` — filter to a specific project
-- `--provider <name>` — filter by cloud provider (`aws`, `google`, `azurerm`)
+- `--provider <name>` — `aws`, `google`, `azurerm`
 - `--costs-only` — hide free resources
-- `--json` (global) — emit the inspect result as JSON instead of a table
+- `--missing-tag <key>` — resources missing the given tag entirely
+- `--invalid-tag <key>` — resources where the given tag's value is outside the policy's allowed list
+- `--min-cost N` / `--max-cost N` — resources with monthly cost ≥ / ≤ N
+- `--filter "<expr>"` — comma-separated AND'd predicates. Supported keys: `policy=`, `project=`, `provider=`, `tag.<key>=missing`. Example: `--filter "tag.team=missing,provider=aws"`. If a predicate is rejected as too complex, file an issue describing the pattern — that's the signal we use to decide which flag to add next.
+
+**Output projection** (replaces piping through `cut` / `awk '{print $N}'`)
+
+- `--fields a,b,c` — per-view canonical column projection in the requested order. One field → bare value per line; multiple fields → TSV with a header row. Unknown field names error with the available set listed.
+- `--addresses-only` — alias for `--fields=address`
+
+**Format**
+
+- `--json` (global) — emit results as JSON instead of a table
+- `--llm` (global) — emit results in a compact, token-efficient indentation-based text format (about 30–40% fewer tokens than `--json` for the same data; preferred for LLM pipelines)
 
 #### `--group-by` dimensions
 
 Resource-context dimensions (aggregate the resource list):
+
 - `type` — Terraform resource type (e.g. `aws_instance`)
 - `provider` — `aws`, `google`, `azurerm`, or `other`
 - `project` — scan project name
@@ -89,16 +118,34 @@ Resource-context dimensions (aggregate the resource list):
 - `file` — `path:line` of the resource definition
 
 Anchor dimensions (each routes to its own collector):
+
 - `policy` — one row per failing policy / resource pairing
 - `guardrail` — one row per guardrail with status and monthly cost
 - `budget` — one row per budget with status, limit, and actual spend
 
 Compatibility rules (validated up-front):
+
 - `policy`, `guardrail`, and `budget` are pairwise mutually exclusive in a single `--group-by`.
 - `guardrail` and `budget` cannot combine with resource-context dims (`type`, `provider`, `project`, `resource`, `file`) — those rows have no resource context.
-- `policy` *can* combine with resource-context dims (e.g. `--group-by policy,type`).
+- `policy` _can_ combine with resource-context dims (e.g. `--group-by policy,type`).
 
 The same mutual-exclusion rule applies to the drill-in flags: `--policy`, `--budget`, and `--guardrail` cannot be used together — pick one.
+
+### Use native flags before reaching for jq / python / cut
+
+Many common queries that look like they need `--json | jq` or a `python3 -c` heredoc have dedicated `inspect` flags. Reach for these first:
+
+| Question                          | Use this                                                              | Not this                                                            |
+| --------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Total monthly cost?               | `infracost inspect --summary --fields total_monthly_cost`             | `infracost scan --json \| jq '.summary.total_monthly_cost'`         |
+| How many failing FinOps policies? | `infracost inspect --summary --fields failing_policies`               | `infracost inspect --failing --group-by policy \| sort -u \| wc -l` |
+| Total potential savings?          | `infracost inspect --total-savings`                                   | `jq '[..monthly_savings] \| add'`                                   |
+| Top N savings opportunities?      | `infracost inspect --top-savings N`                                   | `jq 'sort_by(.savings)' \| head`                                    |
+| Resources missing the `team` tag? | `infracost inspect --missing-tag team`                                | `jq 'select(.tags.team == null)'`                                   |
+| Just the addresses for a view?    | `infracost inspect --policy "X" --addresses-only`                     | `... \| awk '{print $1}'`                                           |
+| Custom column projection?         | `infracost inspect --top-savings 10 --fields address,monthly_savings` | `... \| awk '{print $1, $5}'`or`cut -f1,5`                          |
+
+These flags exist because they capture intent in a structured way the CLI logs as telemetry — when you reach for a flag instead of an ad-hoc pipeline, we can see which patterns are common and decide what to support natively next.
 
 ### Drill-down workflow
 
@@ -151,6 +198,7 @@ When the summary shows budgets over limit (e.g., `Budgets: 3 (1 over)`), drill i
 2. **Pick one** — `--budget "Production budget"` to see full detail: tag scope, limit, actual spend, remaining/over, custom message, matching resources from the scan, and potential savings from FinOps policies on those resources
 
 The budget detail view shows:
+
 - **Limit and actual spend** — the org-wide cloud billing spend against the budget
 - **Resources in this scan matching budget tags** — which resources in the current scan are tagged with the budget's scope, grouped by type with count and monthly cost
 - **FinOps policy violations on matching resources** — any policy violations on resources with the budget's tags, with estimated per-policy savings
@@ -172,7 +220,7 @@ Present over-budget items clearly with the dollar amount over. For example:
 >
 > The budget detail shows 3 resources matching `team=frontend` tags in this scan. There are also FinOps policy violations on some of these resources (Use GP3: up to $30/mo, Use Graviton: up to $45/mo) — addressing these could help reduce spend over time.
 >
-> *Note: Actual spend is based on cloud billing data across the organization. Savings estimates are from the IaC scan and may not directly translate to budget reductions.*
+> _Note: Actual spend is based on cloud billing data across the organization. Savings estimates are from the IaC scan and may not directly translate to budget reductions._
 
 When a budget is over, always drill in with `--budget <name>` to check for related FinOps violations — they highlight areas where spend on matching resources could potentially be reduced.
 
@@ -233,3 +281,4 @@ Always present cost analysis in an engaging, actionable way tailored to what the
 - Always clean up git worktrees created for diffing when done.
 - When you do request `--json` output for a large repo, pipe it to a file — do not attempt to read it inline from the command. By default `scan` already prints a small human-readable summary, so the file pipe is only needed when you specifically need the raw JSON.
 - Do not stash or affect the target repository's git state when running the CLI — it should be non-destructive and read-only. Create separate directories or worktrees away from the user's working directory if you need to run multiple analyses or compare branches.
+- Do not write `jq` pipelines, `python3 -c` heredocs, or shell post-processing chains (`cut`, `awk '{print $N}'`, `sort -u`) over the raw scan output for queries that have a dedicated flag (see "Use native flags before reaching for jq / python / cut" above). When the model writes a pipeline instead of using a flag, we have no signal in telemetry that this is a pattern worth supporting natively.
