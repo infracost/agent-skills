@@ -10,11 +10,23 @@ Look up cloud resource pricing without needing existing infrastructure code. Sup
 
 ## Setup
 
-**Important**: Ensure that `infracost` is available on the path. If it is not, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
+**Important**: Verify the Infracost CLI is installed and the user is authenticated before running any price lookups.
 
-```bash
-infracost login
-```
+1. Check the CLI is on the path:
+
+   ```bash
+   infracost --version
+   ```
+
+   If this fails, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
+
+2. Check the user is logged in:
+
+   ```bash
+   infracost auth whoami
+   ```
+
+   If this reports that the user is not authenticated, ask them to run `infracost auth login` in a separate terminal window and let you know once it completes. Do not attempt to run the login command yourself — it is interactive.
 
 ## Workflow
 
@@ -111,5 +123,5 @@ Present pricing in a clear, structured way:
 
 - Do not commit any generated Terraform files — they are throwaway.
 - Do not modify the CLI source code — this skill is for _using_ the CLI.
-- If `infracost scan` prompts for login, ask the user to run `infracost login` first.
+- If `infracost scan` prompts for login, ask the user to run `infracost auth login` in a separate terminal window first.
 - If the user asks about a resource type you're unsure of the Terraform resource name for, look it up rather than guessing — an incorrect resource type will produce no pricing data.
