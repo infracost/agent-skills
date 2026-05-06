@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.5...infracost-plugin-v0.1.0) (2026-05-06)
+
+
+### Features
+
+* prepare for infracost v2 release ([#37](https://github.com/infracost/agent-skills/issues/37)) ([4983b11](https://github.com/infracost/agent-skills/commit/4983b1128e3dfeaca91cc3ba81fe879ecc9ea9f7))
+
 ## [0.0.5](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.4...infracost-plugin-v0.0.5) (2026-04-21)
 
 
