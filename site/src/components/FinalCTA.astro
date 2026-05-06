@@ -36,7 +36,7 @@
         <h3>Set it up for your team</h3>
         <p>
           Roll out custom price books, FinOps policies, tagging standards, and more across every
-          developer and repo in your org.
+          developer and repo&nbsp;in&nbsp;your&nbsp;org.
         </p>
         <a href="https://www.infracost.io/about/contact-us" class="btn btn-primary cta-btn">Contact us</a>
       </div>
@@ -62,6 +62,8 @@
     transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .cta-card:hover {
     border-color: var(--text-tertiary);
@@ -104,6 +106,7 @@
   }
   .cta-btn {
     width: 100%;
+    margin-top: auto;
   }
 
   @media (max-width: 900px) {
