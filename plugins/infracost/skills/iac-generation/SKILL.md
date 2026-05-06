@@ -17,13 +17,23 @@ Other IaC languages are also indirectly supported if you convert the resource de
 
 ## Setup
 
-**Important**: Ensure that `infracost` is available on the path. If it is not, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
+**Important**: Verify the Infracost CLI is installed and the user is authenticated before generating IaC.
 
-The user must be logged in - if not and you receive auth errors, prompt them to use the following:
+1. Check the CLI is on the path:
 
-```bash
-infracost login
-```
+   ```bash
+   infracost --version
+   ```
+
+   If this fails, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
+
+2. Check the user is logged in:
+
+   ```bash
+   infracost auth whoami
+   ```
+
+   If this reports that the user is not authenticated, ask them to run `infracost auth login` in a separate terminal window and let you know once it completes. Do not attempt to run the login command yourself — it is interactive.
 
 ## Usage
 
