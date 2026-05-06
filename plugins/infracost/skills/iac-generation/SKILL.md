@@ -106,7 +106,11 @@ infracost scan /path/to/repo
 infracost scan --json /path/to/repo > /tmp/scan.json
 ```
 
-`--json` is global — it works on `scan`, `price`, and `inspect` and also switches log output to JSON.
+`--json` is a global flag — it works on `scan`, `price`, and `inspect` and also switches log output to JSON.
+
+For a compact, token-efficient text format suitable for piping into LLM prompts or other agentic tooling, pass `--llm` instead of `--json`. It carries the same data model in roughly 30–40% fewer tokens, with arrays of uniform records rendered as tabular rows so they grep cleanly.
+
+Both `--json` and `--llm` outputs include a top-level `summary` block with pre-computed totals (`total_monthly_cost`, `total_potential_monthly_savings`, distinct failing-resource counts per policy class, per-class policy counts, guardrails triggered, budgets over). Read the `summary` first — most "how many X are failing?" or "what's the total Y?" questions can be answered from it without walking `projects[]` yourself.
 
 #### Inspecting Results
 
@@ -127,18 +131,49 @@ infracost inspect --file /tmp/scan.json [flags]
 
 Available flags (combine as needed):
 
-- `--summary` — high-level overview of projects, costs, and policy counts (default when no flags given)
+**Views**
+
+- `--summary` — high-level overview of projects, costs, policy counts, guardrails, and budgets (default when no flags given). Combine with `--fields` to project specific scalars (e.g. `--summary --fields failing_policies` emits the bare integer).
 - `--failing` — only show policies that have failing resources (finops and tagging)
 - `--group-by <key>[,<key>]` — group results by one or more dimensions. Comma-separated or repeated. See valid dimensions and combinations below.
-- `--policy <name>` — drill into a specific policy to see its failing resources, file locations, and issue counts
+- `--policy <name>` — drill into a specific FinOps or tagging policy to see its failing resources, file locations, and issue counts
 - `--policy <name> --resource <address>` — full detail for one resource under a policy: issue descriptions, savings, attributes, file location with a code snippet
-- `--budget <name>` — drill into a specific budget to see its scope, limit, actual spend, and status
-- `--guardrail <name>` — drill into a specific guardrail to see its status and total monthly cost
-- `--top N` — show only the top N most expensive resources
+- `--budget <name>` — drill into a specific budget to see its scope (tag filters), amount, current cost, and how much is remaining or over
+- `--guardrail <name>` — drill into a specific guardrail to see its status (triggered or not) and total monthly cost
+
+**Aggregations**
+
+- `--total-savings` — scalar sum of `monthly_savings` across every FinOps issue
+- `--top-savings N` — top N FinOps issues sorted by `monthly_savings` desc
+
+**Resource selection**
+
+- `--top N` — top N most expensive resources
 - `--project <name>` — filter to a specific project
-- `--provider <name>` — filter by cloud provider (`aws`, `google`, `azurerm`)
+- `--provider <name>` — `aws`, `google`, `azurerm`
 - `--costs-only` — hide free resources
-- `--json` (global) — emit the inspect result as JSON instead of a table
+- `--missing-tag <key>` — resources missing the given tag entirely
+- `--invalid-tag <key>` — resources where the given tag's value is outside the policy's allowed list
+- `--min-cost N` / `--max-cost N` — resources with monthly cost ≥ / ≤ N
+- `--filter "<expr>"` — comma-separated AND'd predicates. Supported keys: `policy=`, `project=`, `provider=`, `tag.<key>=missing`. Example: `--filter "tag.team=missing,provider=aws"`. If a predicate is rejected as too complex, file an issue describing the pattern — that's the signal we use to decide which flag to add next.
+
+**Output projection** (replaces piping through `cut` / `awk '{print $N}'`)
+
+- `--fields a,b,c` — per-view canonical column projection in the requested order. One field → bare value per line; multiple fields → TSV with a header row. Unknown field names error with the available set listed.
+- `--addresses-only` — alias for `--fields=address`
+
+Available fields per view (use with `--fields`):
+
+- `--summary`: `projects`, `projects_with_errors`, `resources`, `costed_resources`, `free_resources`, `monthly_cost`, `finops_policies`, `failing_policies` (failing FinOps), `distinct_failing_finops_resources` (count of unique addresses that fail any FinOps policy), `tagging_policies`, `failing_tagging_policies`, `distinct_failing_tagging_resources` (count of unique addresses that fail any tagging policy), `guardrails`, `triggered_guardrails`, `budgets`, `over_budget`, `critical_diagnostics`, `warning_diagnostics`.
+- `--top-savings`: `address`, `policy`, `policy_slug`, `project`, `monthly_savings`, `description`.
+- `--missing-tag` / `--invalid-tag` / `--min-cost` / `--max-cost`: `address`, `type`, `project`, `monthly_cost`, `is_free`.
+
+For "how many distinct resources fail X policy" questions, prefer `--summary --fields distinct_failing_finops_resources` / `distinct_failing_tagging_resources` over enumerating the failing-resource list and piping through `sort -u | wc -l` or awk. The summary already de-dupes addresses across multiple policies.
+
+**Format**
+
+- `--json` (global) — emit results as JSON instead of a table
+- `--llm` (global) — emit results in a compact, token-efficient indentation-based text format (about 30–40% fewer tokens than `--json` for the same data; preferred for LLM pipelines)
 
 ##### `--group-by` dimensions
 
@@ -147,9 +182,10 @@ Resource-context dims (aggregate the resource list): `type`, `provider`, `projec
 Anchor dims (each routes to its own collector): `policy`, `guardrail`, `budget`.
 
 Compatibility rules (validated up-front):
+
 - `policy`, `guardrail`, and `budget` are pairwise mutually exclusive in a single `--group-by`.
 - `guardrail` and `budget` cannot combine with resource-context dims — those rows have no resource context.
-- `policy` *can* combine with resource-context dims (e.g. `--group-by policy,type`).
+- `policy` _can_ combine with resource-context dims (e.g. `--group-by policy,type`).
 
 The same mutual-exclusion rule applies to the drill-in flags `--policy`, `--budget`, and `--guardrail` — pick one.
 
@@ -169,4 +205,5 @@ Pass `--json` for the same JSON shape as `scan`. Like `scan`, results are cached
 - Do not commit the authentication token or any env var values to the repository.
 - When you do request `--json` output for a large repo, pipe it to a file — do not attempt to read it inline from the command. By default `scan` and `price` already print a small human-readable summary, so the file pipe is only needed when you specifically need the raw JSON.
 - Do not stash or affect the target repository's git state when running the CLI — it should be non-destructive and read-only. Create separate directories or worktrees away from the user's working directory if you need to run multiple analyses or compare branches.
+- Do not write `jq` pipelines, `python3 -c` heredocs, or shell post-processing chains (`cut`, `awk '{print $N}'`, `sort -u`) over the raw scan output for queries that have a dedicated flag (see "Use native flags before reaching for jq / python / cut" above). When the model writes a pipeline instead of using a flag, we have no signal in telemetry that this is a pattern worth supporting natively.
 - When making decisions based on infracost output, add comments to the affected IaC resources/attributes that explain your decision if it's not obvious from the code itself. This will help reviewers understand the reasoning and make it easier for future maintainers to understand why certain choices were made. For example, if you choose a more expensive resource type for performance reasons, add a comment explaining that tradeoff. Or if you add specific tags to comply with a policy, comment on which policy requires those tags. Be terse, and avoid mentioning Infracost unless absolutely necessary.
