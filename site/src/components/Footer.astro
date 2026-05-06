@@ -1,38 +1,207 @@
 ---
 const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const sections = [
+  {
+    title: "Documentation",
+    links: [
+      { label: "Getting started", href: "https://www.infracost.io/docs/" },
+      { label: "CI/CD integrations", href: "https://www.infracost.io/docs/integrations/cicd/" },
+      { label: "Supported resources", href: "https://www.infracost.io/docs/supported_resources/" },
+      { label: "Support", href: "https://www.infracost.io/docs/support/" },
+      { label: "FAQ", href: "https://www.infracost.io/docs/faq/" },
+    ],
+  },
+  {
+    title: "Community",
+    links: [
+      { label: "Join Slack", href: "https://www.infracost.io/community-chat/", external: true },
+      { label: "Search Slack", href: "https://community-chat.infracost.io", external: true },
+      { label: "GitHub", href: "https://github.com/infracost/infracost", external: true },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "https://www.infracost.io/about/" },
+      { label: "Blog", href: "https://www.infracost.io/blog/" },
+      { label: "Security", href: "https://www.infracost.io/security/" },
+      { label: "Contact Us", href: "https://www.infracost.io/contact/" },
+      { label: "Careers", href: "https://infracost.io/careers" },
+    ],
+  },
+];
+
+const legalLinks = [
+  { label: "Privacy policy", href: "https://www.infracost.io/docs/privacy-policy/" },
+  { label: "Terms of service", href: "https://www.infracost.io/docs/terms-of-service/" },
+  { label: "Data Processing Addendum (DPA)", href: "https://www.infracost.io/docs/data-processing-addendum/" },
+];
 ---
 
 <footer>
   <div class="container">
-    <div class="footer-mark">
-      <img
-        src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/images/infracost-logo.svg`}
-        alt="Infracost"
-        width="115"
-        height="20"
-      />
+    <div class="footer-sections">
+      {sections.map((section) => (
+        <div class={`footer-section ${section.title === "Company" ? "company" : ""}`}>
+          <h2>{section.title}</h2>
+          <ul>
+            {section.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
-    Copyright © {year} Infracost Inc.
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <a href="https://www.infracost.io" class="footer-logo" aria-label="Infracost home">
+          <img
+            src={`${base}/images/infracost-logo.svg`}
+            alt="Infracost"
+            width="115"
+            height="20"
+          />
+        </a>
+        <span class="copyright">Copyright © {year} Infracost Inc.</span>
+      </div>
+      <div class="footer-bottom-right">
+        <ul class="legal-links">
+          {legalLinks.map((link) => (
+            <li><a href={link.href}>{link.label}</a></li>
+          ))}
+        </ul>
+        <ul class="legal-links">
+          <li>
+            <a href="https://www.infracost.io/docs/privacy-policy/#do-not-sell">
+              Do not sell/share my personal information
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </footer>
 
 <style>
   footer {
     border-top: 1px solid var(--border);
-    padding: 40px 0;
-    text-align: center;
-    color: var(--text-tertiary);
+    padding: 64px 0 0;
+    color: var(--text-secondary);
     font-size: 14px;
   }
-  .footer-mark {
+
+  .footer-sections {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-section h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-section li {
+    line-height: 2;
+  }
+  .footer-section a {
+    color: var(--text-secondary);
+  }
+  .footer-section a:hover {
+    color: var(--text-primary);
+  }
+  .footer-section.company {
+    text-align: right;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding: 24px 0 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-bottom-left {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-    opacity: 0.75;
+    gap: 16px;
   }
-  .footer-mark img {
+  .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.75;
+    transition: opacity 0.15s ease;
+  }
+  .footer-logo:hover {
+    opacity: 1;
+  }
+  .footer-logo img {
     height: 20px;
     width: auto;
+    display: block;
+  }
+  .copyright {
+    color: var(--text-tertiary);
+  }
+
+  .footer-bottom-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .legal-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 24px;
+  }
+  .legal-links a {
+    color: var(--text-secondary);
+  }
+  .legal-links a:hover {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 900px) {
+    .footer-sections {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .footer-section.company {
+      text-align: left;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .footer-bottom-right {
+      align-items: flex-start;
+    }
+    .legal-links {
+      justify-content: flex-start;
+    }
   }
 </style>
