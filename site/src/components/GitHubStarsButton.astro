@@ -1,0 +1,377 @@
+---
+interface Props {
+  username: string;
+  repo: string;
+  href?: string;
+}
+
+const { username, repo, href } = Astro.props;
+const target = href ?? `https://github.com/${username}/${repo}`;
+---
+
+<a
+  class="gh-stars-btn"
+  href={target}
+  target="_blank"
+  rel="noreferrer"
+  aria-label={`Star ${username}/${repo} on GitHub`}
+  data-username={username}
+  data-repo={repo}
+>
+  <svg class="gh-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+  </svg>
+
+  <span class="gh-number" data-number aria-live="polite">
+    <span class="gh-number-sr" data-number-text>0</span>
+  </span>
+
+  <span class="gh-star-wrap">
+    <svg class="gh-star gh-star-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    </svg>
+    <span class="gh-star-fill" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    </span>
+    <span class="gh-particles" aria-hidden="true"></span>
+  </span>
+</a>
+
+<style>
+  .gh-stars-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 36px;
+    min-width: 140px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  }
+  .gh-stars-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--text-tertiary);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+  }
+  .gh-stars-btn:active {
+    transform: translateY(0);
+  }
+
+  .gh-logo {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Sliding number ─── */
+  .gh-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    min-width: 4em;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+    line-height: 18px;
+    letter-spacing: 0.01em;
+  }
+  /* Children below are created at runtime by the inline script
+     and don't carry Astro's data-astro-cid attribute, so they must
+     be addressed via :global() within the scoped parent. */
+  .gh-number :global(.gh-number-sr) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .gh-number :global(.gh-digit) {
+    display: inline-block;
+    width: 0.62em;
+    height: 18px;
+    overflow: hidden;
+    text-align: center;
+  }
+  .gh-number :global(.gh-digit-track) {
+    display: flex;
+    flex-direction: column;
+    transform: translateY(0);
+    will-change: transform;
+  }
+  .gh-number :global(.gh-digit-track > span) {
+    height: 18px;
+    line-height: 18px;
+  }
+  .gh-number :global(.gh-comma) {
+    display: inline-block;
+    padding-right: 1px;
+  }
+
+  /* ─── Star + fill ─── */
+  .gh-star-wrap {
+    position: relative;
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: #f59e0b;
+  }
+  .gh-star {
+    width: 16px;
+    height: 16px;
+    color: var(--text-tertiary);
+  }
+  .gh-star-fill {
+    position: absolute;
+    inset: 0;
+    color: #f59e0b;
+    clip-path: inset(100% 0 0 0);
+    will-change: clip-path;
+  }
+  .gh-star-fill svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ─── Particles ─── */
+  .gh-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .gh-particles :global(.gh-particle) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #facc15;
+    transform: translate(-50%, -50%);
+    animation: gh-burst 720ms ease-out forwards;
+  }
+
+  @keyframes gh-burst {
+    0% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+      opacity: 0;
+      transform:
+        translate(calc(-50% + var(--gh-dx, 0px)), calc(-50% + var(--gh-dy, 0px)))
+        scale(0.4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gh-particles :global(.gh-particle) {
+      animation: none;
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  type State = { stars: number; expiry: number };
+
+  const CACHE_TTL = 5 * 60 * 1000;
+  const ANIM_DURATION = 1200;
+
+  function getCached(key: string): number | null {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as State;
+      if (!parsed?.expiry || Date.now() > parsed.expiry) return null;
+      return typeof parsed.stars === "number" ? parsed.stars : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function setCached(key: string, stars: number) {
+    try {
+      const payload: State = { stars, expiry: Date.now() + CACHE_TTL };
+      localStorage.setItem(key, JSON.stringify(payload));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function buildDigitColumn(): HTMLElement {
+    const col = document.createElement("span");
+    col.className = "gh-digit";
+    const track = document.createElement("span");
+    track.className = "gh-digit-track";
+    for (let i = 0; i <= 9; i++) {
+      const cell = document.createElement("span");
+      cell.textContent = String(i);
+      track.appendChild(cell);
+    }
+    col.appendChild(track);
+    return col;
+  }
+
+  function formatGroups(value: number): string[] {
+    // Returns characters: digits and commas for thousands separators.
+    const str = value.toLocaleString("en-US");
+    return str.split("");
+  }
+
+  function renderSkeleton(host: HTMLElement, target: number): HTMLElement[] {
+    const container = host.querySelector<HTMLElement>("[data-number]");
+    if (!container) return [];
+    container.innerHTML = "";
+    // Re-add SR text
+    const sr = document.createElement("span");
+    sr.className = "gh-number-sr";
+    sr.dataset.numberText = "";
+    sr.textContent = "0";
+    container.appendChild(sr);
+
+    const chars = formatGroups(target);
+    const digitColumns: HTMLElement[] = [];
+    for (const ch of chars) {
+      if (ch === ",") {
+        const c = document.createElement("span");
+        c.className = "gh-comma";
+        c.textContent = ",";
+        container.appendChild(c);
+      } else {
+        const col = buildDigitColumn();
+        container.appendChild(col);
+        digitColumns.push(col);
+      }
+    }
+    return digitColumns;
+  }
+
+  function easeOutQuart(t: number): number {
+    return 1 - Math.pow(1 - t, 4);
+  }
+
+  function emitParticles(host: HTMLElement) {
+    const layer = host.querySelector<HTMLElement>(".gh-particles");
+    if (!layer) return;
+    const count = 6;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement("span");
+      p.className = "gh-particle";
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+      const distance = 16 + Math.random() * 10;
+      p.style.setProperty("--gh-dx", `${Math.cos(angle) * distance}px`);
+      p.style.setProperty("--gh-dy", `${Math.sin(angle) * distance}px`);
+      layer.appendChild(p);
+      p.addEventListener("animationend", () => p.remove(), { once: true });
+    }
+  }
+
+  function animate(host: HTMLElement, target: number) {
+    const columns = renderSkeleton(host, target);
+    const fill = host.querySelector<HTMLElement>(".gh-star-fill");
+    const sr = host.querySelector<HTMLElement>("[data-number-text]");
+    if (!fill) return;
+
+    if (sr) sr.textContent = String(target);
+
+    const targetChars = formatGroups(target).filter((c) => c !== ",");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const tracks = columns.map((col) => col.querySelector<HTMLElement>(".gh-digit-track"));
+    const targets = targetChars.map((c) => parseInt(c, 10));
+
+    if (target === 0) {
+      tracks.forEach((track, idx) => {
+        if (track) track.style.transform = `translateY(${-(targets[idx] ?? 0) * 18}px)`;
+      });
+      fill.style.clipPath = "inset(100% 0 0 0)";
+      return;
+    }
+
+    // Drive every animated property from a single rAF loop so the digit
+    // slide and the star fill stay perfectly in sync. Each track tweens
+    // continuously from translateY(0) toward translateY(-Ndigit*18px),
+    // which produces the rolling-odometer effect. We respect
+    // prefers-reduced-motion by shortening the slide to a quick step
+    // and skipping the particle burst rather than skipping the slide
+    // entirely (a counter animation isn't vestibular motion).
+    const duration = reduced ? 200 : ANIM_DURATION;
+    const start = performance.now();
+    function tick(now: number) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = easeOutQuart(t);
+      tracks.forEach((track, idx) => {
+        if (!track) return;
+        const offset = eased * (targets[idx] ?? 0) * 18;
+        track.style.transform = `translateY(${-offset}px)`;
+      });
+      fill.style.clipPath = `inset(${100 - eased * 100}% 0 0 0)`;
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else if (!reduced) {
+        emitParticles(host);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  async function fetchStars(username: string, repo: string): Promise<number | null> {
+    const cacheKey = `gh-stars:${username}/${repo}`;
+    const cached = getCached(cacheKey);
+    if (cached != null) return cached;
+    try {
+      const resp = await fetch(`https://api.github.com/repos/${username}/${repo}`);
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      const stars = typeof data?.stargazers_count === "number" ? data.stargazers_count : null;
+      if (stars != null) setCached(cacheKey, stars);
+      return stars;
+    } catch {
+      return null;
+    }
+  }
+
+  function init(host: HTMLElement) {
+    const username = host.dataset.username;
+    const repo = host.dataset.repo;
+    if (!username || !repo) return;
+
+    const observer = new IntersectionObserver(async (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.disconnect();
+        const stars = await fetchStars(username, repo);
+        if (stars != null) animate(host, stars);
+      }
+    }, { threshold: 0.1 });
+
+    observer.observe(host);
+  }
+
+  document.querySelectorAll<HTMLElement>(".gh-stars-btn").forEach(init);
+</script>
