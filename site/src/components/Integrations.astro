@@ -19,6 +19,12 @@ const editors = [
   { name: "Eclipse Theia", icon: "eclipse-theia.svg" },
   { name: "Neovim", icon: "neovim.png" },
 ];
+
+const iacFrameworks = [
+  { name: "Terraform", icon: "terraform.png" },
+  { name: "CloudFormation", icon: "cloudformation.png" },
+  { name: "CDK", icon: "cdk.svg" },
+];
 ---
 
 <section class="logos-section" id="integrations">
@@ -41,6 +47,18 @@ const editors = [
       <div class="logos-group-title">IDEs &amp; Editors</div>
       <div class="logos-grid">
         {editors.map((t) => (
+          <div class="logo-tile">
+            <img src={`${base}/images/icons/${t.icon}`} alt="" width="22" height="22" loading="lazy" />
+            {t.name}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="logos-group">
+      <div class="logos-group-title">Infrastructure as Code Frameworks</div>
+      <div class="logos-grid">
+        {iacFrameworks.map((t) => (
           <div class="logo-tile">
             <img src={`${base}/images/icons/${t.icon}`} alt="" width="22" height="22" loading="lazy" />
             {t.name}
