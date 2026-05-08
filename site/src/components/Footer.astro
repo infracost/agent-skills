@@ -2,7 +2,10 @@
 const year = new Date().getFullYear();
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const sections = [
+type FooterLink = { label: string; href: string; external?: boolean };
+type FooterSection = { title: string; links: FooterLink[] };
+
+const sections: FooterSection[] = [
   {
     title: "Documentation",
     links: [
