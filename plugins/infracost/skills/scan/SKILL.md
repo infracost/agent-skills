@@ -11,6 +11,8 @@ Supported IaC types: Terraform, CloudFormation, Terragrunt. CDK is not yet direc
 
 This plugin ships an MCP server (`infracost mcp`) that's started automatically when the plugin loads. Every operation in this skill is an MCP tool call — there are no shell commands to run, no JSON files to parse, no flags to remember.
 
+**Important**: Verify the Infracost CLI is installed, the user is authenticated, and an organization is selected before running any scans.
+
 ## Workflow
 
 ### 1. Run a scan

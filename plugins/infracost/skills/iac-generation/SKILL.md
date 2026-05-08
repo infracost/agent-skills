@@ -19,6 +19,8 @@ Other IaC languages are also indirectly supported if you convert the resource de
 
 ## MCP tools you'll use
 
+**Important**: Verify the Infracost CLI is installed, the user is authenticated, and an organization is selected before generating IaC.
+
 Five tools matter for this workflow:
 
 1. `policies` — list all FinOps + tagging policies for the user's organization, so we can write compliant code from the start.
