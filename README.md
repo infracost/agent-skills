@@ -66,10 +66,16 @@ Required tags: team=payments, env=prod, cost-center=platform. Budget: $500/month
 
 ## How It Works
 
-The Infracost skills connect to **Infracost Cloud** to retrieve real pricing data and your
-organization's policies. They read your local IaC files and combine that with live
-pricing and policy data to answer questions, surface violations, suggest fixes, and
-generate compliant new resources.
+The plugin ships a Model Context Protocol (MCP) server (`infracost mcp`) that's started
+automatically when the plugin loads. The skills above tell your agent which MCP tools to
+call for each user intent — `scan`, `price`, `policies`, `budgets`, `guardrails`, and the
+`inspect_*` family for drilling into scan results. Tool outputs are structured (typed
+JSON the agent reads directly), so there are no CLI flags to remember, no shell pipelines
+to write, and no JSON files to parse.
+
+Under the hood the MCP server connects to **Infracost Cloud** for live pricing data and
+your organization's policies, and reads your local IaC files. Auth + active organization
+are resolved once at MCP startup and reused across every tool call in the session.
 
 ## Docs
 
