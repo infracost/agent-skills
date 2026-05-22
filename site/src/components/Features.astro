@@ -80,8 +80,8 @@ const checkIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" a
           <div class="code-line"><span class="code-cyan">&gt;</span>&nbsp;can we hit &lt;$400/mo on this 3-tier app?</div>
           <div class="code-line">&nbsp;</div>
           <div class="code-line"><span class="code-comment"># suggested change to main.tf</span></div>
-          <div class="code-line removed"><span class="line-num">−</span>&nbsp;<span class="code-attr">instance_type</span> = <span class="code-string">"m5.2xlarge"</span></div>
-          <div class="code-line added"><span class="line-num">+</span>&nbsp;<span class="code-attr">instance_type</span> = <span class="code-string">"m6g.large"</span></div>
+          <div class="code-line removed"><span class="line-num">−</span>&nbsp;<span class="code-attr">instance_type</span>&nbsp;=&nbsp;<span class="code-string">"m5.2xlarge"</span></div>
+          <div class="code-line added"><span class="line-num">+</span>&nbsp;<span class="code-attr">instance_type</span>&nbsp;=&nbsp;<span class="code-string">"m6g.large"</span></div>
           <div class="ss-callout mint">
             <div class="ss-callout-header">
               <svg class="ss-callout-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -188,9 +188,9 @@ const checkIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" a
           <div class="code-line"><span class="line-num">31</span><span class="code-keyword">resource</span>&nbsp;<span class="code-string">"aws_lambda_function"</span>&nbsp;<span class="code-string">"api"</span>&nbsp;{`{`}</div>
           <div class="code-line"><span class="line-num">32</span>&nbsp;&nbsp;<span class="code-attr">function_name</span> = <span class="code-string">"acme-api"</span></div>
           <div class="code-line"><span class="line-num">33</span>&nbsp;&nbsp;<span class="code-attr">runtime</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="code-string">"nodejs20.x"</span></div>
-          <div class="code-line added"><span class="line-num">+34</span>&nbsp;&nbsp;<span class="code-attr">tags</span> = {`{`}</div>
-          <div class="code-line added"><span class="line-num">+35</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-attr">Owner</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="code-string">"platform-team"</span></div>
-          <div class="code-line added"><span class="line-num">+36</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-attr">CostCenter</span> = <span class="code-string">"eng-1042"</span></div>
+          <div class="code-line added"><span class="line-num">+34</span>&nbsp;&nbsp;<span class="code-attr">tags</span>&nbsp;= {`{`}</div>
+          <div class="code-line added"><span class="line-num">+35</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-attr">Owner</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;<span class="code-string">"platform-team"</span></div>
+          <div class="code-line added"><span class="line-num">+36</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-attr">CostCenter</span>&nbsp;=&nbsp;<span class="code-string">"eng-1042"</span></div>
           <div class="code-line added"><span class="line-num">+37</span>&nbsp;&nbsp;{`}`}</div>
           <div class="ss-callout mint">
             <div class="ss-callout-header">
