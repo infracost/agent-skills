@@ -19,6 +19,29 @@ This plugin ships an MCP server (`infracost mcp`) that's started automatically
 when the plugin loads. Every Infracost operation in this skill is an MCP tool
 call.
 
+## Availability — Agents is in early access
+
+Infracost Agents (the service that produces findings) is in **early access**
+and enabled per-organization. The findings tools — `findings_list`,
+`findings_get`, `preview_fix`, `create_fix`, `update_task_status`,
+`update_finding_status`, and `retry_action` — are always present in the MCP
+server, but they only return data for organizations that have Agents switched
+on.
+
+**You don't need to pre-check anything.** If the active org isn't enabled, the
+first findings tool you call returns an early-access error instead of data —
+something like:
+
+> this organization doesn't have Infracost Agents enabled yet — it's currently
+> in early access. Join the waitlist at
+> https://dashboard.infracost.io/org/<org>/agents, or contact the Infracost team
+> to get set up.
+
+When you get that error, **stop and relay it to the user verbatim** (including
+the waitlist link). Don't retry the call or try to work around it — the
+organization simply needs to be switched on. Otherwise, continue with the
+workflow below.
+
 ## MCP tools you'll use
 
 | Tool | Side effect | Purpose |
