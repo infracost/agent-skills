@@ -1,43 +1,33 @@
 ---
 name: infracost-price-lookup
-description: Look up cloud resource pricing by generating sample Terraform and running Infracost against it. Use this skill when the user asks "how much does X cost?" or wants to compare pricing between resource configurations, instance types, regions, or cloud providers. This does not require the user to have any existing infrastructure code.
-allowed-tools: Bash(infracost*)
+description: Look up cloud resource pricing by generating sample Terraform and pricing it via the Infracost MCP server. Use this skill when the user asks "how much does X cost?" or wants to compare pricing between resource configurations, instance types, regions, or cloud providers. This does not require the user to have any existing infrastructure code.
 ---
 
 # Price Lookup
 
 Look up cloud resource pricing without needing existing infrastructure code. Supports any resource type that Terraform and Infracost support across AWS, GCP, and Azure.
 
-## Setup
-
-**Important**: Verify the Infracost CLI is installed and the user is authenticated before running any price lookups.
-
-1. Check the CLI is on the path:
-
-   ```bash
-   infracost --version
-   ```
-
-   If this fails, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
-
-2. Check the user is logged in:
-
-   ```bash
-   infracost auth whoami
-   ```
-
-   If this reports that the user is not authenticated, ask them to run `infracost auth login` in a separate terminal window and let you know once it completes. Do not attempt to run the login command yourself — it is interactive.
+This plugin ships an MCP server that exposes a `price` tool. The agent passes a Terraform snippet as a string and the tool returns a per-resource breakdown plus a headline summary — no temp files, no stdin pipes, no JSON parsing.
 
 ## Workflow
 
-### 1. Run Infracost
+### 1. Write minimal Terraform
 
-Pipe the Terraform configuration directly into `infracost price`. This command reads Terraform from stdin, analyzes it, and prints a human-readable cost summary to stdout, followed by suggested `inspect` commands for drilling deeper. Temporary files are created and cleaned up automatically.
+Synthesize a small Terraform snippet for the resource(s) the user is asking about. Rules:
 
-Pass the global `--json` flag if you need the raw JSON output instead — for example, when piping into another tool. The same `--json` flag also switches log output to JSON and works on `scan` and `inspect`.
+- **Minimal config only** — no backends, no variable files, no outputs, no data sources. Just a provider block and the resource(s).
+- **Include attributes that affect pricing** — instance type, storage size/type, engine version, throughput, IOPS, etc. These are the knobs that change the price, so they must be present.
+- **Use the user's requested configuration** — if they ask for "m5.xlarge with 100GB gp3", write exactly that. If they ask generically ("how much does an RDS instance cost?"), pick reasonable defaults and clearly state what you chose.
+- **Set the region** — use the region the user asks for, or default to `us-east-1` and mention it.
+- **Multiple resources are fine** — if the user asks about several resource types, put them all in the same snippet.
+- **Use realistic names** — name resources descriptively (e.g. `aws_instance.web_server`, not `aws_instance.example`) so the output is easier to read.
 
-```bash
-infracost price << 'EOF'
+### 2. Call the `price` MCP tool
+
+Pass the Terraform as the `iac` field:
+
+```
+price(iac="""
 provider "aws" {
   region = "us-east-1"
 }
@@ -51,56 +41,50 @@ resource "aws_instance" "example" {
     volume_type = "gp3"
   }
 }
-EOF
+""")
 ```
 
-Rules for writing the Terraform:
+For non-USD currencies pass the `currency` field (ISO 4217 code — `EUR`, `GBP`, `JPY`, `CAD`, `AUD`, …):
 
-- **Minimal config only** — no backends, no variable files, no outputs, no data sources. Just a provider block and the resource(s).
-- **Include attributes that affect pricing** — instance type, storage size/type, engine version, throughput, IOPS, etc. These are the knobs that change the price, so they must be present.
-- **Use the user's requested configuration** — if they ask for "m5.xlarge with 100GB gp3", write exactly that. If they ask generically ("how much does an RDS instance cost?"), pick reasonable defaults and clearly state what you chose.
-- **Set the region** — use the region the user asks for, or default to `us-east-1` and mention it.
-- **Multiple resources are fine** — if the user asks about several resource types, put them all in the same file.
-- **Use realistic names** — name resources descriptively (e.g., `aws_instance.web_server` not `aws_instance.example`) so the output is easier to read.
-
-**Currency**: If the user requests pricing in a non-USD currency, set the `INFRACOST_CLI_CURRENCY` environment variable when running the command. For example:
-
-```bash
-INFRACOST_CLI_CURRENCY=EUR infracost price << 'EOF'
-...
-EOF
+```
+price(iac="...", currency="EUR")
 ```
 
-Use standard [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency codes (e.g., `EUR`, `GBP`, `JPY`, `CAD`, `AUD`). If the user doesn't specify a currency, default to USD.
+If the user doesn't specify a currency, the tool uses the org-configured default (typically `USD`).
 
-### 2. Inspect the results
+### 3. Read the result
 
-`price` already prints a summary, but you can drill in further with `inspect`. Results are cached, so you don't need to redirect output or pass `--file`.
+`price` returns:
 
-```bash
-# Summary overview (same shape as the default price output)
-infracost inspect --summary
+- `currency` — the ISO code in use.
+- `summary` — headline counts (resource counts, monthly cost, etc.) — the same shape `scan` returns.
+- `resources[]` — one row per top-level resource you sent in, with:
+  - `name`, `type`, `is_supported`, `is_free`
+  - `total_monthly_cost` — pre-summed across cost components AND any nested subresources (e.g. an EKS NodeGroup's LaunchTemplate + EBS volumes are folded into the parent's total).
+  - `cost_components[]` — per-component breakdown (vCPU, storage, IOPS, …) with unit, price, quantity, and the monthly costs.
+  - `tags`, `supports_tags`, `supports_default_tags`, `metadata` (filename + line in the synthesized Terraform).
 
-# Detailed cost breakdown, hiding free resources
-infracost inspect --costs-only
+Unlike `scan`, `price` always includes the per-resource list — the agent has just shipped the IaC, so the cost of returning it is fixed and small.
 
-# Top expensive resources
-infracost inspect --top 5
+### 4. Optional: drill in with inspect tools
 
-# Every resource sorted by cost (no row limit)
-infracost inspect --group-by resource
-```
+The price result is cached in the MCP session just like a scan result. If you want to project the data differently (e.g. group by type, top N by cost), call any of the `inspect_*` tools — they all read the latest cached result by default:
+
+- `inspect_summary` — same summary block but rebuilt through the inspect filter pipeline (lets you project to specific fields or scope by project / provider).
+- `inspect_top_savings(n=5)` — top N FinOps savings opportunities on the priced resources (if any).
+- `inspect_resources(group_by=["type"])` — aggregate the per-resource list by type, provider, etc.
+
+These rarely add value over reading `resources[]` directly when the snippet is small, but they're handy for "what would the top 5 savings be on this?" follow-ups.
 
 ## Presenting Results
 
-Present pricing in a clear, structured way:
+Lead with the monthly cost — that's what the user came for.
 
-- **Lead with the monthly cost** — this is what the user cares about most
-- **Break down cost components** — show what makes up the total (compute, storage, data transfer, etc.)
-- **Call out usage-based costs** — note that some costs depend on actual usage (requests, data transferred, etc.) and the estimates use typical defaults. Be explicit about what assumptions were made.
-- **Compare when asked** — if the user wants to compare configurations (e.g., m5.xlarge vs m5.2xlarge), create both resources and present a side-by-side table
-- **Include FinOps recommendations** — if Infracost flags any policies (e.g., "use GP3 instead of GP2", "consider Graviton"), highlight those with potential savings
-- **Mention the region** — pricing varies by region, so always state which region was used
+- **Total monthly cost first**, then the per-component breakdown.
+- **Call out usage-based costs.** Some line items (data transfer, requests, etc.) depend on actual usage and use typical-default assumptions. Be explicit about what the estimate assumed.
+- **State the region.** Pricing varies by region — always say which one you used.
+- **Compare side-by-side when asked.** For "m5.xlarge vs m5.2xlarge" questions, call `price` once with both resources in the IaC and present a comparison table.
+- **Surface FinOps recommendations.** If the result shows applicable FinOps policies (e.g., "use GP3 instead of GP2", "consider Graviton"), highlight them with the potential savings.
 
 ### Example presentation
 
@@ -121,7 +105,7 @@ Present pricing in a clear, structured way:
 
 ## Important Guidelines
 
-- Do not commit any generated Terraform files — they are throwaway.
-- Do not modify the CLI source code — this skill is for _using_ the CLI.
-- If `infracost scan` prompts for login, ask the user to run `infracost auth login` in a separate terminal window first.
-- If the user asks about a resource type you're unsure of the Terraform resource name for, look it up rather than guessing — an incorrect resource type will produce no pricing data.
+- Do not commit any generated Terraform — the snippet you build for the `price` tool is throwaway, never written to the user's workspace.
+- Do not modify the CLI source code unless the user explicitly asks for it — this skill is for _using_ the MCP server.
+- If `price` returns an error like "no organizations selected" or "not authenticated", relay the actionable message back to the user — don't retry blindly. The MCP server checks auth + org at startup; a runtime error means the user needs to act (`infracost auth login`, `infracost org switch <slug>`).
+- If you're unsure of the Terraform resource name for what the user is asking about, look it up rather than guessing — an incorrect resource type will produce no pricing data.
