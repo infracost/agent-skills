@@ -10,13 +10,13 @@ CMD=$(command -v infracost)
 VERSION=$(infracost --version)
 echo "infracost $VERSION found at $CMD"
 
-# TODO(FIX-156): bump the minimum version once the MCP-enabled CLI is
-# released. The plugin's .mcp.json runs `infracost mcp`, which requires
-# the FIX-154 chain (currently in flight). The version this stamps to
-# isn't released yet — pin it here when it lands.
-MAJOR=$(echo "$VERSION" | grep -oE '[0-9]+' | head -1)
-if [ -z "$MAJOR" ] || [ "$MAJOR" -lt 2 ]; then
-  echo "Error: infracost v2.0.0 or newer is required (found $VERSION)." >&2
+# The plugin's .mcp.json runs `infracost mcp`, which first shipped in
+# infracost v2.2.0 (FIX-154). Require that as the floor.
+SEMVER=$(echo "$VERSION" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+MAJOR=$(echo "$SEMVER" | cut -d. -f1)
+MINOR=$(echo "$SEMVER" | cut -d. -f2)
+if [ -z "$SEMVER" ] || [ "$MAJOR" -lt 2 ] || { [ "$MAJOR" -eq 2 ] && [ "$MINOR" -lt 2 ]; }; then
+  echo "Error: infracost v2.2.0 or newer is required (found $VERSION)." >&2
   echo "Upgrade by following the instructions at https://www.infracost.io/docs/features/get_started/" >&2
   exit 1
 fi
