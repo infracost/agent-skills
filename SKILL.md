@@ -10,3 +10,4 @@ This skill provides access to all Infracost capabilities. Depending on your task
 - **IaC Generation**: [plugins/infracost/skills/iac-generation/SKILL.md](plugins/infracost/skills/iac-generation/SKILL.md)
 - **Scan**: [plugins/infracost/skills/scan/SKILL.md](plugins/infracost/skills/scan/SKILL.md)
 - **Price Lookup**: [plugins/infracost/skills/price-lookup/SKILL.md](plugins/infracost/skills/price-lookup/SKILL.md)
+- **Fix Findings**: [plugins/infracost/skills/fix-findings/SKILL.md](plugins/infracost/skills/fix-findings/SKILL.md)

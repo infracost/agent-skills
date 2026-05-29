@@ -18,6 +18,7 @@ as code.
 | [iac-generation](./plugins/infracost/skills/iac-generation/SKILL.md) | Ensure cost optimization and FinOps/tagging policy compliance when writing infrastructure as code               |
 | [scan](./plugins/infracost/skills/scan/SKILL.md)                     | Analyze IaC projects to estimate cloud costs, identify savings opportunities, and flag FinOps policy violations |
 | [price-lookup](./plugins/infracost/skills/price-lookup/SKILL.md)     | Look up cloud resource pricing by generating sample Terraform and running Infracost — no existing IaC required  |
+| [fix-findings](./plugins/infracost/skills/fix-findings/SKILL.md)     | Apply Agents FinOps findings — fix locally when the task carries the code, or have Agents draft a PR / ticket     |
 
 Works with **Terraform, Terragrunt, and CloudFormation**. Supports **AWS, GCP, and Azure**.
 
@@ -62,6 +63,13 @@ way to get under budget?
 ```
 Write Terraform for an RDS PostgreSQL instance for our payments service in us-east-1.
 Required tags: team=payments, env=prod, cost-center=platform. Budget: $500/month.
+```
+
+**Fix the FinOps findings on this repo:**
+
+```
+Walk me through my open Infracost findings and help me fix them. Open PRs via
+Agents where it makes sense; do the simple ones locally.
 ```
 
 ## How It Works
