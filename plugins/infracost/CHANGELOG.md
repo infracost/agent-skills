@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.1.0...infracost-plugin-v0.1.1) (2026-05-29)
+
+
+### Features
+
+* add fix-findings skill (FIX-161) ([#52](https://github.com/infracost/agent-skills/issues/52)) ([f5deb8a](https://github.com/infracost/agent-skills/commit/f5deb8a0e32839891a605118c18c1663786f6c82))
+* switch skills to the Infracost MCP server (FIX-156) ([#51](https://github.com/infracost/agent-skills/issues/51)) ([17a79a6](https://github.com/infracost/agent-skills/commit/17a79a6b33d12d7a217ed6ec95e5f579191f103a))
+
 ## [0.1.0](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.0.5...infracost-plugin-v0.1.0) (2026-05-06)
 
 
