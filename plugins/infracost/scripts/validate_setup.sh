@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. "$(dirname "$0")/resolve-path.sh"
+
 if ! command -v infracost &> /dev/null; then
   echo "Error: infracost CLI is not installed." >&2
   echo "Install it by following the instructions at https://www.infracost.io/docs/features/get_started/" >&2

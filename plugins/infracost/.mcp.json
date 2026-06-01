@@ -1,8 +1,7 @@
 {
   "mcpServers": {
     "infracost": {
-      "command": "infracost",
-      "args": ["mcp"]
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/mcp.sh"
     }
   }
 }
