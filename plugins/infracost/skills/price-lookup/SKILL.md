@@ -9,6 +9,36 @@ Look up cloud resource pricing without needing existing infrastructure code. Sup
 
 This plugin ships an MCP server that exposes a `price` tool. The agent passes a Terraform snippet as a string and the tool returns a per-resource breakdown plus a headline summary — no temp files, no stdin pipes, no JSON parsing.
 
+## Setup
+
+**Important**: Verify the Infracost CLI is installed, the user is authenticated, and an organization is selected before running any price lookups.
+
+1. Check the CLI is on the path:
+
+   ```bash
+   infracost --version
+   ```
+
+   If this fails, inform the user that they need to install the Infracost CLI by following the instructions at https://www.infracost.io/docs/features/get_started/.
+
+2. Check the user is logged in and has an organization selected:
+
+   ```bash
+   infracost auth whoami
+   ```
+
+   If this reports that the user is not authenticated, ask them to run `infracost auth login` in a separate terminal window and let you know once it completes. Do not attempt to run the login command yourself — it is interactive.
+
+   The output also lists the user's organizations. If there is more than one and none is marked active (a `✔` next to its slug), `whoami` prints a "No organization selected" warning at the bottom — when you see that warning, the CLI cannot pick an org for you in a non-interactive session and downstream commands will fail with `no organization selected`. Ask the user which organization they want to use for this session, then apply their answer using one of these (in order of preference for agentic use):
+
+   - Pass `--org <slug>` on every subsequent `infracost` command — scoped to the current call only.
+   - Or set `export INFRACOST_CLI_ORG=<slug>` for the rest of the shell session.
+   - Or run `infracost org switch <slug>` once to save the choice globally (only if the user explicitly wants to change their default), or `infracost org switch <slug> --repo` to pin it to the current repository.
+
+   Single-org users never need this step — the CLI auto-selects.
+
+   If a later command fails with `no organization selected`, the error message lists the available slugs inline; loop back and apply the user's choice via one of the methods above before retrying.
+
 ## Workflow
 
 ### 1. Write minimal Terraform
