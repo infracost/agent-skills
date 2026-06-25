@@ -74,16 +74,28 @@ Agents where it makes sense; do the simple ones locally.
 
 ## How It Works
 
-The plugin ships a Model Context Protocol (MCP) server (`infracost mcp`) that's started
-automatically when the plugin loads. The skills above tell your agent which MCP tools to
-call for each user intent — `scan`, `price`, `policies`, `budgets`, `guardrails`, and the
-`inspect_*` family for drilling into scan results. Tool outputs are structured (typed
-JSON the agent reads directly), so there are no CLI flags to remember, no shell pipelines
-to write, and no JSON files to parse.
+The skills are single-sourced and written in terms of **capabilities** (`scan`, `price`,
+`policies`, `budgets`, `guardrails`, and the `inspect`/`inspect_*` drill-ins). Each capability
+has two thin **bindings** — the same Infracost engine, invoked two ways — and each agent uses
+whichever fits how it works. The capability ↔ binding map is in
+[`plugins/infracost/BINDINGS.md`](./plugins/infracost/BINDINGS.md).
 
-Under the hood the MCP server connects to **Infracost Cloud** for live pricing data and
-your organization's policies, and reads your local IaC files. Auth + active organization
-are resolved once at MCP startup and reused across every tool call in the session.
+| Binding | Used by | How it's invoked |
+| ------- | ------- | ---------------- |
+| **MCP** | Claude Code, Cursor, other MCP clients | The plugin ships an MCP server (`infracost mcp`) that starts automatically; the agent calls typed tools and reads structured JSON — no flags, no shell pipelines, no JSON files to parse. |
+| **CLI** | GitLab Duo, Gemini CLI, other shell-running agents | The agent runs `infracost …` commands directly. Commands are kept metacharacter-free (using the CLI's own `--llm` / `--fields` / `--filter` / `--group-by` flags) so Duo can offer pattern-based approval. See [AGENTS.md](./AGENTS.md) and [chat-rules.md](./chat-rules.md). |
+
+The skill bodies hold one rule: *if the Infracost MCP server is available, use its tools; otherwise
+run the equivalent CLI command from the matrix.* So the workflow, FinOps concepts, and presentation
+guidance stay in one place — only the binding differs.
+
+> **Note:** `fix-findings` (Infracost Agents) is MCP / Claude-Code-only and is not part of the CLI
+> binding.
+
+Under the hood both bindings connect to **Infracost Cloud** for live pricing data and your
+organization's policies, and read your local IaC files. With MCP, auth + active organization are
+resolved once at startup; with the CLI, they come from your existing `infracost` login (or
+`INFRACOST_API_KEY` + `INFRACOST_CLI_ORG` on headless runners).
 
 ## Docs
 
