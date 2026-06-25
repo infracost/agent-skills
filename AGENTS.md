@@ -29,6 +29,9 @@ commands.
 
 ## Operating rules (always apply)
 
+These are mirrored as always-on guardrails in
+[`.gitlab/duo/chat-rules.md`](.gitlab/duo/chat-rules.md) for GitLab Duo.
+
 1. **Prefer Infracost's own flags over shell plumbing.** Keep commands free of shell metacharacters
    (`;`, `&&`, `|`, `$`, `>` redirects). Use `--llm`, `--fields`, `--filter`, `--group-by`,
    `--top-savings`, etc. instead of piping through `jq` / `awk` / `cut` or redirecting to files. This

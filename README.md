@@ -83,7 +83,7 @@ whichever fits how it works. The capability ↔ binding map is in
 | Binding | Used by | How it's invoked |
 | ------- | ------- | ---------------- |
 | **MCP** | Claude Code, Cursor, other MCP clients | The plugin ships an MCP server (`infracost mcp`) that starts automatically; the agent calls typed tools and reads structured JSON — no flags, no shell pipelines, no JSON files to parse. |
-| **CLI** | GitLab Duo, Gemini CLI, other shell-running agents | The agent runs `infracost …` commands directly. Commands are kept metacharacter-free (using the CLI's own `--llm` / `--fields` / `--filter` / `--group-by` flags) so Duo can offer pattern-based approval. See [AGENTS.md](./AGENTS.md) and [chat-rules.md](./chat-rules.md). |
+| **CLI** | GitLab Duo, Gemini CLI, other shell-running agents | The agent runs `infracost …` commands directly. Commands are kept metacharacter-free (using the CLI's own `--llm` / `--fields` / `--filter` / `--group-by` flags) so Duo can offer pattern-based approval. See [AGENTS.md](./AGENTS.md) and [.gitlab/duo/chat-rules.md](./.gitlab/duo/chat-rules.md). |
 
 The skill bodies hold one rule: *if the Infracost MCP server is available, use its tools; otherwise
 run the equivalent CLI command from the matrix.* So the workflow, FinOps concepts, and presentation

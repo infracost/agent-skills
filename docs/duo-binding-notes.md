@@ -207,10 +207,38 @@ Options that were considered:
    documented metacharacter exception; everything else stays pattern-approvable.
 5. **fix-findings — DECIDED:** MCP-only. Early-access prototype, not documented (§5).
 
-## 8. Open questions for the owner (don't guess)
+## 8. Duo file layout + support floor (RESEARCHED 2026-06-25)
 
-1. **Exact Duo file layout + `SKILL.md`/`AGENTS.md` support floor** on the GitLab versions Infracost
-   users actually run. Spec says ~GitLab 19.0–19.1, experimental — **unverified from this repo or the
-   CLI**; needs confirmation from Duo docs / real user versions. (`AGENTS.md` carries capability
-   logic + binding rules; `chat-rules.md` is optional always-on guardrails — add only if rules need
-   to be enforced separately from the skill body.)
+The spec's "~GitLab 19.0–19.1, experimental" framing was **too conservative** — these are GA and
+the floor is well below it. Confirmed against docs.gitlab.com:
+
+| File | Duo-discovered location | Surfaces that read it | GA since |
+|---|---|---|---|
+| `AGENTS.md` | **repo root** (+ subdirs for monorepos); user-level `~/.gitlab/duo/AGENTS.md` | Agentic Chat + flows (IDE: VS Code / JetBrains), Duo CLI; GitLab **UI = project-level** | Chat 18.7, flows GA **18.8**, UI 18.11 |
+| `chat-rules.md` | **`.gitlab/duo/chat-rules.md`** (NOT repo root); user-level `~/.gitlab/duo/chat-rules.md` | Agentic Chat (IDE + UI), custom agents/flows | custom rules 18.2, GA **18.8**, UI 18.11 |
+| `SKILL.md` (Agent Skills) | **`skills/<name>/SKILL.md` at project root** (needs YAML front matter; optional `slash-command: enabled` → `/<name>`); user-level CLI only | VS Code 6.71.4+, Duo CLI 8.73.0+, UI flows; **not Duo Chat in UI** | project-level GA **18.10**; user-level 19.0 (experimental) |
+
+**Implications for our packaging:**
+
+- `AGENTS.md` at repo root ✅ — correct location; it is our primary Duo entrypoint and is read across
+  Chat/flows/CLI. It references `BINDINGS.md` + the skill files, so the workflows are reachable even
+  without native skill discovery.
+- `chat-rules.md` must live at **`.gitlab/duo/chat-rules.md`** (fixed — it was at repo root in the
+  first cut).
+- **Native Duo Agent Skills are NOT wired up.** Our per-skill `SKILL.md` files live under
+  `plugins/infracost/skills/<name>/` (Claude plugin layout); Duo discovers skills only at the
+  project-root `skills/<name>/SKILL.md`. Adding that would mean duplicating (or symlinking) the skill
+  files — at odds with single-sourcing. **Decision: rely on `AGENTS.md` as the Duo entrypoint; treat
+  native `skills/` Agent-Skills (with `/infracost-scan` slash commands) as an optional follow-up.**
+
+**Approval-gate behavior — CONFIRMED verbatim in docs:** *"If tool arguments contain shell
+metacharacters (`;`, `&&`, `|`, `$`, and others), pattern-based approval is not available."* It falls
+back to "Approve for session" (exact args), not fully manual per-command. So our metacharacter-free
+design directly buys the "approve all uses of this tool" pattern approval; `price`'s heredoc loses
+the pattern option (expected).
+
+**Surfaces that run shell commands:** VS Code + JetBrains (IDE Agentic Chat), Duo CLI (interactive),
+Duo CLI headless/CI (auto-approves all tools). **GitLab web UI Agentic Chat does NOT run shell** — so
+the CLI binding targets the IDE + CLI surfaces, not the web UI.
+
+See [duo-test-plan.md](duo-test-plan.md) for how to verify each surface (and the free-trial path).
