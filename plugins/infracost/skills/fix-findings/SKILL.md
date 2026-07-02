@@ -34,7 +34,7 @@ something like:
 
 > this organization doesn't have Infracost Agents enabled yet — it's currently
 > in early access. Join the waitlist at
-> https://dashboard.infracost.io/org/<org>/agents, or contact the Infracost team
+> `https://dashboard.infracost.io/org/<org>/agents`, or contact the Infracost team
 > to get set up.
 
 When you get that error, **stop and relay it to the user verbatim** (including
@@ -58,7 +58,7 @@ The MCP server handles auth + active-org resolution at startup. If a tool return
 
 ### What's *not* exposed via MCP
 
-Dismissing an individual action (i.e. killing a draft PR before the worker runs) only lives in the Agents portal at https://coast.infracost.io. This is intentional: closing a real PR or archiving a real ticket should happen with the user looking at the upstream artifact. If the user wants to dismiss an *action* (not a task), point them to the dashboard.
+Dismissing an individual action (i.e. killing a draft PR before the worker runs) only lives in the Agents portal at `https://dashboard.infracost.io/org/<org>/agents`. This is intentional: closing a real PR or archiving a real ticket should happen with the user looking at the upstream artifact. If the user wants to dismiss an *action* (not a task), point them to the dashboard.
 
 ## Workflow
 
@@ -112,7 +112,7 @@ Before doing any work on a task, look at the data in the `findings_get` response
 
 If the task is claimed:
 
-> Tell the user, surface the existing `action_id` + `type` + `action_status`, and direct them to the Agents portal at https://coast.infracost.io to dismiss or close the existing action before claiming the task themselves. Do **not** try to dismiss the action via MCP — that capability lives in the portal on purpose.
+> Tell the user, surface the existing `action_id` + `type` + `action_status`, and direct them to the Agents portal at `https://dashboard.infracost.io/org/<org>/agents` to dismiss or close the existing action before claiming the task themselves. Do **not** try to dismiss the action via MCP — that capability lives in the portal on purpose.
 
 If the task is `open` *and* has no non-terminal linked action, you can move on to step 5.
 
@@ -158,7 +158,7 @@ How to do it:
 
    - **You did Agents' suggested change** (the edit matched the `action_description` / `code` snippet) → `update_task_status(task_id="t-1", status="confirm")`. Advances the manual action to `done` so the cascade can pick it up. No reason needed.
    - **You did something different** (alternative code, different resource, fix at a different layer) → `update_task_status(task_id="t-1", status="correct", reason="<what you did instead>")`. Agents records the reason as the dismissed_reason on the task + linked manual action, and emits an `AgentLearning(source=correction)` so the agent learns the user's preferred approach. **Reason is required** — the learning is useless without it.
-   - **You and the user decided not to do anything right now, but the task is still valid** (release the claim — someone else, or the user later, might pick it up) → don't call `update_task_status`. Tell the user to open the manual action you created in step 1 from the Agents portal at https://coast.infracost.io and dismiss it there; that releases the claim and leaves the underlying task `open`.
+   - **You and the user decided not to do anything right now, but the task is still valid** (release the claim — someone else, or the user later, might pick it up) → don't call `update_task_status`. Tell the user to open the manual action you created in step 1 from the Agents portal at `https://dashboard.infracost.io/org/<org>/agents` and dismiss it there; that releases the claim and leaves the underlying task `open`.
    - **You and the user decided the task isn't worth doing at all** (not now, not later) → that's Path C, not Path A. Call `update_task_status(task_id="t-1", status="dismiss", reason="<why>")`. It also cascade-dismisses the manual action you created in step 1, so you don't need to touch the portal.
 
    The verb difference matters: `correct` and `dismiss` both end the task as dismissed, but they emit different learning signals (`correction` vs `task_dismissed`). Don't use `correct` for a no-op decline — that mis-trains the agent into thinking the user took an alternative action.
