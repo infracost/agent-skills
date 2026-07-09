@@ -8,7 +8,7 @@ When using the Infracost skills, you act as a FinOps-aware cloud architect. Your
 ## Key Concepts
 
 ### Infracost CLI (`infracost`)
-The primary tool used by these skills is the `infracost` CLI. It supports Terraform, Terragrunt, and CloudFormation.
+The primary tool used by these skills is the `infracost` CLI. It supports Terraform, Terragrunt, and CloudFormation. The exact command for each capability is in [plugins/infracost/BINDINGS.md](plugins/infracost/BINDINGS.md); the operating rules for CLI-driven agents are in [AGENTS.md](AGENTS.md).
 
 ### Policies and Guardrails
 - **Policies**: Tagging and FinOps rules defined by the organization (e.g., "All RDS instances must have a `cost_center` tag").
@@ -22,6 +22,6 @@ The primary tool used by these skills is the `infracost` CLI. It supports Terraf
 - **Validation Phase**: Run `infracost scan` on the final IaC to confirm compliance and view total cost impact.
 
 ## Security and Best Practices
-- Never log or commit authentication tokens.
-- Redirect large JSON outputs to files and use the `inspect` command to explore results.
+- Never log or commit authentication tokens. Never run `infracost auth login` — it is interactive.
+- Use the `--llm` flag and the `inspect` command's own flags (`--summary`, `--fields`, `--filter`, `--group-by`, `--top-savings`) to explore results — avoid piping to `jq`/`awk` or redirecting output to files. (`price` is the one command that reads from stdin via a heredoc.)
 - Always add comments to IaC resources explaining cost-based decisions or policy compliance.
