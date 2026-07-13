@@ -27,10 +27,14 @@ command — listed in [BINDINGS.md](../../BINDINGS.md).
 command from BINDINGS.md.** The Claude Code plugin starts the MCP server automatically.
 
 **Before generating IaC**, satisfy the three preflight capabilities (see BINDINGS.md): the CLI is
-present, the user is authenticated, and an organization is selected. With MCP these are resolved at
-startup; with the CLI, check them inline. Never run `infracost auth login` — it is interactive. If
-any operation reports "no organization selected" or "not authenticated", relay the actionable
-message to the user — don't retry blindly.
+present, the user is authenticated, and an organization is selected. With MCP these are resolved on
+the first tool call (failures come back as readable errors, not a dropped connection); with the CLI,
+check them inline. Never run `infracost auth login` — it is interactive. On an **authentication
+error**, have the user run `infracost auth login` in a separate terminal, then retry. On **"no
+organization selected"**, the error lists the available org slugs; ask which one to use and have the
+user run `infracost org switch <slug>` (add `--repo` to pin it to this repo), then retry — the
+running MCP server picks up the selection on its next call. Relay these actionable messages to the
+user — don't retry blindly.
 
 ## Capabilities you'll use
 

@@ -54,7 +54,7 @@ workflow below.
 | `update_finding_status` | **destructive** | Set a whole finding's status: `open` / `resolved` / `dismissed`. A dismissal with a reason emits an AgentLearning so the finding isn't re-raised |
 | `retry_action` | destructive | Re-queue a Agents action whose worker landed in `failed` state |
 
-The MCP server handles auth + active-org resolution at startup. If a tool returns "no organization selected" or "not authenticated", relay the actionable message to the user — don't retry blindly.
+Auth and the active organization are resolved lazily on the first tool call — not at startup — so failures come back as readable tool errors rather than a dropped MCP connection. On an **authentication error**, have the user run `infracost auth login` in a separate terminal (interactive — never run it yourself), then retry. On **"no organization selected"**, the error lists the available org slugs; ask which one to use and have the user run `infracost org switch <slug>` (add `--repo` to pin it to this repo), then retry — the running MCP server picks up the selection on its next call. Relay these actionable messages to the user — don't retry blindly.
 
 ### What's *not* exposed via MCP
 

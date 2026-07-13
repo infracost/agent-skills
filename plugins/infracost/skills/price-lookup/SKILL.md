@@ -21,8 +21,9 @@ the CLI, the snippet is fed to `infracost price` on stdin via a heredoc (this is
 the skill set that needs a shell metacharacter — see BINDINGS.md).
 
 **Before pricing**, satisfy the three preflight capabilities (see BINDINGS.md): the CLI is present,
-the user is authenticated, and an organization is selected. With MCP these are resolved at startup;
-with the CLI, check them inline. Never run `infracost auth login` — it is interactive.
+the user is authenticated, and an organization is selected. With MCP these are resolved on the first
+tool call (failures come back as readable errors, not a dropped connection); with the CLI, check
+them inline. Never run `infracost auth login` — it is interactive.
 
 ## Workflow
 
@@ -118,5 +119,5 @@ Lead with the monthly cost — that's what the user came for.
 
 - Do not commit any generated Terraform — the snippet you build is throwaway, never written to the user's workspace.
 - Do not modify the CLI source code unless the user explicitly asks for it — this skill is for _using_ Infracost.
-- If a price reports an error like "no organizations selected" or "not authenticated", relay the actionable message back to the user — don't retry blindly. A runtime error means the user needs to act (`infracost auth login` in their own terminal, `infracost org switch <slug>`).
+- If a price reports an authentication error or "no organization selected", relay the actionable message back to the user — don't retry blindly. Auth + org are resolved on the first tool call, so the message tells the user what to do: run `infracost auth login` in their own terminal (interactive — never run it yourself), or `infracost org switch <slug>` for one of the slugs the error lists. The running MCP server picks up a saved org selection on its next call.
 - If you're unsure of the Terraform resource name for what the user is asking about, look it up rather than guessing — an incorrect resource type will produce no pricing data.

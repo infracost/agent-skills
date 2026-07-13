@@ -21,8 +21,9 @@ Code/Cursor you use the tools. On agents that run shell commands (GitLab Duo, Ge
 CLI binding. Either way, the workflow below is identical.
 
 **Before any analysis**, satisfy the three preflight capabilities (see BINDINGS.md): the CLI is
-present, the user is authenticated, and an organization is selected. With MCP these are resolved at
-startup; with the CLI, check them inline. Never run `infracost auth login` — it is interactive.
+present, the user is authenticated, and an organization is selected. With MCP these are resolved on
+the first tool call (failures come back as readable errors, not a dropped connection); with the CLI,
+check them inline. Never run `infracost auth login` — it is interactive.
 
 ## Workflow
 
@@ -190,4 +191,4 @@ Clean up any worktrees you created when you're done.
 - Always clean up git worktrees created for diffing when done.
 - Do not stash or affect the target repository's git state — scan operations are non-destructive and read-only. If you need to compare branches, use separate worktrees away from the user's working directory.
 - Prefer the structured fields on the `summary` block over recomputing things from `summary.project_details[]`. The summary already de-dupes failing-resource counts across multiple policies.
-- Auth and the active organization are resolved at MCP startup (MCP binding) or checked inline (CLI binding). If an operation reports "no scan results available" or "no organization selected", relay the actionable error back to the user — don't retry blindly.
+- Auth and the active organization are resolved on the first tool call (MCP binding) or checked inline (CLI binding) — either way, failures surface as readable errors, not a dropped connection. On an **authentication error**, have the user run `infracost auth login` in a separate terminal (interactive — never run it yourself), then retry. On **"no organization selected"**, the error lists the available org slugs; ask which one to use and have the user run `infracost org switch <slug>` (add `--repo` to pin it to this repo), then retry — the running MCP server picks up the selection on its next call. If an operation reports "no scan results available", relay that too. Relay these actionable errors to the user — don't retry blindly.
