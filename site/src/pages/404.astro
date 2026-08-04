@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<BaseLayout
+  title="Page not found — Infracost Dev"
+  description="The page you were looking for doesn't exist."
+>
+  <Nav />
+  <main id="main-content">
+    <section class="notfound">
+      <div class="container">
+        <div class="code">404</div>
+        <h1>This page doesn't exist</h1>
+        <p>The link may be out of date, or the page may have moved.</p>
+        <div class="ctas">
+          <a href={`${base}/`} class="btn btn-primary">Back to home</a>
+          <a href="https://www.infracost.io/docs/" class="btn btn-secondary">Read the docs</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .notfound {
+    padding: 140px 0 160px;
+    text-align: center;
+  }
+  .code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    color: var(--cyan);
+    margin-bottom: 20px;
+  }
+  .notfound h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 44px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .notfound p {
+    color: var(--text-secondary);
+    font-size: 18px;
+    margin-bottom: 32px;
+  }
+  .ctas {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 900px) {
+    .notfound {
+      padding: 96px 0 112px;
+    }
+    .notfound h1 {
+      font-size: 32px;
+    }
+  }
+</style>
