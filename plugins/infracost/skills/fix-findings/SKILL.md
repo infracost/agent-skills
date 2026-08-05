@@ -76,17 +76,17 @@ Useful inputs:
 - `effort` — `trivial` / `small` / `medium` / `large` to narrow by how much work is involved.
 - `limit` — caps page size (server defaults to 50, max 200). `cursor` pages.
 
-The output carries `findings[]`, `total_savings` (page total — not org total), `next_cursor`, and `has_next_page`. Each finding row has `id`, `title`, `summary`, `effort`, `status`, `estimated_monthly_savings`, and `task_total`.
+The output carries `findings[]`, `total_yearly_savings` (page total — not org total), `next_cursor`, and `has_next_page`. Each finding row has `id`, `title`, `summary`, `effort`, `status`, `estimatedYearlySavings`, and `taskTotal`. All savings figures are per **year** — quote them as `$X/yr`, matching the Infracost dashboard.
 
 ### 2. Present the list
 
-Don't dump raw JSON. Present a numbered list, sorted by `estimated_monthly_savings` desc, and offer to drill in:
+Don't dump raw JSON. Present a numbered list, sorted by `estimatedYearlySavings` desc, and offer to drill in:
 
-> You have **6 open findings** worth **~$1,240/mo** in potential savings:
+> You have **6 open findings** worth **~$14,880/yr** in potential savings:
 >
-> 1. **Idle EBS volumes** — $420/mo, 3 tasks, small effort (`f-abc`)
-> 2. **Oversized RDS instances** — $310/mo, 2 tasks, medium effort (`f-def`)
-> 3. **Untagged production resources** — $260/mo, 12 tasks, trivial effort (`f-ghi`)
+> 1. **Idle EBS volumes** — $5,040/yr, 3 tasks, small effort (`f-abc`)
+> 2. **Oversized RDS instances** — $3,720/yr, 2 tasks, medium effort (`f-def`)
+> 3. **Untagged production resources** — $3,120/yr, 12 tasks, trivial effort (`f-ghi`)
 > 4. …
 >
 > Which one would you like to start with?
@@ -99,7 +99,7 @@ If `has_next_page` is true, mention it and offer to page (`findings_list(cursor=
 findings_get(id="f-abc")
 ```
 
-This returns the finding header plus every nested task with full `action_description`, `code`, `suggested_action`, `effort`, `savings`, plus any existing `actions` and timeline `events`. **Read this carefully** — the task body tells you whether each task is locally fixable.
+This returns the finding header plus every nested task with full `action_description`, `code`, `suggested_action`, `effort`, `yearlySavings`, plus any existing `actions` and timeline `events`. **Read this carefully** — the task body tells you whether each task is locally fixable.
 
 Present the tasks under the finding, again numbered, with savings and a one-line summary. If a task has a clear `code` snippet that looks like a diff or a drop-in replacement, mention that — it's the signal for Path A below.
 
@@ -268,11 +268,11 @@ Path C should never be the default — confirm with the user that they're sure t
 
 ## Presenting results
 
-- **Lead with the dollars.** Always say what the user is saving (per month and annualized) when you've applied or queued a fix.
+- **Lead with the dollars.** Always say what the user is saving per year when you've applied or queued a fix — savings are quoted as `$X/yr` everywhere, matching the dashboard.
 - **Show before/after for local edits.** Quote the lines you changed; don't just say "edited `main.tf`".
 - **Surface the action id (and URL when Agents provides one) for Agents fixes.** The user wants the link to share with their team.
 - **Note unresolved tasks.** If a finding has 4 tasks and you've fixed 2, tell the user which 2 remain and the savings on each.
-- **Don't promise savings you haven't verified.** Agents' `estimated_monthly_saving` is an estimate; for local fixes, a follow-up `scan` + `inspect_policy_detail` is what confirms the change actually moved the needle.
+- **Don't promise savings you haven't verified.** Agents' `estimatedYearlySavings` is an estimate; for local fixes, a follow-up `scan` + `inspect_policy_detail` is what confirms the change actually moved the needle.
 
 ## Important Guidelines
 

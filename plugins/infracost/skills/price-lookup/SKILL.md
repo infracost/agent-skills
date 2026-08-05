@@ -113,7 +113,7 @@ Lead with the monthly cost — that's what the user came for.
 >
 > - I/O requests: ~$X/mo based on typical usage
 >
-> Savings opportunity: Consider Graviton (db.r6g.xlarge) for ~20% savings (~$73/mo).
+> Savings opportunity: Consider Graviton (db.r6g.xlarge) for ~20% savings (~$876/yr).
 
 ## Important Guidelines
 

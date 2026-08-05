@@ -47,7 +47,7 @@ Optional: a `currency` (ISO 4217 code — `USD`, `EUR`, `GBP`, …). Defaults to
 
 The `summary` block answers most "how many X?" and "what's the total Y?" questions without further calls:
 
-- `monthly_cost`, `total_monthly_savings`
+- `monthly_cost`, `total_yearly_savings` (costs are per month; savings are always per year — quote them as `$X/yr`)
 - `resources`, `costed_resources`, `free_resources`
 - `finops_policies`, `failing_policies`, `distinct_failing_finops_resources`
 - `tagging_policies`, `failing_tagging_policies`, `distinct_failing_tagging_resources`
@@ -67,7 +67,7 @@ the views.
 | Question | Capability | Notable inputs |
 |---|---|---|
 | Everything that's currently failing (failing policies + triggered guardrails + over-budget items) | *everything currently failing* | `project`, `provider`, `filter` |
-| Top N savings opportunities sorted by monthly_savings | *top N savings* | `n` (default 10), filter inputs |
+| Top N savings opportunities sorted by yearly_savings | *top N savings* | `n` (default 10), filter inputs |
 | List resources matching predicates (missing tag, invalid tag, cost band) | *list resources by predicate* | `missing_tag`, `invalid_tag`, `min_cost`, `max_cost`, `resource`, filter inputs |
 | Group / aggregate resources by dimension | *aggregate resources by dimension* | `group_by` (e.g. `type`, `policy,type`, `budget`), `top` |
 | Per-project diagnostic messages (parse errors, missing vars, …) | *per-project diagnostics* | `project`, `critical_only` |
@@ -149,7 +149,7 @@ Present over-budget items clearly with the dollar amount over:
 >
 > (drills in with *budget detail* for "Frontend Q2")
 >
-> The budget detail shows 3 resources matching `team=frontend` tags in this scan. There are also FinOps policy violations on some of these resources (Use GP3: up to $30/mo, Use Graviton: up to $45/mo) — addressing these could help reduce spend over time.
+> The budget detail shows 3 resources matching `team=frontend` tags in this scan. There are also FinOps policy violations on some of these resources (Use GP3: up to $360/yr, Use Graviton: up to $540/yr) — addressing these could help reduce spend over time.
 >
 > _Note: Actual spend is based on cloud billing data across the organization. Savings estimates are from the IaC scan and may not directly translate to budget reductions._
 
@@ -167,7 +167,7 @@ Make the output engaging with tables and clear callouts. Tailor depth to complex
 - **Over-budget items are also prominent**, with the amount over and any custom overrun messages. Even for budgets that are under, show how much headroom remains. Always offer to drill in with *budget detail*. Frame as "your organization has spent $X against this budget", not "this change costs $X".
 - **Environmental impact metrics** (CO2, water) when available — they add real value alongside the cost numbers.
 - **Usage-based costs come with a caveat.** We don't have actual usage data; the estimates use typical defaults. Call out the uncertainty for those resources and recommend reviewing actual usage post-deploy.
-- **Make it actionable.** Don't just say "FinOps policy Z has 3 violations" — say "You could save $X per month by doing Y. The 3 affected resources are…" Concrete dollar amounts (monthly and annualized) and concrete code changes.
+- **Make it actionable.** Don't just say "FinOps policy Z has 3 violations" — say "You could save $X per year by doing Y. The 3 affected resources are…" Concrete yearly dollar amounts and concrete code changes.
 - **Don't mention informational diagnostics** unless the user is debugging a scan.
 
 ## Diffing Against a Baseline

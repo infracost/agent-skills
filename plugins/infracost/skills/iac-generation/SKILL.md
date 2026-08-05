@@ -87,7 +87,7 @@ Once the IaC files are complete, **scan** the directory.
 Read the `summary` block first. Most of what you need is there:
 
 - `monthly_cost` — total cost of what you generated.
-- `total_monthly_savings` — sum of potential savings if every FinOps issue were fixed.
+- `total_yearly_savings` — sum of potential savings per year if every FinOps issue were fixed. Savings are always quoted per year (`$X/yr`); costs stay monthly.
 - `failing_policies`, `failing_tagging_policies` — counts; if non-zero, drill in.
 - `triggered_guardrails`, `over_budget` — counts; **if any guardrail with `block_pr` triggered, the generated code must be changed**.
 - `critical_diagnostics`, `warning_diagnostics` — non-zero means the scanner couldn't fully analyze something; surface via the *per-project diagnostics* capability.
