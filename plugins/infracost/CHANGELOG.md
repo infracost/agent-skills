@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.2](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.1.1...infracost-plugin-v0.1.2) (2026-07-13)
+
+
+### Features
+
+* add direct-CLI binding for shell-running agents (GitLab Duo) ([#56](https://github.com/infracost/agent-skills/issues/56)) ([a351270](https://github.com/infracost/agent-skills/commit/a35127020467167e2c90b3ab84d21984e8de3226))
+* better handling of edge cases when no org selected ([#47](https://github.com/infracost/agent-skills/issues/47)) ([6990508](https://github.com/infracost/agent-skills/commit/6990508b4c65ea4ed28f640984cf579c508f0d1c))
+
+
+### Bug Fixes
+
+* correct Agents portal URLs in fix-findings skill ([#58](https://github.com/infracost/agent-skills/issues/58)) ([03b221f](https://github.com/infracost/agent-skills/commit/03b221fe7d04fa0fddb2cb6b2566fdbbc03b20a2))
+* direct users to login / org-switch on MCP auth + org errors FIX-388 ([#60](https://github.com/infracost/agent-skills/issues/60)) ([7351657](https://github.com/infracost/agent-skills/commit/735165754cdf6774d9d03469fbb4d4551cdeee22))
+* resolve infracost binary in GUI-launched contexts ([#54](https://github.com/infracost/agent-skills/issues/54)) ([8aa25b1](https://github.com/infracost/agent-skills/commit/8aa25b1d02df257031db2837f27d6c6585dd7f74))
+
 ## [0.1.1](https://github.com/infracost/agent-skills/compare/infracost-plugin-v0.1.0...infracost-plugin-v0.1.1) (2026-05-29)
 
 
