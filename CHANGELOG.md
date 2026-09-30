@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.2](https://github.com/infracost/agent-skills/compare/infracost-marketplace-v0.1.1...infracost-marketplace-v0.1.2) (2026-09-30)
+
+
+### Features
+
+* add direct-CLI binding for shell-running agents (GitLab Duo) ([#56](https://github.com/infracost/agent-skills/issues/56)) ([a351270](https://github.com/infracost/agent-skills/commit/a35127020467167e2c90b3ab84d21984e8de3226))
+
+
+### Miscellaneous
+
+* pin GitHub Actions to SHAs ([#67](https://github.com/infracost/agent-skills/issues/67)) ([b4104c3](https://github.com/infracost/agent-skills/commit/b4104c3a605e0999fc11fd566ab5452dc528b8a5))
+
 ## [0.1.1](https://github.com/infracost/agent-skills/compare/infracost-marketplace-v0.1.0...infracost-marketplace-v0.1.1) (2026-05-29)
 
 
