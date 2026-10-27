@@ -128,6 +128,8 @@ Choose this when **all** of the following hold:
 - The change is in IaC the user has on disk (Terraform, CloudFormation, Terragrunt) — i.e. you can find the file the change should land in.
 - The change is bounded — single file or a small set of files, not a sweeping refactor.
 
+If the user makes the change themselves outside this repo (cloud console, CLI, another repo), skip to step 4 once they say it's done.
+
 How to do it:
 
 1. Locate the target file(s). The task's `action_description` usually names them; if not, `grep` the user's repo for the resource address or distinctive attribute the snippet touches.
@@ -154,7 +156,7 @@ How to do it:
 Choose this when **any** of the following hold:
 
 - The task's `code` is empty or too abstract to drop in directly.
-- The change touches code or systems you don't have in this repo (e.g. another service, Terraform state already in production, a cloud console action).
+- The change touches code or systems you don't have in this repo (e.g. another service, Terraform state already in production) and the user wants Agents to open the PR or ticket.
 - The task's `suggested_action` is `create_ticket` — Agents knows the right ticketing integration to use.
 - The user explicitly wants a PR to review rather than a local edit.
 
@@ -231,18 +233,18 @@ This re-publishes the same action config to the worker queue with no edits. **Do
 
 Use the table below as a starting heuristic — but always read the task and ask the user what they want.
 
-| Signal                                                              | Path A (local) | Path B (PR/ticket) | Path C (decline) |
-| ------------------------------------------------------------------- | -------------- | ------------------ | ---------------- |
-| `code` is a clear diff or replacement snippet                       | ✅              | also OK             |                  |
-| `action_description` names a file path you can find                 | ✅              | also OK             |                  |
-| Resource address resolves to a file in the user's working dir       | ✅              | also OK             |                  |
-| `suggested_action` is `create_ticket`                               | ❌              | ✅ (ticket)         |                  |
-| Change is cross-repo or requires cloud console action               | ❌              | ✅ (ticket / manual) |                 |
-| Task `code` is empty or vague                                       | ❌              | ✅                  |                  |
-| User explicitly wants a PR to review and merge                      | ❌              | ✅ (`open_pr`)      |                  |
-| User wants a quick experimental change to validate locally first    | ✅              | ❌                  |                  |
-| User reads the task and says "we don't want to do this"             |                |                    | ✅ (per-task)     |
-| User reads the finding and says "this whole investigation is off"   |                |                    | ✅ (per-finding)  |
+| Signal                                                            | Path A (local)                    | Path B (PR/ticket) | Path C (decline) |
+| ----------------------------------------------------------------- | --------------------------------- | ------------------ | ---------------- |
+| `code` is a clear diff or replacement snippet                     | ✅                                | also OK            |                  |
+| `action_description` names a file path you can find               | ✅                                | also OK            |                  |
+| Resource address resolves to a file in the user's working dir     | ✅                                | also OK            |                  |
+| `suggested_action` is `create_ticket`                             | ❌                                | ✅ (ticket)        |                  |
+| Change is cross-repo or requires cloud console action             | ✅ (user does it, then `confirm`) | ✅ (ticket)        |                  |
+| Task `code` is empty or vague                                     | ❌                                | ✅                 |                  |
+| User explicitly wants a PR to review and merge                    | ❌                                | ✅ (`open_pr`)     |                  |
+| User wants a quick experimental change to validate locally first  | ✅                                | ❌                 |                  |
+| User reads the task and says "we don't want to do this"           |                                   |                    | ✅ (per-task)    |
+| User reads the finding and says "this whole investigation is off" |                                   |                    | ✅ (per-finding) |
 
 When you're not sure between A and B, **default to Path B**. A Agents-drafted PR is lower-risk than silently editing their files because it leaves a reviewable artifact and a Agents action you can later inspect.
 
