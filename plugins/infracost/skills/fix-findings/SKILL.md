@@ -49,7 +49,7 @@ workflow below.
 | `findings_list` | none | Page through findings for the active org |
 | `findings_get` | none | Full finding + nested tasks, actions, events |
 | `preview_fix` | none | Ask Agents to draft a PR or ticket for a task |
-| `create_fix` | **destructive** | Submit a drafted PR/ticket action — or, with `type="manual"`, **claim** a task before fixing it locally |
+| `create_fix` | **destructive** | Submit a drafted PR/ticket action |
 | `update_task_status` | **destructive** | Report what you did to a task. `confirm` = you did Agents' suggested change; `correct` = you did something different (requires reason); `dismiss` = you decided not to do the task (reason recommended). The three verbs feed different learning signals — pick by user intent, not for convenience |
 | `update_finding_status` | **destructive** | Set a whole finding's status: `open` / `resolved` / `dismissed`. A dismissal with a reason emits an AgentLearning so the finding isn't re-raised |
 | `retry_action` | destructive | Re-queue a Agents action whose worker landed in `failed` state |
@@ -107,12 +107,12 @@ Present the tasks under the finding, again numbered, with savings and a one-line
 
 Before doing any work on a task, look at the data in the `findings_get` response to confirm it isn't already in flight:
 
-- **`task.status`** — anything other than `open` means somebody (or something) has already started. The common non-open values are `in_progress` (Agents worker is opening a PR / creating a ticket), `awaiting_resolution` (a manual action exists and is waiting for confirmation), `resolved`, and `dismissed`.
+- **`task.status`** — anything other than `open` means somebody (or something) has already started. The common non-open values are `in_progress` (Agents worker is opening a PR / creating a ticket), `awaiting_resolution` (someone marked it done and the next scan will verify it), `resolved`, and `dismissed`.
 - **`finding.actions[]`** — find any action whose `task_ids` includes the current task and whose `action_status` is not in the terminal set (`done` / `merged` / `deployed` / `verified` / `failed` / `cancelled` / `dismissed`). A `draft` or `open` action linked to the task means it's claimed.
 
 If the task is claimed:
 
-> Tell the user, surface the existing `action_id` + `type` + `action_status`, and direct them to the Agents portal at `https://dashboard.infracost.io/org/<org>/agents` to dismiss or close the existing action before claiming the task themselves. Do **not** try to dismiss the action via MCP — that capability lives in the portal on purpose.
+> Tell the user, surface the existing `action_id` + `type` + `action_status`, and direct them to the Agents portal at `https://dashboard.infracost.io/org/<org>/agents` to dismiss or close the existing action before working on the task themselves. Do **not** try to dismiss the action via MCP — that capability lives in the portal on purpose.
 
 If the task is `open` *and* has no non-terminal linked action, you can move on to step 5.
 
@@ -128,51 +128,35 @@ Choose this when **all** of the following hold:
 - The change is in IaC the user has on disk (Terraform, CloudFormation, Terragrunt) — i.e. you can find the file the change should land in.
 - The change is bounded — single file or a small set of files, not a sweeping refactor.
 
+If the user makes the change themselves outside this repo (cloud console, CLI, another repo), skip to step 4 once they say it's done.
+
 How to do it:
 
-1. **Claim the task in Agents first.** Call `create_fix` with `type="manual"` to register a manual action linked to the task. This moves the task to `awaiting_resolution` server-side, so another user or session can see it's in flight and won't double-claim it. The `config` is opaque JSON; a reasonable shape names what you're about to change:
+1. Locate the target file(s). The task's `action_description` usually names them; if not, `grep` the user's repo for the resource address or distinctive attribute the snippet touches.
 
-   ```
-   create_fix(
-     finding_id="f-abc",
-     task_id="t-1",
-     type="manual",
-     config={
-       "intent": "Rename bucket attribute from \"hello\" to \"example-bucket-prod\"",
-       "files": ["bin/example/main.tf"],
-     },
-   )
-   ```
+2. **Show the user the proposed edit before you make it** — quote the relevant lines and explain the change. This is the point at which the user can redirect: maybe Agents' suggestion isn't the right call and they want to make a different change instead. If that conversation happens, follow what the user decides — your job is to report *what was done*, not to defend Agents' original suggestion.
 
-   Confirm the action with the user before calling — it's a destructive tool. The returned `action_id` is what you'll close in step 6.
+3. Apply the edit with the standard file-editing tools.
 
-2. Locate the target file(s). The task's `action_description` usually names them; if not, `grep` the user's repo for the resource address or distinctive attribute the snippet touches.
-
-3. **Show the user the proposed edit before you make it** — quote the relevant lines and explain the change. This is the point at which the user can redirect: maybe Agents' suggestion isn't the right call and they want to make a different change instead. If that conversation happens, follow what the user decides — your job is to report *what was done*, not to defend Agents' original suggestion.
-
-4. Apply the edit with the standard file-editing tools.
-
-5. **Report what you did to Agents.** You're signalling *what action was taken*, not judging whether it worked — Agents' observation cascade verifies and resolves the task asynchronously. Don't re-scan locally to second-guess the cascade.
+4. **Report what you did to Agents.** You're signalling *what action was taken*, not judging whether it worked — Agents' observation cascade verifies and resolves the task asynchronously. Don't re-scan locally to second-guess the cascade.
 
    The verb depends on the user's intent. If the user redirected you mid-edit (e.g. "actually, let's do X instead"), follow the conversation: ask what they want to do, then pick the verb that matches.
 
-   - **You did Agents' suggested change** (the edit matched the `action_description` / `code` snippet) → `update_task_status(task_id="t-1", status="confirm")`. Advances the manual action to `done` so the cascade can pick it up. No reason needed.
-   - **You did something different** (alternative code, different resource, fix at a different layer) → `update_task_status(task_id="t-1", status="correct", reason="<what you did instead>")`. Agents records the reason as the dismissed_reason on the task + linked manual action, and emits an `AgentLearning(source=correction)` so the agent learns the user's preferred approach. **Reason is required** — the learning is useless without it.
-   - **You and the user decided not to do anything right now, but the task is still valid** (release the claim — someone else, or the user later, might pick it up) → don't call `update_task_status`. Tell the user to open the manual action you created in step 1 from the Agents portal at `https://dashboard.infracost.io/org/<org>/agents` and dismiss it there; that releases the claim and leaves the underlying task `open`.
-   - **You and the user decided the task isn't worth doing at all** (not now, not later) → that's Path C, not Path A. Call `update_task_status(task_id="t-1", status="dismiss", reason="<why>")`. It also cascade-dismisses the manual action you created in step 1, so you don't need to touch the portal.
+   - **You did Agents' suggested change** (the edit matched the `action_description` / `code` snippet) → `update_task_status(task_id="t-1", status="confirm")`. Marks the task done, the same as **Mark as done** in the Agents portal, and the next scan verifies it. No reason needed, and no `create_fix` call is needed first.
+   - **You did something different** (alternative code, different resource, fix at a different layer) → `update_task_status(task_id="t-1", status="correct", reason="<what you did instead>")`. Agents records the reason as the task's dismissed_reason, dismisses any draft/open action linked to it, and emits an `AgentLearning(source=correction)` so the agent learns the user's preferred approach. **Reason is required** — the learning is useless without it.
+   - **You and the user decided not to do anything right now, but the task is still valid** (someone else, or the user later, might pick it up) → don't call `update_task_status`. The task stays `open`.
+   - **You and the user decided the task isn't worth doing at all** (not now, not later) → that's Path C, not Path A. Call `update_task_status(task_id="t-1", status="dismiss", reason="<why>")`.
 
    The verb difference matters: `correct` and `dismiss` both end the task as dismissed, but they emit different learning signals (`correction` vs `task_dismissed`). Don't use `correct` for a no-op decline — that mis-trains the agent into thinking the user took an alternative action.
 
-   If you skipped step 1 (no claim), `update_task_status status=confirm` has nothing to advance and is a silent no-op. Don't skip the claim and then assume the report covered it.
-
-6. Report back: what file(s) changed, the before/after diff for the lines you touched, the manual `action_id` you created, and which `update_task_status` verb (if any) you sent. Don't claim Agents verified the fix — the cascade hasn't run yet at the moment you're reporting; the user will see that resolution land asynchronously.
+5. Report back: what file(s) changed, the before/after diff for the lines you touched, and which `update_task_status` verb (if any) you sent. Don't claim Agents verified the fix — the cascade hasn't run yet at the moment you're reporting; the user will see that resolution land asynchronously.
 
 #### Path B — Have Agents draft a PR or ticket
 
 Choose this when **any** of the following hold:
 
 - The task's `code` is empty or too abstract to drop in directly.
-- The change touches code or systems you don't have in this repo (e.g. another service, Terraform state already in production, a cloud console action).
+- The change touches code or systems you don't have in this repo (e.g. another service, Terraform state already in production) and the user wants Agents to open the PR or ticket.
 - The task's `suggested_action` is `create_ticket` — Agents knows the right ticketing integration to use.
 - The user explicitly wants a PR to review rather than a local edit.
 
@@ -184,7 +168,7 @@ How to do it:
    preview_fix(finding_id="f-abc", task_id="t-1", type="open_pr")
    ```
 
-   Use `type="create_ticket"` for ticket-shaped tasks. `type="manual"` is not supported by `preview_fix` (the LLM can't draft a manual action) — for those, switch to Path A (where `create_fix(..., type="manual")` is the claim step).
+   Use `type="create_ticket"` for ticket-shaped tasks. Neither `preview_fix` nor `create_fix` accepts `type="manual"` — a manual fix has no action to draft or create. For those, switch to Path A, which ends with `update_task_status(status="confirm")`.
 
 2. **Show the user the draft.** The tool returns `{type, config}`. Surface the relevant fields — for an `open_pr` config that's typically the PR title, target branch, body summary, and files touched; for a `create_ticket` config it's the ticket title, team, description. Do **not** submit anything yet.
 
@@ -215,7 +199,7 @@ Choose this when the user reads the task or finding and decides not to do it: a 
 
 Two scopes:
 
-- **Per-task** — `update_task_status(task_id="t-1", status="dismiss", reason="<why>")`. Dismisses just this task and cascade-dismisses any draft/open actions linked to it. Emits a learning with source `task_dismissed`. Use when only one task on the finding is off-base but the others are still worth doing. **No claim required** — you can dismiss a task without first calling `create_fix(type=manual)`.
+- **Per-task** — `update_task_status(task_id="t-1", status="dismiss", reason="<why>")`. Dismisses just this task and cascade-dismisses any draft/open actions linked to it. Emits a learning with source `task_dismissed`. Use when only one task on the finding is off-base but the others are still worth doing.
 
   Important: do **not** use `status=correct` for this case. `correct` is for "the user did something different"; `dismiss` is for "the user declined". They feed different learning signals.
 
@@ -249,18 +233,18 @@ This re-publishes the same action config to the worker queue with no edits. **Do
 
 Use the table below as a starting heuristic — but always read the task and ask the user what they want.
 
-| Signal                                                              | Path A (local) | Path B (PR/ticket) | Path C (decline) |
-| ------------------------------------------------------------------- | -------------- | ------------------ | ---------------- |
-| `code` is a clear diff or replacement snippet                       | ✅              | also OK             |                  |
-| `action_description` names a file path you can find                 | ✅              | also OK             |                  |
-| Resource address resolves to a file in the user's working dir       | ✅              | also OK             |                  |
-| `suggested_action` is `create_ticket`                               | ❌              | ✅ (ticket)         |                  |
-| Change is cross-repo or requires cloud console action               | ❌              | ✅ (ticket / manual) |                 |
-| Task `code` is empty or vague                                       | ❌              | ✅                  |                  |
-| User explicitly wants a PR to review and merge                      | ❌              | ✅ (`open_pr`)      |                  |
-| User wants a quick experimental change to validate locally first    | ✅              | ❌                  |                  |
-| User reads the task and says "we don't want to do this"             |                |                    | ✅ (per-task)     |
-| User reads the finding and says "this whole investigation is off"   |                |                    | ✅ (per-finding)  |
+| Signal                                                            | Path A (local)                    | Path B (PR/ticket) | Path C (decline) |
+| ----------------------------------------------------------------- | --------------------------------- | ------------------ | ---------------- |
+| `code` is a clear diff or replacement snippet                     | ✅                                | also OK            |                  |
+| `action_description` names a file path you can find               | ✅                                | also OK            |                  |
+| Resource address resolves to a file in the user's working dir     | ✅                                | also OK            |                  |
+| `suggested_action` is `create_ticket`                             | ❌                                | ✅ (ticket)        |                  |
+| Change is cross-repo or requires cloud console action             | ✅ (user does it, then `confirm`) | ✅ (ticket)        |                  |
+| Task `code` is empty or vague                                     | ❌                                | ✅                 |                  |
+| User explicitly wants a PR to review and merge                    | ❌                                | ✅ (`open_pr`)     |                  |
+| User wants a quick experimental change to validate locally first  | ✅                                | ❌                 |                  |
+| User reads the task and says "we don't want to do this"           |                                   |                    | ✅ (per-task)    |
+| User reads the finding and says "this whole investigation is off" |                                   |                    | ✅ (per-finding) |
 
 When you're not sure between A and B, **default to Path B**. A Agents-drafted PR is lower-risk than silently editing their files because it leaves a reviewable artifact and a Agents action you can later inspect.
 
