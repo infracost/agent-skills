@@ -41,6 +41,9 @@ capabilities when you need it (see step 3).
 The scan result is cached under the scanned path. Subsequent inspect operations read the most recent
 scan by default; target a specific previously-scanned directory by passing its path.
 
+There is no cache until a scan has run, so run **scan** on the path before any inspect or diff
+capability — don't call them first and wait for the error.
+
 Optional: a `currency` (ISO 4217 code — `USD`, `EUR`, `GBP`, …). Defaults to the org-configured currency.
 
 ### 2. Triage with the summary
@@ -191,4 +194,4 @@ Clean up any worktrees you created when you're done.
 - Always clean up git worktrees created for diffing when done.
 - Do not stash or affect the target repository's git state — scan operations are non-destructive and read-only. If you need to compare branches, use separate worktrees away from the user's working directory.
 - Prefer the structured fields on the `summary` block over recomputing things from `summary.project_details[]`. The summary already de-dupes failing-resource counts across multiple policies.
-- Auth and the active organization are resolved on the first tool call (MCP binding) or checked inline (CLI binding) — either way, failures surface as readable errors, not a dropped connection. On an **authentication error**, have the user run `infracost auth login` in a separate terminal (interactive — never run it yourself), then retry. On **"no organization selected"**, the error lists the available org slugs; ask which one to use and have the user run `infracost org switch <slug>` (add `--repo` to pin it to this repo), then retry — the running MCP server picks up the selection on its next call. If an operation reports "no scan results available", relay that too. Relay these actionable errors to the user — don't retry blindly.
+- Auth and the active organization are resolved on the first tool call (MCP binding) or checked inline (CLI binding) — either way, failures surface as readable errors, not a dropped connection. On an **authentication error**, have the user run `infracost auth login` in a separate terminal (interactive — never run it yourself), then retry. On **"no organization selected"**, the error lists the available org slugs; ask which one to use and have the user run `infracost org switch <slug>` (add `--repo` to pin it to this repo), then retry — the running MCP server picks up the selection on its next call. If an operation reports "no scan results available", run **scan** on that path and retry once; only relay it if the scan itself fails. Relay these actionable errors to the user — don't retry blindly.
